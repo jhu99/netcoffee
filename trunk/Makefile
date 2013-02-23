@@ -13,19 +13,29 @@ $(error MODE must be one of {Debug,Release})
 endif
 endif
 
+LEMON = include/lemon-1.2.3
+
 ifeq ($(MODE),Debug)
-	CXXFLAGS = -Wall -g3 -DDEBUG -std=c++0x -DVERBOSE -Iinclude/ -Isrc/ -Isrc/input/ -Isrc/algorithms/
+	CXXFLAGS = -Wall -g3 -DDEBUG -std=c++0x -DVERBOSE -I$(LEMON)/ -Isrc/ -Isrc/input/ -Isrc/algorithms/
 else
-	CXXFLAGS = -Wall -O3 -ffast-math -fcaller-saves -finline-functions -std=c++0x -DNDEBUG -Iinclude/ -Isrc/ -Isrc/input/ -Isrc/algorithms/
+	CXXFLAGS = -Wall -O3 -ffast-math -fcaller-saves -finline-functions -std=c++0x -DNDEBUG -I$(LEMON)/ -Isrc/ -Isrc/input/ -Isrc/algorithms/
 endif
 
 all: aligner move
 
-aligner: src/main.cpp src/verbose.o include/lemon/arg_parser.o
+aligner: src/main.cpp src/verbose.o $(LEMON)/lemon/arg_parser.o
 	${CXX} ${CXXFLAGS} -o $@ $^ 
 
 move:
 	mv aligner ./bin
+
+#lemon: lemon-config lemon-make
+
+#lemon-config:
+	#$(LEMON)/configure
+
+#lemon-make:
+	#$(LEMON)/make	
 
 clean:
 	rm ./bin/aligner
