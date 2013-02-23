@@ -32,10 +32,10 @@ move:
 #lemon: lemon-config lemon-make
 
 #lemon-config:
-	#$(LEMON)/configure
+#$(LEMON)/configure
 
 #lemon-make:
-	#$(LEMON)/make	
+#$(LEMON)/make	
 
 clean:
 	rm ./bin/aligner
