@@ -1,0 +1,175 @@
+/* solution_x.h
+Author: Jialu Hu
+Date: 29.06.2012*/
+
+#ifndef SOLUTION_X_H_
+#define SOLUTION_X_H_
+
+#include <lemon/core.h>
+#include <lemon/bits/graph_extender.h>
+#include <lemon/concepts/graph.h>
+#include <unordered_map>
+#include <array>
+#include "macro.h"
+#include "input/recordstore.h"
+#include "input/networkpool.h"
+
+template<typename GR,typename Con,typename BP>
+class Solution_X
+{
+private:    
+    typedef GR Graph;
+    typedef NetworkPool<GR,BP> NetworkPool_Type;
+    typedef RecordStore<Con> RecordStore_Type;
+    typedef typename NetworkPool<GR, BP>::GraphData GraphData;
+protected:
+  TEMPLATE_GRAPH_TYPEDEFS(Graph);
+  
+  /// Labels of the nodes
+  typedef typename Graph::template NodeMap<unsigned int> Node2LabelMap;
+  /// Mapping from labels to original nodes
+  typedef std::unordered_map<std::string, typename Graph::Node> Label2NodeMap;
+  /// Weights on original edges
+  typedef typename Graph::template EdgeMap<float> WeightEdgeMap;
+public:
+  Graph *_g;
+  Node2LabelMap *_node2label;
+  Label2NodeMap *_label2node1;
+  Label2NodeMap *_label2node2;
+  Label2NodeMap *_label2node3;
+  WeightEdgeMap *_weightmap;
+  float _score;
+  
+  Solution_X();
+  ~Solution_X();
+  bool isOverlapped(unsigned int,RecordStore<Con>&);
+  bool add(unsigned int, RecordStore<Con>&, NetworkPool<GR,BP>&);
+  Label2NodeMap* getLabel2Node(unsigned i);
+  bool connectNode(Node& node, RecordStore<Con>&, NetworkPool<GR,BP>&);
+  bool connectGraph(RecordStore<Con>&, NetworkPool<GR,BP>&);
+};
+
+template<typename GR,typename Con,typename BP>
+Solution_X<GR,Con,BP>::Solution_X()
+{
+  _g = new Graph();
+  _node2label=new Node2LabelMap(*_g);
+  _label2node1=new Label2NodeMap();
+  _label2node2=new Label2NodeMap();
+  _label2node3=new Label2NodeMap();
+  _weightmap=new WeightEdgeMap(*_g);
+  _g->reserveNode(NUM_NODE_REVERSE);
+  _g->reserveEdge(NUM_EDGE_REVERSE);
+}
+template<typename GR,typename Con,typename BP>
+Solution_X<GR,Con,BP>::~Solution_X()
+{
+  delete _g;
+  delete _node2label;
+  delete _label2node1;
+  delete _label2node2;
+  delete _label2node3;
+  delete _weightmap;
+}
+
+template<typename GR,typename Con,typename BP>
+std::unordered_map<std::string, typename GR::Node>*
+Solution_X<GR,Con,BP>::getLabel2Node(unsigned i)
+{
+  Label2NodeMap* nodemap=NULL;
+  switch(i)
+  {
+    case 0: nodemap=_label2node1;break;
+    case 1: nodemap=_label2node2;break;
+    case 2: nodemap=_label2node3;break;
+    default: ;
+  }
+  return nodemap;
+}
+
+template<typename GR,typename Con,typename BP>
+bool
+Solution_X<GR,Con,BP>::isOverlapped(unsigned int select,RecordStore<Con>& rs)
+{
+  if((*_label2node1).find(rs.proteins1->at(select))!=(*_label2node1).end() ||
+     (*_label2node2).find(rs.proteins2->at(select))!=(*_label2node2).end() ||
+     (*_label2node3).find(rs.proteins3->at(select))!=(*_label2node3).end()
+    )
+  return true;
+  else
+  return false;
+}
+template<typename GR,typename Con,typename BP>
+bool
+Solution_X<GR,Con,BP>::add(unsigned int select, RecordStore<Con>& rs, NetworkPool<GR,BP>& np)
+{
+  for(unsigned i=0;i<NUM_SPECIES;++i)
+  {
+    std::string protein=rs.getRecords(select,i);
+    GraphData *graph = np.getGraph(i);
+    if(graph->invIdNodeMap->find(protein)==graph->invIdNodeMap->end())
+    {
+      std::cerr << "Records "<<protein<<" donot exist in networks" <<std::endl;
+      return false;
+    }
+  }
+  Node node=_g->addNode();
+  (*_node2label)[node]=select;
+  for(unsigned i=0;i<NUM_SPECIES;++i)
+  {
+    std::string protein=rs.getRecords(select,i);
+    Label2NodeMap* label2Node=getLabel2Node(i);
+    (*label2Node)[protein]=node;
+  }  
+  return true;
+}
+template<typename GR,typename Con,typename BP>
+bool
+Solution_X<GR,Con,BP>::connectNode(Node& node, RecordStore<Con>& rs, NetworkPool<GR,BP>& np)
+{
+  unsigned select=(*_node2label)[node];
+  for(unsigned i=0; i<NUM_SPECIES; ++i)
+  {
+    std::string protein = rs.getRecords(select, i);
+    GraphData *graph = np.getGraph(i);
+    Label2NodeMap* label2Node=getLabel2Node(i);
+    for(IncEdgeIt e(*(graph->g),(*(graph->invIdNodeMap))[protein]);
+      e!=lemon::INVALID; ++e)
+      {
+        Node neighbor=graph->g->runningNode(e);
+        std::string pro=(*(graph->label))[neighbor];
+        if(protein==pro)continue;
+        else if(label2Node->find(pro)!=label2Node->end())
+        {
+          Node existNode=(*label2Node)[pro];
+          IncEdgeIt en(*_g,node);
+          for(; en!=lemon::INVALID; ++en)
+          {
+            if(_g->runningNode(en)==existNode)break;
+          }
+          if(en!=lemon::INVALID)
+          {
+           (*_weightmap)[en]+=1.0/NUM_SPECIES;
+          }
+          else
+          {
+            Edge newedge=_g->addEdge(existNode,node);
+            (*_weightmap)[newedge]=1.0/NUM_SPECIES;
+          }
+        }          
+      }
+  }  
+  return true;
+}
+
+template<typename GR,typename Con,typename BP>
+bool
+Solution_X<GR,Con,BP>::connectGraph(RecordStore<Con>& rs, NetworkPool<GR,BP>& np)
+{
+  for(NodeIt it(*_g); it!=lemon::INVALID; ++it)
+  {
+    connectNode(it,rs,np);
+  }
+  return true;
+}
+#endif //SOLUTION_X_H_
