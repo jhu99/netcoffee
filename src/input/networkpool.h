@@ -30,12 +30,14 @@ public:
   typedef typename Graph::template EdgeMap<int> WeightEdgeMap;
   /// Host of proteins for all input networks
   std::unordered_map<std::string,short> proteinHost;
+  typedef typename Graph::template NodeMap<unsigned> DegreeNodeMap;
 
   struct GraphData
   {
     Graph *g;
     OrigLabelNodeMap *label;
     InvOrigLabelNodeMap *invIdNodeMap;
+    DegreeNodeMap *degreeMap;
     WeightEdgeMap *weight;
     lemon::ArcLookUp<Graph> *arcLookUpG;
     int nodeNum;
@@ -47,6 +49,7 @@ public:
       g = new Graph();
       label = new OrigLabelNodeMap(*g);
       invIdNodeMap = new InvOrigLabelNodeMap();
+      degreeMap = new DegreeNodeMap(*g);
       weight = new WeightEdgeMap(*g);
       arcLookUpG = new lemon::ArcLookUp<Graph>(*g);
     }
@@ -55,6 +58,7 @@ public:
       delete g;
       delete label;
       delete invIdNodeMap;
+      delete degreeMap;
       delete weight;
       delete arcLookUpG;
     }
@@ -181,11 +185,22 @@ bool NetworkPool<GR,BP>::readNetwork(std::string &filename,short i)
     data->edgeNum++;
   }
   data->arcLookUpG->refresh();
+  unsigned maxNode=0;
+  for(NodeIt mynode(*(data->g));mynode!=lemon::INVALID;++mynode)
+  {
+	  for(IncEdgeIt myedge(*(data->g),mynode);myedge!=lemon::INVALID;++myedge)
+	  {
+		  (*data->degreeMap)[mynode]++;
+	  }
+	  if(maxNode < (*data->degreeMap)[mynode])
+		maxNode=(*data->degreeMap)[mynode];
+  }
   if(g_verbosity>=VERBOSE_NON_ESSENTIAL)
   {
     std::cerr <<filename <<" has been read successfully!"<<std::endl;
     std::cerr <<"# of proteins:"<< data->nodeNum <<"\t"<<std::endl;
     std::cerr <<"# of interactions:"<<data->edgeNum<<std::endl;
+    std::cerr <<"the largest degree:"<< maxNode << std::endl;
   }
   return 1;
 }
