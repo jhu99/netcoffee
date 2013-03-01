@@ -1,0 +1,127 @@
+================================================================
+==== RUN FOR FIVE SPECIES ======================================
+================================================================
+--------ISORANKN--------------
+--------ISORANKN--------------
+It starts at Wed 27 Feb 2013 10:43:54 AM CET.
+--------ISORANKN--------------
+--------ISORANKN--------------
+--------ISORANKN--------------
+It starts at Wed 27 Feb 2013 10:43:54 AM CET.
+It starts at Wed 27 Feb 2013 10:43:54 AM CET.
+It starts at Wed 27 Feb 2013 10:43:54 AM CET.
+It starts at Wed 27 Feb 2013 10:43:54 AM CET.
+The parameter of alpha is 0.1 .
+It tooks 9072 seconds.
+The parameter of alpha is 0.2 .
+It tooks 10676 seconds.
+The parameter of alpha is 0.3 .
+It tooks 11420 seconds.
+The parameter of alpha is 0.4 .
+It tooks 13688 seconds.
+The parameter of alpha is 0.5 .
+It tooks 16341 seconds.
+--------ISORANKN--------------
+It starts at Wed 27 Feb 2013 04:22:16 PM CET.
+--------ISORANKN--------------
+It starts at Wed 27 Feb 2013 04:22:16 PM CET.
+--------ISORANKN--------------
+It starts at Wed 27 Feb 2013 04:22:16 PM CET.
+--------ISORANKN--------------
+It starts at Wed 27 Feb 2013 04:22:16 PM CET.
+The parameter of alpha is 0.6 .
+It tooks 17802 seconds.
+The parameter of alpha is 0.7 .
+It tooks 20963 seconds.
+The parameter of alpha is 0.8 .
+It tooks 42055 seconds.
+The parameter of alpha is 0.9 .
+It tooks 42085 seconds.
+------------------------NETCOFFEE------------------------------
+It takes u: 570.16s, s: 30.17s, cu: 0s, cs: 0s, real: 943.325s seconds to obtain the alignment with alpha 0.4.
+------------------------NETCOFFEE------------------------------
+It takes u: 578.3s, s: 31.95s, cu: 0s, cs: 0s, real: 975.074s seconds to obtain the alignment with alpha 0.5.
+------------------------NETCOFFEE------------------------------
+It takes u: 604.24s, s: 31.89s, cu: 0s, cs: 0s, real: 1087.56s seconds to obtain the alignment with alpha 0.1.
+------------------------NETCOFFEE------------------------------
+It takes u: 605.04s, s: 32.63s, cu: 0s, cs: 0s, real: 1088.58s seconds to obtain the alignment with alpha 0.3.
+------------------------NETCOFFEE------------------------------
+It takes u: 643.26s, s: 30.8s, cu: 0s, cs: 0s, real: 1106.64s seconds to obtain the alignment with alpha 0.2.
+------------------------NETCOFFEE------------------------------
+It takes u: 566.03s, s: 32.93s, cu: 0s, cs: 0s, real: 928.437s seconds to obtain the alignment with alpha 0.9.
+------------------------NETCOFFEE------------------------------
+It takes u: 569.73s, s: 33.76s, cu: 0s, cs: 0s, real: 938.894s seconds to obtain the alignment with alpha 0.6.
+------------------------NETCOFFEE------------------------------
+It takes u: 569.47s, s: 33.67s, cu: 0s, cs: 0s, real: 938.992s seconds to obtain the alignment with alpha 0.8.
+------------------------NETCOFFEE------------------------------
+It takes u: 575.98s, s: 32.99s, cu: 0s, cs: 0s, real: 941.506s seconds to obtain the alignment with alpha 0.7.
+
+
+================================================================
+==== RUN FOR FOUR SPECIES ======================================
+================================================================
+
+--------ISORANKN--------------
+It starts at Thu 28 Feb 2013 04:55:04 PM CET.
+--------ISORANKN--------------
+It starts at Thu 28 Feb 2013 04:55:04 PM CET.
+--------ISORANKN--------------
+It starts at Thu 28 Feb 2013 04:55:04 PM CET.
+--------ISORANKN--------------
+It starts at Thu 28 Feb 2013 04:55:04 PM CET.
+--------ISORANKN--------------
+It starts at Thu 28 Feb 2013 04:55:04 PM CET.
+The parameter of alpha is 0.1 .
+It tooks 1543 seconds for four species.
+The parameter of alpha is 0.2 .
+It tooks 1674 seconds for four species.
+The parameter of alpha is 0.3 .
+It tooks 1958 seconds for four species.
+The parameter of alpha is 0.4 .
+It tooks 2039 seconds for four species.
+The parameter of alpha is 0.5 .
+It tooks 2425 seconds for four species.
+--------ISORANKN--------------
+It starts at Thu 28 Feb 2013 06:05:03 PM CET.
+--------ISORANKN--------------
+It starts at Thu 28 Feb 2013 06:05:03 PM CET.
+--------ISORANKN--------------
+It starts at Thu 28 Feb 2013 06:05:03 PM CET.
+--------ISORANKN--------------
+It starts at Thu 28 Feb 2013 06:05:03 PM CET.
+The parameter of alpha is 0.6 .
+It tooks 2706 seconds for four species.
+The parameter of alpha is 0.7 .
+It tooks 3554 seconds for four species.
+The parameter of alpha is 0.8 .
+It tooks 6068 seconds for four species.
+The parameter of alpha is 0.9 .
+It tooks 6355 seconds for four species.
+--------NETWORKBLASTM--------------
+It starts at Fri 01 Mar 2013 10:35:15 AM CET.
+-- NETWORK BLAST MULTISPECIES (NBM) --
+-- Copyright(c) Maxim Kalaev 2008, Tel Aviv university
+-- Software version: 4.21-unoficial, build: Sun Nov 30 16:57:50 IST 2008;
+----
+--= FINISHED =--
+It tooks 467 seconds.
+------------------------NETCOFFEE------------------------------
+It takes u: 111.54s, s: 24.2s, cu: 0s, cs: 0s, real: 375.386s seconds to obtain the alignment with alpha 0.7.
+------------------------NETCOFFEE------------------------------
+It takes u: 113.16s, s: 24.46s, cu: 0s, cs: 0s, real: 375.579s seconds to obtain the alignment with alpha 0.6.
+------------------------NETCOFFEE------------------------------
+It takes u: 112.1s, s: 24.62s, cu: 0s, cs: 0s, real: 375.707s seconds to obtain the alignment with alpha 0.9.
+------------------------NETCOFFEE------------------------------
+It takes u: 111.56s, s: 24.88s, cu: 0s, cs: 0s, real: 375.861s seconds to obtain the alignment with alpha 0.8.
+------------------------NETCOFFEE------------------------------
+It takes u: 116.75s, s: 22.17s, cu: 0s, cs: 0s, real: 464.851s seconds to obtain the alignment with alpha 0.3.
+------------------------NETCOFFEE------------------------------
+It takes u: 116.85s, s: 22.57s, cu: 0s, cs: 0s, real: 465.527s seconds to obtain the alignment with alpha 0.5.
+------------------------NETCOFFEE------------------------------
+It takes u: 117.07s, s: 22.84s, cu: 0s, cs: 0s, real: 466.293s seconds to obtain the alignment with alpha 0.4.
+------------------------NETCOFFEE------------------------------
+It takes u: 117.97s, s: 22.43s, cu: 0s, cs: 0s, real: 467.109s seconds to obtain the alignment with alpha 0.6.
+------------------------NETCOFFEE------------------------------
+It takes u: 121.61s, s: 21.37s, cu: 0s, cs: 0s, real: 468.191s seconds to obtain the alignment with alpha 0.2.
+------------------------NETCOFFEE------------------------------
+It takes u: 125.49s, s: 21.02s, cu: 0s, cs: 0s, real: 469.003s seconds to obtain the alignment with alpha 0.1.
