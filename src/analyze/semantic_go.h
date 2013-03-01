@@ -540,6 +540,7 @@ bool GoList<NetworkPoolType,Option>::readAlignment(const char* filename)
   {
     std::string str;
     std::stringstream streamline(line);
+    if(line[0]=='#') continue;
     (*newalignment)[len]= new AlignmentNodeVector();
     Node node=_g.addNode();
     while(streamline.good())// reference of natelia
@@ -633,14 +634,23 @@ bool GoList<NetworkPoolType,Option>::getAlignmentCoverage(NetworkPoolType& netwo
   unsigned *mySpecies = new unsigned[_numSpecies+1];
   unsigned *protein_k = new unsigned[_numSpecies+1];
   unsigned alignmentProtein=0;
+  std::unordered_map<std::string,int> coveredProtein;
   for(unsigned i=0;i<length;i++)
   {
     unsigned mysize = (*newalignment)[i]->size();
     unsigned numSpecies=0;
-    alignmentProtein+=mysize;
     for(unsigned j=0;j<mysize;j++)
     {
       std::string myprotein = (*(*newalignment)[i])[j];
+      if(coveredProtein.find(myprotein)!=coveredProtein.end())
+      {
+		coveredProtein[myprotein]++;
+	  }
+	  else
+	  {
+		  coveredProtein[myprotein]=1;
+		  alignmentProtein++;
+	  }
       //std::cout << i <<" " <<j <<" " << myprotein << std::endl;
       numProtein[networks.getHost(myprotein)]++;
     }

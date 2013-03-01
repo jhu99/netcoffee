@@ -13,10 +13,12 @@ class MaskWhiteSpace
 public:
   std::string inputfilename;
   std::string outputfilename;
-  MaskWhiteSpace()
+  MaskWhiteSpace(std::string resultfolder)
   {
-    inputfilename="./result/isorankn/clusters.txt";
-    outputfilename="./result/isorankn/alignment_isorankn.data";
+	inputfilename.append(resultfolder);
+	outputfilename.append(resultfolder);
+	inputfilename.append("clusters.txt");
+	outputfilename.append("alignment_isorankn.data");
   }
   bool run();
 };

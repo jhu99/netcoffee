@@ -229,11 +229,12 @@ int main(int argc, char** argv)
     if(myoption.task==0)
     {
       // Figure out annotation information of proteins.
+      // Figure out coverage performance of the alignment.
       networks.initNetworkPool(myoption.networkfiles);
       std::cout << "Annotation information of proteins in " << myoption.alignmentfile <<std::endl;
       analyzer.readAlignment(myoption.alignmentfile.c_str());/// alignment file must strictly on the format
       analyzer.getAlignmentCoverage(networks);
-      analyzer.getNetworkAnnotation(networks);
+      //analyzer.getNetworkAnnotation(networks);
     }
     else if(myoption.task==1)
     {
@@ -268,7 +269,7 @@ int main(int argc, char** argv)
     }
     else if(myoption.task==1)
     {
-      MaskWhiteSpace maskspace;
+      MaskWhiteSpace maskspace(myoption.resultfolder);
       maskspace.run();
     }
     else if(myoption.task==2)
@@ -278,7 +279,7 @@ int main(int argc, char** argv)
       networks.initNetworkPool(myoption.networkfiles);
       myformat.removeBiEdges(networks);
     }else if(myoption.task==3)
-    {
+    {	
       FormatType myformat(myoption);
       std::string outfile("./result/alignment_netcoffee.data");
       myformat.formatAlignment(myoption.alignmentfile,outfile);
