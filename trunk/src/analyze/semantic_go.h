@@ -172,7 +172,6 @@ bool GoList<NetworkPoolType,Option>::getMatchSet_i(std::string& filename,Network
 	std::ifstream input(filename.c_str());
 	std::string line;
 	unsigned *numProtein = new unsigned[_numSpecies];
-	unsigned *protein_k = new unsigned[_numSpecies+1];
 	while(std::getline(input,line))
 	{
 		assert(line[0]=='#');
