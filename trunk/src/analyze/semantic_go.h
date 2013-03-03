@@ -137,11 +137,14 @@ public:
   bool getNetworkAnnotation(NetworkPoolType&);
   bool getAlignmentCoverage(NetworkPoolType&);
   bool getMulFunSim(std::string&);
+  bool getMatchSet_i(std::string&,NetworkPoolType&);
   bool readFsstResult(std::string&);
+  bool readAveFunSim(std::string&);
   bool isAnnotated(AlignmentNodeVector* pRecords);
   bool getAveFunSim(AlignmentNodeVector* pRecords,std::ofstream&,std::ofstream&,std::ofstream&);
   bool getAlignmentEdge(NetworkPoolType&);
   bool extractPValue();
+  bool outputMatchSet_i(std::string&,std::string&,int);
 };
 
 template<typename NetworkPoolType,typename Option>
@@ -161,6 +164,39 @@ bool GoList<NetworkPoolType,Option>::readFsstResult(std::string& filename)
     fun_map[proteinpair] = funscore;  
   }
   return true;
+}
+
+template<typename NetworkPoolType,typename Option>
+bool GoList<NetworkPoolType,Option>::getMatchSet_i(std::string& filename,NetworkPoolType& networks)
+{
+	std::ifstream input(filename.c_str());
+	std::string line;
+	unsigned *numProtein = new unsigned[_numSpecies];
+	unsigned *protein_k = new unsigned[_numSpecies+1];
+	while(std::getline(input,line))
+	{
+		assert(line[0]=='#');
+		std::string pattern,protein,nextline;
+	    std::stringstream streamline(line);
+	    int numSpecies=0;
+	    while(streamline.good())// reference of natelia
+	    {
+	      streamline >> pattern;
+	      protein=pattern.substr(pattern.size()-1);
+	      numProtein[networks.getHost(protein)]++;
+	    }
+	    for(short k=0;k<_numSpecies;k++)
+	    {
+	      if(numProtein[k]>0)
+	      {
+	        numSpecies++;
+	        numProtein[k]=0;
+	      }
+	    }
+	    std::getline(input,nextline);
+	    //outputMatchSet_i(line,nextline,numSpecies);
+	}
+	return true;
 }
 
 template<typename NetworkPoolType,typename Option>
@@ -497,6 +533,29 @@ bool GoList<NetworkPoolType,Option>::deleteRedundancy()
 }
 
 template<typename NetworkPoolType,typename Option>
+bool GoList<NetworkPoolType,Option>::outputMatchSet_i(std::string& line,std::string& nextline,int numSpecies)
+{
+	std::string filename;
+	filename.append(resultfolder);
+	filename.append("matchsets-");
+	switch(numSpecies)
+	{
+		case 1:filename.append("one");break;
+		case 2:filename.append("two");break;
+		case 3:filename.append("three");break;
+		case 4:filename.append("four");break;
+		case 5:filename.append("five");break;
+		case 6:filename.append("six");break;
+		default:filename.append("7+");
+	}
+	std::ofstream output(filename.c_str(),std::ios_base::out|std::ios_base::app);
+	output << line <<std::endl;
+	output << nextline << std::endl;
+	output.close();
+	return true;
+}
+
+template<typename NetworkPoolType,typename Option>
 bool GoList<NetworkPoolType,Option>::outputGOterm(std::ofstream& output,std::string protein)
 {
   if(go_map.find(protein)==go_map.end())
@@ -526,6 +585,12 @@ typename GoList<NetworkPoolType,Option>::GoTerms& GoList<NetworkPoolType,Option>
     case 2:goterm=&go.CC;output <<"CC:";break;
   }
   return *goterm;
+}
+
+template<typename NetworkPoolType,typename Option>
+bool GoList<NetworkPoolType,Option>::readAveFunSim(std::string& filename)
+{
+	return true;
 }
 
 template<typename NetworkPoolType,typename Option>
