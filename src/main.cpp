@@ -247,9 +247,9 @@ int main(int argc, char** argv)
     }
     else if(myoption.task==2)
     {
-      // Get average score.
+      // Get average score for match-sets conserved by i species.
       analyzer.readAlignment(myoption.alignmentfile.c_str());/// alignment file must strictly on the format 1
-      analyzer.getMulFunSim(myoption.avefunsimfile);// avefunsimfile is fsst.result file
+      analyzer.readAveFunSim(myoption.avefunsimfile);
     }
     else if(myoption.task==3)
     {
