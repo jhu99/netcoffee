@@ -248,8 +248,8 @@ int main(int argc, char** argv)
     else if(myoption.task==2)
     {
       // Get average score for match-sets conserved by i species.
-      analyzer.readAlignment(myoption.alignmentfile.c_str());/// alignment file must strictly on the format 1
-      analyzer.readAveFunSim(myoption.avefunsimfile);
+      networks.initNetworkPool(myoption.networkfiles);
+      analyzer.getMatchSet_i(myoption.avefunsimfile,networks);
     }
     else if(myoption.task==3)
     {
