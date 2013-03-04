@@ -696,8 +696,109 @@ drawMatchSet_i <- function(filename,numspecies)
 {
   originData <- as.matrix(read.csv(filename,sep="\t",quote="",header=FALSE,comment="#"));
   browser();
-  mydata <- originData[,3];
-  dim(mydata) <- c(8,9)
-  print(mydata)
+  mydata <- as.numeric(originData[,3]);
+  dim(mydata) <- c(numspecies,18);
+  result=(mydata[1,]+mydata[2,]+mydata[3,]+mydata[4,]+mydata[5,]);
+  net=result[seq(1,18,by=2)]
+  iso=result[seq(2,18,by=2)]
+  p1<-net/5;
+  p2<-iso/3;
+  x<-p1[3:7];
+  x<-rbind(x,p2[3:7]);
+  x<- 100*x;
+  browser();
+  jpeg(filename="./result/images/precision.jpeg");
+  par(mar=c(5,5,4,2)+0.1)
+  barplot(x,beside=TRUE,names.arg=c(0.3,0.4,0.5,0.6,0.7), ylab="Percentage(%)",cex.names=1.5,cex.lab=2.0,,cex.main=2.0,cex.axis=1.5,main="(d)",ylim=c(0,60),col=c("red","blue"));
+	legend("topleft",legend=c("NetCoffee","IsoRank-N"),lwd=2.5,col=c("red","blue"));
+  dev.off()
+  
+  print(result);
+}
+
+drawBoxplotMulFunsim <- function()
+{
+	ALPHA <- c(0.3,0.4,0.5,0.6,0.7);
+	filelist <- c();
+	for (i in ALPHA)
+	{ 
+	    filename1 =paste("./result/","five_species",sep="");
+		filename =paste(filename1,"/netcoffee/alpha_",sep="");
+		filename2 =paste(filename1,"/isorankn/alpha_",sep="");
+		filename1 =paste(filename,i,sep="");
+		filename1 =paste(filename1,"/aveFunSim.result",sep="");
+		filename2 =paste(filename2,i,sep="");
+		filename2 =paste(filename2,"/aveFunSim.result",sep="");
+		filelist <- rbind(filelist,filename1);
+		filelist <- rbind(filelist,filename2);
+	}
+	originData1 <- as.matrix(read.csv(filelist[1],sep="\t",quote="",header=FALSE,comment="#"));
+	originData2 <- as.matrix(read.csv(filelist[2],sep="\t",quote="",header=FALSE,comment="#"));
+	originData3 <- as.matrix(read.csv(filelist[3],sep="\t",quote="",header=FALSE,comment="#"));
+	originData4 <- as.matrix(read.csv(filelist[4],sep="\t",quote="",header=FALSE,comment="#"));
+	originData5 <- as.matrix(read.csv(filelist[5],sep="\t",quote="",header=FALSE,comment="#"));
+	originData6 <- as.matrix(read.csv(filelist[6],sep="\t",quote="",header=FALSE,comment="#"));
+	originData7 <- as.matrix(read.csv(filelist[7],sep="\t",quote="",header=FALSE,comment="#"));
+	originData8 <- as.matrix(read.csv(filelist[8],sep="\t",quote="",header=FALSE,comment="#"));
+	originData9 <- as.matrix(read.csv(filelist[9],sep="\t",quote="",header=FALSE,comment="#"));
+	originData10 <- as.matrix(read.csv(filelist[10],sep="\t",quote="",header=FALSE,comment="#"));
+	
+  browser();
+	data1 <- originData1[,c(1,5,6)];
+	data2 <- originData2[,c(1,5,6)];
+	data3 <- originData3[,c(1,5,6)];
+	data4 <- originData4[,c(1,5,6)];
+	data5 <- originData5[,c(1,5,6)];
+	data6 <- originData6[,c(1,5,6)];
+	data7 <- originData7[,c(1,5,6)];
+	data8 <- originData8[,c(1,5,6)];
+	data9 <- originData9[,c(1,5,6)];
+	data10 <- originData10[,c(1,5,6)];
+
+	jpeg(filename="./result/images/rfunsim_record.jpeg");
+	par(mar=c(5,5,4,2)+0.1)
+	boxplot(data1[,1],data2[,1],
+			data3[,1],data4[,1],
+			data5[,1],data6[,1],
+			data7[,1],data8[,1],
+			data9[,1],data10[,1],
+			ylim=c(0,1.2),
+			names=c(0.3,0.3,0.4,0.4,0.5,0.5,0.6,0.6,0.7,0.7),
+			border = c("red","blue","red","blue","red","blue","red","blue","red","blue"),
+			main="(a)",
+			cex.lab=2.0,cex.axis=1.5,cex.main=2.0,ylab=expression(bar("rfunSim")));
+			legend("topleft",legend=c("NetCoffee","IsoRank-N"),lwd=2.5,col=c("red","blue"),pch=c(22,22));
+	dev.off()
+  
+  jpeg(filename="./result/images/mf_record.jpeg");
+  par(mar=c(5,5,4,2)+0.1)
+	boxplot(data1[,2],data2[,2],
+			data3[,2],data4[,2],
+			data5[,2],data6[,2],
+			data7[,2],data8[,2],
+			data9[,2],data10[,2],
+			ylim=c(0,1.2),
+			names=c(0.3,0.3,0.4,0.4,0.5,0.5,0.6,0.6,0.7,0.7),
+			border = c("red","blue","red","blue","red","blue","red","blue","red","blue"),
+			main="(b)",
+			cex.lab=2.0,cex.axis=1.5,cex.main=2.0,ylab=expression(bar("MFscore")));
+			legend("topleft",legend=c("NetCoffee","IsoRank-N"),lwd=2.5,col=c("red","blue"),pch=c(22,22));
+	dev.off()
+  
+  jpeg(filename="./result/images/bp_record.jpeg");
+  par(mar=c(5,5,4,2)+0.1)
+	boxplot(data1[,3],data2[,3],
+			data3[,3],data4[,3],
+			data5[,3],data6[,3],
+			data7[,3],data8[,3],
+			data9[,3],data10[,3],
+			ylim=c(0,1.2),
+			names=c(0.3,0.3,0.4,0.4,0.5,0.5,0.6,0.6,0.7,0.7),
+			border = c("red","blue","red","blue","red","blue","red","blue","red","blue"),
+			main="(c)",
+			cex.lab=2.0,cex.axis=1.5,cex.main=2.0,ylab=expression(bar("BPscore")));
+			legend("topleft",legend=c("NetCoffee","IsoRank-N"),lwd=2.5,col=c("red","blue"),pch=c(22,22));
+	dev.off()
+	print(filelist);
 }
 

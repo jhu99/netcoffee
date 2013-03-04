@@ -172,16 +172,23 @@ bool GoList<NetworkPoolType,Option>::getMatchSet_i(std::string& filename,Network
 	std::ifstream input(filename.c_str());
 	std::string line;
 	unsigned *numProtein = new unsigned[_numSpecies];
+	unsigned *numMatchSet = new unsigned [_numSpecies+1];
+	unsigned *qNumMatchSet = new unsigned [_numSpecies+1];
+	//if(!input.is_open()) return false;
 	while(std::getline(input,line))
 	{
 		assert(line[0]=='#');
+		std::string subline;
+		subline = line.substr(0,4);
+		if(subline.compare("#The")==0)continue;
 		std::string pattern,protein,nextline;
 	    std::stringstream streamline(line);
 	    int numSpecies=0;
+	    FunScore funscore;
 	    while(streamline.good())// reference of natelia
 	    {
 	      streamline >> pattern;
-	      protein=pattern.substr(pattern.size()-1);
+	      protein=pattern.substr(1,pattern.size()-1);
 	      numProtein[networks.getHost(protein)]++;
 	    }
 	    for(short k=0;k<_numSpecies;k++)
@@ -192,9 +199,19 @@ bool GoList<NetworkPoolType,Option>::getMatchSet_i(std::string& filename,Network
 	        numProtein[k]=0;
 	      }
 	    }
+	    numMatchSet[numSpecies]++;
 	    std::getline(input,nextline);
-	    //outputMatchSet_i(line,nextline,numSpecies);
+	    std::stringstream nextstreamline(nextline);
+	    nextstreamline >> funscore.rfunsim >> funscore.funsim >> funscore.rfunsimall >> funscore.funsimall >> funscore.mf >> funscore.bp >> funscore.cc;
+	    if(funscore.mf >= 0.8 || funscore.bp >= 0.6)
+	    {
+			qNumMatchSet[numSpecies]++;
+		}
+	    outputMatchSet_i(line,nextline,numSpecies);
 	}
+	std::cout << "#" << filename << std::endl;
+	for(int i=1;i<=_numSpecies;i++)
+		std::cout <<"#Match-sets conserved by "<<i<<" species:"<< std::endl <<  qNumMatchSet[i] <<"\t" << numMatchSet[i] <<"\t" << qNumMatchSet[i]/(1.0*numMatchSet[i]) << std::endl;
 	return true;
 }
 
@@ -539,13 +556,13 @@ bool GoList<NetworkPoolType,Option>::outputMatchSet_i(std::string& line,std::str
 	filename.append("matchsets-");
 	switch(numSpecies)
 	{
-		case 1:filename.append("one");break;
-		case 2:filename.append("two");break;
-		case 3:filename.append("three");break;
-		case 4:filename.append("four");break;
-		case 5:filename.append("five");break;
-		case 6:filename.append("six");break;
-		default:filename.append("7+");
+		case 1:filename.append("one.txt");break;
+		case 2:filename.append("two.txt");break;
+		case 3:filename.append("three.txt");break;
+		case 4:filename.append("four.txt");break;
+		case 5:filename.append("five.txt");break;
+		case 6:filename.append("six.txt");break;
+		default:filename.append("7+.txt");
 	}
 	std::ofstream output(filename.c_str(),std::ios_base::out|std::ios_base::app);
 	output << line <<std::endl;
@@ -729,7 +746,7 @@ bool GoList<NetworkPoolType,Option>::getAlignmentCoverage(NetworkPoolType& netwo
     mySpecies[numSpecies]++;
     protein_k[numSpecies]+=mysize;
   }
-  std::cout <<"The number of proteins coverved by the alignment: "<<alignmentProtein<<std::endl;
+  std::cout <<"The number of proteins coverved by the alignment: "<<alignmentProtein<<"  "<<alignmentProtein/(1.0*networks.allNodeNum)<< std::endl;
   for(short k=1;k<=_numSpecies;k++)
   {
     std::cout <<"The number of clusters contains proteins from exactly"<<k<<" species:"<<mySpecies[k] <<"\\" << protein_k[k] <<std::endl;
