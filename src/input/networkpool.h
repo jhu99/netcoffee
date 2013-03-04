@@ -31,6 +31,7 @@ public:
   /// Host of proteins for all input networks
   std::unordered_map<std::string,short> proteinHost;
   typedef typename Graph::template NodeMap<unsigned> DegreeNodeMap;
+  int allNodeNum;
 
   struct GraphData
   {
@@ -76,6 +77,7 @@ public:
 
 template<typename GR, typename BP>
 NetworkPool<GR,BP>::NetworkPool()
+:allNodeNum(0)
 {
 }
 
@@ -202,6 +204,7 @@ bool NetworkPool<GR,BP>::readNetwork(std::string &filename,short i)
     std::cerr <<"# of interactions:"<<data->edgeNum<<std::endl;
     std::cerr <<"the largest degree:"<< maxNode << std::endl;
   }
+  allNodeNum+=data->nodeNum;
   return 1;
 }
 #endif //NETWORKPOOL_H_
