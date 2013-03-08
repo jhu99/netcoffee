@@ -211,7 +211,12 @@ bool GoList<NetworkPoolType,Option>::getMatchSet_i(std::string& filename,Network
 	}
 	std::cout << "#" << filename << std::endl;
 	for(int i=1;i<=_numSpecies;i++)
-		std::cout <<"#Match-sets conserved by "<<i<<" species:"<< std::endl <<  qNumMatchSet[i] <<"\t" << numMatchSet[i] <<"\t" << qNumMatchSet[i]/(1.0*numMatchSet[i]) << std::endl;
+	{
+		float ratio=0.0;
+		if(numMatchSet[i]==0)  ratio=0.0;
+		else ratio = qNumMatchSet[i]/(1.0*numMatchSet[i]);
+		std::cout <<"#Match-sets conserved by "<<i<<" species:"<< std::endl <<  qNumMatchSet[i] <<"\t" << numMatchSet[i] <<"\t" << ratio << std::endl;
+	}
 	return true;
 }
 

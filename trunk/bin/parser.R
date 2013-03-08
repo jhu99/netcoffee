@@ -381,13 +381,13 @@ drawblastdistri <- function(filelist)
     filename2 = paste(filename,"jpeg", sep=".");
     filename3 = paste(filename,"logratio.jpeg", sep="-");
     jpeg(file=filename2)
-    par(mar=c(5,5,4,2)+0.1)
+    par(mar=c(5,5,4,2)+0.3)
     plot(x,score[,1],type="o",,pch=1,col="red",log="xy",xlab="e-Value",ylab="Probability",cex.lab=2.0,cex.axis=1.5,cex.main=2.0);
     lines(x,score[,2],type="o",col="blue",pch=4);
-    legend("topleft",legend=c("N Model","O Model"),lwd=2.5,text.col=c("red","blue"),col=c("red","blue"),pch=c(1,4));
+    legend("topleft",legend=c("N Model","H Model"),lwd=2.5,text.col=c("red","blue"),col=c("red","blue"),pch=c(1,4));
     dev.off();
     jpeg(file=filename3)
-    par(mar=c(5,5,4,2)+0.1)
+    par(mar=c(5,5,4,2)+0.3)
     plot(x[1:86],logratio[1:86],type="o",pch=1,col="red",log="x",xlab="e-Value",ylab="Score",cex.lab=2.0,cex.axis=1.5,cex.main=2.0);
     dev.off();
     if(i==1)
@@ -402,17 +402,17 @@ drawblastdistri <- function(filelist)
   
   allscore = allscore/i;
   logratio <- log10(allscore[,2]/allscore[,1]);
-  write.table(logratio,file="./dataset/score_composit_4s.model",sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE);
+  write.table(logratio,file="./dataset/score_composit.model",sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE);
   
   jpeg(file="./result/images/composite.jpeg")
-  par(mar=c(5,5,4,2)+0.1)
-  plot(x,allscore[,1],type="o",pch=1,col="red",log="xy",xlab="e-Value",ylab="Probability",main="Distribution of O&N model");
+  par(mar=c(5,5,4,2)+0.3)
+  plot(x,allscore[,1],type="o",pch=1,col="red",log="xy",xlab="e-Value",ylab="Probability",cex.lab=2.0,cex.axis=1.5);
   lines(x,allscore[,2],type="o",pch=4,col="blue");
   legend("topleft",legend=c("N Model","H Model"),lwd=2.5,text.col=c("red","blue"),col=c("red","blue"),pch=c(1,4));
   dev.off();
   
-  jpeg(file="./result/images/logratio2.jpeg")
-  par(mar=c(5,5,4,2)+0.1)
+  jpeg(file="./result/images/logratio.jpeg")
+  par(mar=c(5,5,4,2)+0.3)
   plot(x[1:86],logratio[1:86],type="o",pch=1,col="red",log="x",xlab="e-Value",ylab="Score",cex.lab=2.0,cex.axis=1.5,cex.main=2.0);
   dev.off();
   
@@ -709,7 +709,7 @@ drawMatchSet_i <- function(filename,numspecies)
   browser();
   jpeg(filename="./result/images/precision.jpeg");
   par(mar=c(5,5,4,2)+0.1)
-  barplot(x,beside=TRUE,names.arg=c(0.3,0.4,0.5,0.6,0.7), ylab="Percentage(%)",cex.names=1.5,cex.lab=2.0,,cex.main=2.0,cex.axis=1.5,main="(d)",ylim=c(0,60),col=c("red","blue"));
+  barplot(x,beside=TRUE,names.arg=c(0.3,0.4,0.5,0.6,0.7), ylab="Percentage(%)",cex.names=1.5,cex.lab=2.0,,cex.main=2.0,cex.axis=1.5,ylim=c(0,60),col=c("red","blue"));
 	legend("topleft",legend=c("NetCoffee","IsoRank-N"),lwd=2.5,col=c("red","blue"));
   dev.off()
   
@@ -765,7 +765,6 @@ drawBoxplotMulFunsim <- function()
 			ylim=c(0,1.2),
 			names=c(0.3,0.3,0.4,0.4,0.5,0.5,0.6,0.6,0.7,0.7),
 			border = c("red","blue","red","blue","red","blue","red","blue","red","blue"),
-			main="(a)",
 			cex.lab=2.0,cex.axis=1.5,cex.main=2.0,ylab=expression(bar("rfunSim")));
 			legend("topleft",legend=c("NetCoffee","IsoRank-N"),lwd=2.5,col=c("red","blue"),pch=c(22,22));
 	dev.off()
@@ -780,7 +779,6 @@ drawBoxplotMulFunsim <- function()
 			ylim=c(0,1.2),
 			names=c(0.3,0.3,0.4,0.4,0.5,0.5,0.6,0.6,0.7,0.7),
 			border = c("red","blue","red","blue","red","blue","red","blue","red","blue"),
-			main="(b)",
 			cex.lab=2.0,cex.axis=1.5,cex.main=2.0,ylab=expression(bar("MFscore")));
 			legend("topleft",legend=c("NetCoffee","IsoRank-N"),lwd=2.5,col=c("red","blue"),pch=c(22,22));
 	dev.off()
@@ -795,10 +793,25 @@ drawBoxplotMulFunsim <- function()
 			ylim=c(0,1.2),
 			names=c(0.3,0.3,0.4,0.4,0.5,0.5,0.6,0.6,0.7,0.7),
 			border = c("red","blue","red","blue","red","blue","red","blue","red","blue"),
-			main="(c)",
 			cex.lab=2.0,cex.axis=1.5,cex.main=2.0,ylab=expression(bar("BPscore")));
 			legend("topleft",legend=c("NetCoffee","IsoRank-N"),lwd=2.5,col=c("red","blue"),pch=c(22,22));
 	dev.off()
 	print(filelist);
+}
+
+drawEdgeScoreDistri <- function()
+{
+	originData <- as.matrix(read.csv("./result/five_species/netcoffee/alpha_0.1/scoreRecords.txt",sep="\t",quote="",header=FALSE,comment="#"));
+  myseq <- as.numeric(originData[,2]);
+  top <- as.numeric(originData[,5]);
+  myseq <- ( myseq -min(myseq))/(max(myseq)-min(myseq));
+  top <- (top-min(top))/(max(top)-min(top));
+  pdf("./result/images/edgescore_1.pdf");
+  boxplot(myseq,top,names=c("seqence-based score","topology-based score"),cex.names=1.5,cex.lab=2.0,cex.main=2.0,cex.axis=1.5);
+  dev.off();
+  pdf("./result/images/edgescore_2.pdf");
+  top <- top^0.05;
+  boxplot(myseq,top,names=c("seqence-based score","topology-based score"),cex.names=1.5,cex.lab=2.0,cex.main=2.0,cex.axis=1.5);  
+  dev.off();
 }
 
