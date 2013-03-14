@@ -21,13 +21,13 @@ else
 	CXXFLAGS = -Wall -O3 -ffast-math -fcaller-saves -finline-functions -std=c++0x -DNDEBUG -I$(LEMON)/ -Isrc/ -Isrc/input/ -Isrc/algorithms/
 endif
 
-all: aligner move
+all: netcoffee move
 
-aligner: src/main.cpp src/verbose.o $(LEMON)/lemon/arg_parser.o
+netcoffee: src/main.cpp src/verbose.o $(LEMON)/lemon/arg_parser.o
 	${CXX} ${CXXFLAGS} -o $@ $^ 
 
 move:
-	mv aligner ./bin
+	mv netcoffee ./bin
 
 #lemon: lemon-config lemon-make
 
@@ -38,4 +38,4 @@ move:
 #$(LEMON)/make	
 
 clean:
-	rm ./bin/aligner
+	rm ./bin/netcoffee

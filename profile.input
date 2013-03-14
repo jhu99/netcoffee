@@ -32,7 +32,7 @@ efile  ./dataset/3-dm7227-5-sc4932.cf
 efile  ./dataset/4-ce6239-4-ce6239.cf
 efile  ./dataset/4-ce6239-5-sc4932.cf
 efile  ./dataset/5-sc4932-5-sc4932.cf
-scorefile     ./dataset/score_composit_4s.model
+scorefile     ./dataset/score_composit.model
 alignmentfile ./result/alignment_netcoffee.data
 avefunsimfile netcoffee_fsst.result
 logfile       ./result/measure_time.txt

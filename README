@@ -15,10 +15,9 @@ Before running this program, you are strongly recommended to read this file care
 ################################################################################
 PREREQUISITE
 1. LEMON Graph Library 1.2.3
-The source code is freely available under Boost Software License, Version 1.0 on http://lemon.cs.elte.hu/trac/lemon/wiki/Downloads
-Please copy the LEMON library directory into "./include/" after you compile the code.
-Note that it's necessary to compile the lemon library under the same machine on which you want to compile NetCoffee.
-We provide a lemon library which was compiled on X86-64 machine. If you have a differrent machine, you have to compile the lemon library again.
+The source code is freely available under Boost Software License, Version 1.0 at the website: http://lemon.cs.elte.hu/trac/lemon/wiki/Downloads
+Please first compile the lemon graph library before compiling the code of NetCoffee.
+Note that this package should move to the directory $NETCOFFEE/include.
 2. FSST package
 This package is necessary only if you want to use "-analyse" option to calculate the semantic similarities.
 It can be download at http://gotax.bioinf.mpi-inf.mpg.de/avail.php.
@@ -28,10 +27,18 @@ It can be download at http://search.cpan.org/dist/GO-TermFinder/lib/GO/TermFinde
 
 ################################################################################
 COMPILING
-To compile the source code, the latest standard language C++11, also known as C++0x, is needed. Other older compiler may not support it.
-Under Linux, you can simply comiple it by run command:
+To compile the source code, the latest compilers which supports the standard language C++11, also known as C++0x, is needed. Other older compiler may not support it.
+1. Compile LEMON GRAPH LIBRARY
+
+cd $NETCOFFEE/include/lemon-1.2.3/
+./configure
+./make
+
+2. Compile NetCoffee
+
+cd $NETCOFFEE
 ./make MODE=Release
-If you want to compile it in Debug mode, run command:
+#If you want to compile it in Debug mode, run command:
 ./make (MODE=Debug)
 
 ################################################################################
@@ -76,14 +83,21 @@ logfile       ./result/measure_time.txt
 
 
 2. -scorefile
-The default file is "./dataset/score_composit_4s.model". This file was empirically obtained from blastp scoring files for othologous model and null model.
+The default file is "./dataset/score_composit.model". This file was empirically obtained from blastp scoring files for othologous model and null model.
 You can run commandline with option "-record -task 0" to generate this data with blastp scoring files.
 
+3. other option in Usage
+
+You can generate the following message by running the program with option "-h".
+
+$NETCOFFEE/bin/aligner -h
 Usage:
   ./bin/aligner -version|-records|-alignment|-analyse|-format
      [--help|-h|-help] [-alignmentfile str] [-alpha num] [-avefunsimfile str]
-     [-beta num] [-nmax int] [-numspecies int] [-out] [-profile str]
-     [-recordsfile str] [-task int] [-threshold num]
+     [-beta num] [-distributionfile str] [-edgefactor num] [-formatfile str]
+     [-nmax int] [-numspecies int] [-orthologyfile str] [-out] [-profile str]
+     [-randomfile str] [-recordsfile str] [-resultfolder str] [-task int]
+     [-threshold num]
 Where:
   --help|-h|-help
      Print a short help message
@@ -92,27 +106,39 @@ Where:
   -alignmentfile str
      The filename of alignment which is required to either create or analyse.
   -alpha num
-     Prameter controlling how much sequence similarity contributes. Default is 0.8.
+     Prameter controlling how much sequence similarity contributes. Default is 0.5.
   -analyse
      Make analysis on alignmenr result.
   -avefunsimfile str
      The filename for functional similarity of alignment.
   -beta num
      Probability for randomly picking out the alignment records. Default is 1.0
+  -distributionfile str
+     Output file for log ratio distribution.
+  -edgefactor num
+     The factor of the power law normalization. Default is 0.1.
   -format
      Process input or output file into proper format.
+  -formatfile str
+     Profile of input parameters.
   -nmax int
      The parameter for SA algorithm N.
   -numspecies int
      Number of the species compared. Default is 4.
+  -orthologyfile str
+     Training data for orthology model.
   -out
      Print the alignment result into file.
   -profile str
      Profile of input parameters.
+  -randomfile str
+     Training data for random model.
   -records
      Generate alignment records file.
   -recordsfile str
      Records file for writing and reading. It is used to store the triplet edges in NetCoffee program.
+  -resultfolder str
+     The folder which was used as active folder in the data process.
   -task int
      Complete different tasks. It must be used with -alignment option together.
   -threshold num
@@ -123,22 +149,18 @@ Where:
 ################################################################################
 EXAMPLE
 1. Download dataset
-Our dataset are freely available on http://ftp.mi.fu-berlin.de/jhu/NetCoffee/dataset.tar.gz .
-Download it into the folder of source code and uncompress it with command:
+Our dataset is freely available at our website: https://code.google.com/p/netcoffee/downloads/list.
+Download it into the folder of $NETCOFFEE and uncompress it with command:
 tar -zxvf dataset.tar.gz
 2. Compile source code
 Compile the source code with command:
 make MODE=Release
 3. Run NetCoffee on the dataset with command:
-./bin/aligner -alignment -task 1 -out
-4. Analyse coverage of the alignment result with command:
-./bin/aligner -analyse -task 0
-5. Analyse consistency of the alignment result with two command (FSST package and gene association files are needed):
-./bin/aligner -analyse -task 1
-./bin/aligner -analyse -task 2
-
-Then you can find the output files in ./result/ .
+./bin/aligner -alignment -task 1 -out -alpha ${ALPHA} -alignmentfile ./result/alignment_netcoffee.data -resultfolder ./result/
+${ALPHA} is the parameter you want to specify for alpha.
+Then you can find the all the involved output files in ./result/ .
 There are many other functions which you can see with "-help" option.
+
 ################################################################################
 END
 THANKS FOR READING
