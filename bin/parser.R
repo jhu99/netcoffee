@@ -406,9 +406,9 @@ drawblastdistri <- function(filelist)
   
   jpeg(file="./result/images/composite.jpeg")
   par(mar=c(5,5,4,2)+0.3)
-  plot(x,allscore[,1],type="o",pch=1,col="red",log="xy",xlab="e-Value",ylab="Probability",cex.lab=2.0,cex.axis=1.5);
-  lines(x,allscore[,2],type="o",pch=4,col="blue");
-  legend("topleft",legend=c("N Model","H Model"),lwd=2.5,text.col=c("red","blue"),col=c("red","blue"),pch=c(1,4));
+  plot(x,allscore[,1],type="o",pch=1,log="xy",xlab="e-Value",ylab="Probability",cex.lab=2.0,cex.axis=1.5);
+  lines(x,allscore[,2],type="o",pch=4);
+  legend("topleft",legend=c("N Model","H Model"),lwd=2.5,pch=c(1,4));
   dev.off();
   
   jpeg(file="./result/images/logratio.jpeg")
@@ -709,8 +709,8 @@ drawMatchSet_i <- function(filename,numspecies)
   browser();
   jpeg(filename="./result/images/precision.jpeg");
   par(mar=c(5,5,4,2)+0.1)
-  barplot(x,beside=TRUE,names.arg=c(0.3,0.4,0.5,0.6,0.7), ylab="Percentage(%)",cex.names=1.5,cex.lab=2.0,,cex.main=2.0,cex.axis=1.5,ylim=c(0,60),col=c("red","blue"));
-	legend("topleft",legend=c("NetCoffee","IsoRank-N"),lwd=2.5,col=c("red","blue"));
+  barplot(x,beside=TRUE,names.arg=c(0.3,0.4,0.5,0.6,0.7), ylab="Percentage(%)",col=c("gray","white"),cex.names=1.5,cex.lab=2.0,,cex.main=2.0,cex.axis=1.5,ylim=c(0,60));
+  #legend("topleft",legend=c("NetCoffee","IsoRank-N"),lwd=2.5,col=c("gray"));
   dev.off()
   
   print(result);
@@ -764,7 +764,7 @@ drawBoxplotMulFunsim <- function()
 			data9[,1],data10[,1],
 			ylim=c(0,1.2),
 			names=c(0.3,0.3,0.4,0.4,0.5,0.5,0.6,0.6,0.7,0.7),
-			border = c("red","blue","red","blue","red","blue","red","blue","red","blue"),
+			border = c("black","darkgrey","black","darkgrey","black","darkgrey","black","darkgrey","black","darkgrey"),
 			cex.lab=2.0,cex.axis=1.5,cex.main=2.0,ylab=expression(bar("rfunSim")));
 			legend("topleft",legend=c("NetCoffee","IsoRank-N"),lwd=2.5,col=c("red","blue"),pch=c(22,22));
 	dev.off()
@@ -813,5 +813,116 @@ drawEdgeScoreDistri <- function()
   top <- top^0.05;
   boxplot(myseq,top,names=c("seqence-based score","topology-based score"),cex.names=1.5,cex.lab=2.0,cex.main=2.0,cex.axis=1.5);  
   dev.off();
+}
+
+drawBoxplotMatchSet_i <- function()
+{
+  matchset <- c("matchsets-three.txt", "matchsets-four.txt","matchsets-five.txt");
+  figlabel <- c("(a) i=","(b) i=","(c) i=","(d) i=","(e) i=","(f) i=","(g) i=","(h) i=","(i) i=");
+  species=3;
+  fignum=1;
+  for (mat in matchset )
+  {
+    ALPHA <- c(0.3,0.4,0.5,0.6,0.7);
+    filelist <- c();
+	  for (i in ALPHA)
+	  { 
+	    filename1 =paste("./result/","five_species",sep="");
+		  filename =paste(filename1,"/netcoffee/alpha_",sep="");
+		  filename2 =paste(filename1,"/isorankn/alpha_",sep="");
+		  filename1 =paste(filename,i,sep="");
+		  filename1 =paste(filename1,mat,sep="/");
+		  filename2 =paste(filename2,i,sep="");
+		  filename2 =paste(filename2,mat,sep="/");
+		  filelist <- rbind(filelist,filename1);
+		  filelist <- rbind(filelist,filename2);
+	  }
+    print(filelist);
+    originData1 <- as.matrix(read.csv(filelist[1],sep="\t",quote="",header=FALSE,comment="#"));
+  	originData2 <- as.matrix(read.csv(filelist[2],sep="\t",quote="",header=FALSE,comment="#"));
+  	originData3 <- as.matrix(read.csv(filelist[3],sep="\t",quote="",header=FALSE,comment="#"));
+  	originData4 <- as.matrix(read.csv(filelist[4],sep="\t",quote="",header=FALSE,comment="#"));
+  	originData5 <- as.matrix(read.csv(filelist[5],sep="\t",quote="",header=FALSE,comment="#"));
+  	originData6 <- as.matrix(read.csv(filelist[6],sep="\t",quote="",header=FALSE,comment="#"));
+  	originData7 <- as.matrix(read.csv(filelist[7],sep="\t",quote="",header=FALSE,comment="#"));
+  	originData8 <- as.matrix(read.csv(filelist[8],sep="\t",quote="",header=FALSE,comment="#"));
+  	originData9 <- as.matrix(read.csv(filelist[9],sep="\t",quote="",header=FALSE,comment="#"));
+  	originData10 <- as.matrix(read.csv(filelist[10],sep="\t",quote="",header=FALSE,comment="#"));
+    
+    data1 <- originData1[,c(1,5,6)];
+    data2 <- originData2[,c(1,5,6)];
+  	data3 <- originData3[,c(1,5,6)];
+  	data4 <- originData4[,c(1,5,6)];
+  	data5 <- originData5[,c(1,5,6)];
+  	data6 <- originData6[,c(1,5,6)];
+  	data7 <- originData7[,c(1,5,6)];
+  	data8 <- originData8[,c(1,5,6)];
+  	data9 <- originData9[,c(1,5,6)];
+  	data10 <- originData10[,c(1,5,6)];
+
+    boxtext=paste(figlabel[fignum], species, sep="");
+  	fignum=fignum+1;
+  	output3=paste("./result/images/bp_",mat,sep="");
+    output3=paste(output3,"jpeg",sep=".")
+  jpeg(filename=output3);
+  par(mar=c(5,5,4,2)+0.1)
+	boxplot(data1[,3],data2[,3],
+			data3[,3],data4[,3],
+			data5[,3],data6[,3],
+			data7[,3],data8[,3],
+			data9[,3],data10[,3],
+			ylim=c(0,1.2),
+			names=c(0.3,0.3,0.4,0.4,0.5,0.5,0.6,0.6,0.7,0.7),
+			border=c("black","antiquewhite4","black","antiquewhite4","black","antiquewhite4","black","antiquewhite4","black","antiquewhite4"),
+			col= c("gray","white","gray","white","gray","white","gray","white","gray","white"),
+			cex.lab=2.0,cex.axis=1.5,cex.main=2.0,ylab=expression(bar("BPscore")));
+			#legend("topleft",legend=c("NetCoffee","IsoRank-N"),lwd=2.5,col=c("gray","black"),pch=c(15,22));
+			text(5,1.1,boxtext,cex=2);
+	dev.off()
+	
+	boxtext=paste(figlabel[fignum], species, sep="");
+  	fignum=fignum+1;
+  
+    output2=paste("./result/images/mf_",mat,sep="");
+    output2=paste(output2,"jpeg",sep=".")
+  jpeg(filename=output2);
+  par(mar=c(5,5,4,2)+0.1)
+	boxplot(data1[,2],data2[,2],
+			data3[,2],data4[,2],
+			data5[,2],data6[,2],
+			data7[,2],data8[,2],
+			data9[,2],data10[,2],
+			ylim=c(0,1.2),
+			names=c(0.3,0.3,0.4,0.4,0.5,0.5,0.6,0.6,0.7,0.7),
+			border = c("black","antiquewhite4","black","antiquewhite4","black","antiquewhite4","black","antiquewhite4","black","antiquewhite4"),
+			col= c("gray","white","gray","white","gray","white","gray","white","gray","white"),
+			cex.lab=2.0,cex.axis=1.5,cex.main=2.0,ylab=expression(bar("MFscore")));
+			#legend("topleft",legend=c("NetCoffee","IsoRank-N"),lwd=2.5,col=c("black","antiquewhite4"),pch=c(15,22));
+			text(5,1.1,boxtext,cex=2);
+	dev.off()
+	
+	boxtext=paste(figlabel[fignum], species, sep="");
+  	fignum=fignum+1;    
+    output1=paste("./result/images/rfunsim_",mat,sep="");
+    output1=paste(output1,"jpeg",sep=".")
+    jpeg(filename=output1);
+  par(mar=c(5,5,4,2)+0.1)
+	boxplot(data1[,1],data2[,1],
+			data3[,1],data4[,1],
+			data5[,1],data6[,1],
+			data7[,1],data8[,1],
+			data9[,1],data10[,1],
+			ylim=c(0,1.2),
+			names=c(0.3,0.3,0.4,0.4,0.5,0.5,0.6,0.6,0.7,0.7),
+			border = c("black","antiquewhite4","black","antiquewhite4","black","antiquewhite4","black","antiquewhite4","black","antiquewhite4"),
+			col= c("gray","white","gray","white","gray","white","gray","white","gray","white"),
+			cex.lab=2.0,cex.axis=1.5,cex.main=2.0,ylab=expression(bar("rfunSim")));
+			#legend("topleft",legend=c("NetCoffee","IsoRank-N"),lwd=2.5,col=c("black","antiquewhite4"),pch=c(15,22));
+			text(5,1.1,boxtext,cex=2);
+	dev.off()
+
+	species=species+1;
+    
+  }
 }
 
