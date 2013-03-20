@@ -241,8 +241,8 @@ int main(int argc, char** argv)
       // Analyze the alignment results in term of semantic similarity with GO.
       // Get average score.
       analyzer.readAlignment(myoption.alignmentfile.c_str());/// alignment file must strictly on the format
-      analyzer.convert_fsst();
-      analyzer.deleteRedundancy();
+      //analyzer.convert_fsst();
+      //analyzer.deleteRedundancy();
       analyzer.getMulFunSim(myoption.avefunsimfile);// avefunsimfile is fsst.result file
     }
     else if(myoption.task==2)
@@ -283,10 +283,14 @@ int main(int argc, char** argv)
       FormatType myformat(myoption);
       std::string outfile("./result/alignment_netcoffee.data");
       myformat.formatAlignment(myoption.alignmentfile,outfile);
-    }else
+    }else if(myoption.task==4)
     {
 	  // discard these replicate interaction and self-loop in PPI networks.
 	  FormatType myformat(myoption);
+	  myformat.retrieveKOnumber(myoption.formatfile);
+	}
+	else
+	{
 	}
   }
   mylog.close();

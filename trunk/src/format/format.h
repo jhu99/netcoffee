@@ -8,6 +8,7 @@ Data: 10.12.2012*/
 #include <iostream>
 #include <fstream>
 #include <stdlib.h>
+#include <unordered_map>
 
 template<typename NetworksType,typename MyOption>
 class Format
@@ -16,9 +17,11 @@ public:
   Format(MyOption&);
   ~Format(){};
   std::vector<std::string> blastfile;
+  std::unordered_multimap<std::string,std::string>  KOmap;
   bool removeBiEdges(NetworksType&);
   bool formatAlignment(std::string,std::string);
   bool removeRodundantInteraction();
+  bool retrieveKOnumber(std::string);
 };
 
 template<typename NetworksType,typename MyOption>
@@ -82,12 +85,38 @@ bool Format<NetworksType,MyOption>::formatAlignment(std::string alignmentfile,st
       output << proteins[i] << std::endl;
     }
   }
-  return true;
+  return true;	
 }
 
 template<typename NetworksType,typename MyOption>
 bool Format<NetworksType,MyOption>::removeRodundantInteraction()
 {
+	return true;
+}
+
+template<typename NetworksType,typename MyOption>
+bool Format<NetworksType,MyOption>::retrieveKOnumber(std::string formatfile)
+{
+	std::ifstream input(formatfile.c_str());
+	std::string line;
+	std::string module;
+	std::string KOnumber;
+	while(std::getline(input,line))
+	{
+	  std::stringstream streamline(line);
+	  std::string koindex;
+      streamline >> koindex;
+      if(koindex.compare("D")==0)
+      {
+		  streamline >> module;
+	  }else if(koindex.compare("E")==0)
+	  {
+		  streamline >> KOnumber;
+		  std::cout << KOnumber << std::endl;
+		  KOmap.insert(std::make_pair(module,KOnumber));
+	  }
+	  else continue;
+	}
 	return true;
 }
 #endif

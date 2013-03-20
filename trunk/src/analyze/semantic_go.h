@@ -175,6 +175,8 @@ bool GoList<NetworkPoolType,Option>::getMatchSet_i(std::string& filename,Network
 	unsigned *numMatchSet = new unsigned [_numSpecies+1];
 	unsigned *qNumMatchSet = new unsigned [_numSpecies+1];
 	//if(!input.is_open()) return false;
+	unsigned qNumNode=0;
+	std::unordered_map<std::string,int> coveredmap;
 	while(std::getline(input,line))
 	{
 		assert(line[0]=='#');
@@ -185,11 +187,18 @@ bool GoList<NetworkPoolType,Option>::getMatchSet_i(std::string& filename,Network
 	    std::stringstream streamline(line);
 	    int numSpecies=0;
 	    FunScore funscore;
+	    unsigned msize=0;
 	    while(streamline.good())// reference of natelia
 	    {
 	      streamline >> pattern;
 	      protein=pattern.substr(1,pattern.size()-1);
 	      numProtein[networks.getHost(protein)]++;
+	      //msize++;
+	      if(coveredmap.find(protein)==coveredmap.end())
+	      {
+			  coveredmap[protein]=1;
+			  msize++;
+		  }
 	    }
 	    for(short k=0;k<_numSpecies;k++)
 	    {
@@ -206,17 +215,19 @@ bool GoList<NetworkPoolType,Option>::getMatchSet_i(std::string& filename,Network
 	    if(funscore.mf >= 0.8 || funscore.bp >= 0.6)
 	    {
 			qNumMatchSet[numSpecies]++;
+			qNumNode+=msize;
 		}
 	    outputMatchSet_i(line,nextline,numSpecies);
 	}
 	std::cout << "#" << filename << std::endl;
-	for(int i=1;i<=_numSpecies;i++)
-	{
-		float ratio=0.0;
-		if(numMatchSet[i]==0)  ratio=0.0;
-		else ratio = qNumMatchSet[i]/(1.0*numMatchSet[i]);
-		std::cout <<"#Match-sets conserved by "<<i<<" species:"<< std::endl <<  qNumMatchSet[i] <<"\t" << numMatchSet[i] <<"\t" << ratio << std::endl;
-	}
+	std::cout <<"#Proteins covered by qualified match-sets:"<< std::endl << qNumNode << "\t"<< qNumNode/(1.0*networks.allNodeNum) << std::endl;
+	//for(int i=1;i<=_numSpecies;i++)
+	//{
+		//float ratio=0.0;
+		//if(numMatchSet[i]==0)  ratio=0.0;
+		//else ratio = qNumMatchSet[i]/(1.0*numMatchSet[i]);
+		//std::cout <<"#Match-sets conserved by "<<i<<" species:"<< std::endl <<  qNumMatchSet[i] <<"\t" << numMatchSet[i] <<"\t" << ratio << std::endl;
+	//}
 	return true;
 }
 
@@ -338,7 +349,7 @@ bool GoList<NetworkPoolType,Option>::getAveFunSim(AlignmentNodeVector* pRecords,
       std::stringstream ss;
       ss << termfinder << _numQualified;
       termfinder = ss.str();
-      //system(termfinder.c_str());
+      system(termfinder.c_str());
     }
   //system("./bin/termfinderClient.sh ");
   return true;
