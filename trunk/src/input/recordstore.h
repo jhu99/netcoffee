@@ -204,6 +204,7 @@ public:
   double beta;
   unsigned seed;
   float alpha;
+  bool bscore;
   std::default_random_engine generator;
   std::uniform_real_distribution<float> distribution;
   std::vector<Graph*> bpgraphs;
@@ -229,7 +230,8 @@ public:
   InvOrigLabelNodeMap*,InvOrigLabelNodeMap*);
   bool readDistribution(const char*,const char*);
   float scoreCalculate(double,double,double);
-  float getScore(double evalue);
+  float getScore(double);
+  float getBitScore(float);
   bool readScore(const char*);
   bool createBpGraph(KpGraph&,NetworkPool&,Graph*,OrigLabelNodeMap*,                                InvOrigLabelNodeMap*, EdgeWeight*,int,int,int);
   bool createBpGraphAll(KpGraph&,NetworkPool&);
@@ -262,6 +264,7 @@ RecordStore<KpGraph,Option>::RecordStore(std::string& filename1,
 ,beta(myoption.beta)
 ,seed(std::chrono::system_clock::now().time_since_epoch().count())
 ,alpha(myoption.alpha)
+,bscore(myoption.bscore)
 ,generator(seed)
 ,distribution(0.0,1.0)
 //,graphs()
@@ -558,13 +561,17 @@ RecordStore<KpGraph,Option>::createBpGraph(KpGraph& kpgraph,
       node2 = (*label2node)[protein2];
     }
     e = gr->addEdge(node1,node2);
-    float evalue = getScore(bp12->seWeight[kst]);
+    float sescore=0.0;
+    if(!bscore)
+		sescore=getScore(bp12->seWeight[kst]);
+	else
+		sescore=getBitScore(static_cast<float>(bp12->seWeight[kst]));
     unsigned stWeight = bp12->stWeight[kst];
     float weight =0.0;
     if(ni == nj)
-		weight= alpha*(evalue-minNodeScore)/(maxNodeScore-minNodeScore);
+		weight= alpha*(sescore-minNodeScore)/(maxNodeScore-minNodeScore);
 	else
-        weight = combineScore(evalue, stWeight);// TODO: give a wise choice.
+        weight = combineScore(sescore, stWeight);// TODO: give a wise choice.
     edgemap->set(e,weight);
   }
   return true;
@@ -991,7 +998,7 @@ RecordStore<KpGraph,Option>::readScore(const char * filename)
   
   if(!input.is_open())
   {
-    std::cerr <<"Training data is not available\n";
+    std::cerr <<"Score file is not available\n";
     return false;
   }
 
@@ -1004,14 +1011,14 @@ RecordStore<KpGraph,Option>::readScore(const char * filename)
   {
     std::stringstream streamline(line);
     streamline >> probability;
-    if(first_line)
+    if((linenum<86 && !bscore) || (linenum>1 && bscore) )
     {
-      maxNodeScore = probability;
-      minNodeScore = probability;
-      first_line = false;
-    }
-    if(linenum<86)
-    {
+	  if(first_line)
+	  {
+	      maxNodeScore = probability;
+	      minNodeScore = probability;
+	      first_line = false;
+      }
       if (probability > maxNodeScore)
         maxNodeScore = probability;
       if (probability < minNodeScore)
@@ -1074,6 +1081,21 @@ RecordStore<KpGraph,Option>::getScore(double evalue)
     return 0.0;
   }
   return (*resultDistr)[index];
+}
+
+template<typename KpGraph,typename Option>
+float
+RecordStore<KpGraph,Option>::getBitScore(float bitscore)
+{
+	int ind=0;
+	if(bitscore < 940.0)
+	{
+		ind=bitscore/10;
+	}else
+	{
+		ind=NUM_PRO_BARS-1;
+	}
+	return (*resultDistr)[ind];
 }
 
 template<typename KpGraph,typename Option>

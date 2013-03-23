@@ -35,7 +35,7 @@ typedef struct _Option
   bool create_records;
   bool analyze;
   bool model;
-  bool blastformat;
+  bool bscore;
   bool tcoffee;
   int task;
   double edgefactor;
@@ -61,7 +61,7 @@ typedef struct _Option
   std::vector<std::string> associationfiles;/// gene ontology association
   _Option()
   : out(false), create_records(false),
-  analyze(false), model(false),blastformat(true),task(0),edgefactor(0.1),alpha(0.5),beta(1.0),threshold(0.4),numspecies(5),nmax(2000)
+  analyze(false), model(false),bscore(false),task(0),edgefactor(0.1),alpha(0.5),beta(1.0),threshold(0.4),numspecies(5),nmax(2000)
   {
     profile="./profile.input";
   }
@@ -95,7 +95,7 @@ bool setParser(ArgParser& parser, Option& myoption)
   .refOption("task","Complete different tasks. It must be used with -alignment option together.",myoption.task)
   .refOption("alignmentfile","The filename of alignment which is required to either create or analyse.",myoption.alignmentfile)
   .refOption("avefunsimfile", "The filename for functional similarity of alignment.", myoption.avefunsimfile)
-  .refOption("recordsfile", "Records file for writing and reading. It is used to store the triplet edges in NetCoffee program.", myoption.recordsfile)
+  .refOption("recordsfile", "Records file for writing and reading. It is used to store the triplet edges.", myoption.recordsfile)
   .refOption("alpha", "Prameter controlling how much sequence similarity contributes. Default is 0.5.", myoption.alpha)
   .refOption("edgefactor", "The factor of the power law normalization. Default is 0.1.", myoption.alpha)
   .refOption("numspecies","Number of the species compared. Default is 4.", myoption.numspecies)
@@ -109,6 +109,7 @@ bool setParser(ArgParser& parser, Option& myoption)
   .refOption("threshold","Threshold gamma which is used to exclude match-sets with score below a certain value. Default is 0.0.",myoption.threshold)
   .refOption("nmax","The parameter for SA algorithm N.",myoption.nmax)
   .refOption("out","Print the alignment result into file.",myoption.out)
+  .refOption("bscore","Use bitscore as the similarity of edges.",myoption.bscore)
   ;
   return true;
 }
@@ -161,9 +162,9 @@ int main(int argc, char** argv)
   {
     if(myoption.task==0)
     {
-      // Read training data for null model and homology model.
+      // Read training data for null model and homology model(evalue/bitscore).
         Score_Model mymodel(myoption.orthologyfile,myoption.randomfile,myoption.distributionfile);
-        mymodel.run(myoption.blastformat);
+        mymodel.run(myoption.bscore);
     }
     else if(myoption.task==1)
     {
@@ -178,7 +179,7 @@ int main(int argc, char** argv)
     {
       records.readRecords2(myoption.recordsfile.c_str());/// Read records for multiple networks.
     }
-    else if(myoption.task==4)
+    else if(myoption.task==3)
     {
       /// Construct triple nodes using tcoffee.
       networks.initNetworkPool(myoption.networkfiles);
@@ -241,8 +242,8 @@ int main(int argc, char** argv)
       // Analyze the alignment results in term of semantic similarity with GO.
       // Get average score.
       analyzer.readAlignment(myoption.alignmentfile.c_str());/// alignment file must strictly on the format
-      //analyzer.convert_fsst();
-      //analyzer.deleteRedundancy();
+      analyzer.convert_fsst();
+      analyzer.deleteRedundancy();
       analyzer.getMulFunSim(myoption.avefunsimfile);// avefunsimfile is fsst.result file
     }
     else if(myoption.task==2)

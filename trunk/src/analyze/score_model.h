@@ -23,6 +23,7 @@ public:
   ~Score_Model(){};
   void readDistribution(bool blastp);
   int getIndex(double);
+  int getIndex_bit(float);
   void calculatePro();
   void run(bool blastp);
 };
@@ -47,7 +48,19 @@ int Score_Model::getIndex(double evalue)
   }
   return ind;
 }
-void Score_Model::readDistribution(bool b6)
+int Score_Model::getIndex_bit(float bitscore)
+{
+	int ind=0;
+	if(bitscore < 940.0)
+	{
+		ind=bitscore/10;
+	}else
+	{
+		ind=NUM_PRO_BARS-1;
+	}
+	return ind;
+}
+void Score_Model::readDistribution(bool bscore)
 {
   std::ifstream input1(homofile.c_str());
   std::ifstream input2(nullfile.c_str());
@@ -63,23 +76,28 @@ void Score_Model::readDistribution(bool b6)
   while(std::getline(input1,line))
   {
     std::stringstream streamline(line);
-    if(b6)
-    {
-      streamline >> protein1 >> protein2 >>  bitscore >> evalue;
-    }
-    else
-    {
-      streamline >> protein1 >> protein2 >> evalue;
-    }
-    int num=getIndex(evalue);
+    streamline >> protein1 >> protein2 >>  bitscore >> evalue;
+
+    int num;
+	if(!bscore)
+	  num=getIndex(evalue);
+	else
+	  num=getIndex_bit(bitscore);
     homomodel[num]++;
     sum_homo++;
   }
   while(std::getline(input2,line))
   {
     std::stringstream streamline(line);
-    streamline >> evalue;
-    int num=getIndex(evalue);
+    int num;
+    if(!bscore)
+    {
+		streamline >> evalue;
+		num=getIndex(evalue);
+	}else
+	{   streamline >> bitscore;
+		num=getIndex_bit(bitscore);
+	}    
     nullmodel[num]++;
     sum_null++;
   }
@@ -96,9 +114,9 @@ void Score_Model::calculatePro()
   }
   output.close();
 }
-void Score_Model::run(bool blastp)
+void Score_Model::run(bool bscore)
 {
-  readDistribution(blastp);
+  readDistribution(bscore);
   calculatePro();
 }
 #endif //SCORE_MODEL_H_
