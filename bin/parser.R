@@ -367,6 +367,69 @@ drawdistribution<-function()
   lines(he,hp,type="o",col="blue");
   legend("bottomleft",legend=c("N Model","H Model"),lwd=2.5,text.col=c("red","blue"),col=c("red","blue"),pch=c("o","o"));
 }
+
+drawblastdistribitscore <- function(filelist)
+{
+  allscore <- c();
+  i=0;
+  x <- seq(from=0,by=10,length=95);
+  
+  browser();
+  for (filename in filelist)
+  {
+    i=i+1;
+    score <- as.matrix(read.csv(filename, sep = " ", quote="", header=FALSE, comment="#"));
+    logratio <- log10(score[,2]/score[,1]);
+    filename2 = paste(filename,"jpeg", sep="-bit.");
+    filename3 = paste(filename,"logratio.jpeg", sep="-bit-");
+    jpeg(file=filename2)
+    par(mar=c(5,5,4,2)+0.3)
+    plot(x,score[,1],type="o",,pch=1,col="red",log="y",xlab="bitscore",ylab="Probability",cex.lab=2.0,cex.axis=1.5,cex.main=2.0);
+    lines(x,score[,2],type="o",col="blue",pch=4);
+    legend("topright",legend=c("N Model","H Model"),lwd=2.5,text.col=c("red","blue"),col=c("red","blue"),pch=c(1,4));
+    dev.off();
+    jpeg(file=filename3)
+    par(mar=c(5,5,4,2)+0.3)
+    plot(x[1:86],logratio[1:86],type="o",pch=1,col="red",log="x",xlab="e-Value",ylab="Score",cex.lab=2.0,cex.axis=1.5,cex.main=2.0);
+    dev.off();
+    if(i==1)
+    {
+      allscore = score;
+    }
+    else 
+    {allscore <- score + allscore;}
+    print(i);
+  }
+  browser();
+  
+  allscore = allscore/i;
+  logratio <- log10(allscore[,2]/allscore[,1]);
+  write.table(logratio,file="./dataset/score_composit.bmodel",sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE);
+  
+  jpeg(file="./result/images/composite-bit.jpeg")
+  par(mar=c(5,5,4,2)+0.3)
+  plot(x,allscore[,1],type="o",pch=1,log="y",xlab="bitscore",ylab="Probability",cex.lab=2.0,cex.axis=1.5);
+  lines(x,allscore[,2],type="o",pch=4);
+  legend("topright",legend=c("N Model","H Model"),lwd=2.5,pch=c(1,4));
+  dev.off();
+  
+  jpeg(file="./result/images/logratio-bit.jpeg")
+  par(mar=c(5,5,4,2)+0.3)
+  plot(x[1:86],logratio[1:86],type="o",pch=1,col="red",log="x",xlab="bitscore",ylab="Score",cex.lab=2.0,cex.axis=1.5,cex.main=2.0);
+  dev.off();
+  
+#   pdf(file="logratio_regression.pdf")
+#   par(mar=c(5,5,4,2)+0.1)
+#   beta1 =  -1.176e-07;
+#   beta2 = -5.576e-05;
+#   beta3 = -8.437e-03;
+#   beta4 = 2.378e+00 
+#   ylogratio <- beta1*(log10(x))^3+beta2*(log10(x))^2+beta3*log10(x)+beta4;
+#   plot(x,ylogratio,type="o",pch=1,col="red",log="x",xlab="e-Value",ylab="Score",cex.lab=2.0,cex.axis=1.5,cex.main=2.0);
+#   dev.off();
+#   write.table(ylogratio,file="./regression_score_composit_4s.model",sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE);
+}
+
 drawblastdistri <- function(filelist)
 {
   allscore <- c();
@@ -577,17 +640,16 @@ extractrFunsim <- function(files)
   dev.off();
 }
 
-plotConvergency <- function(folder)
+plotConvergency <- function(filename, para)
 {
-  filename1=paste(folder,"alignmentscore.data",sep="/");
-  filename2=paste(folder,"convergency.jpeg",sep="/");
-  originData <- as.matrix(read.csv(filename1, sep = "\t", quote="", header=FALSE, comment="!"));
-  browser();
+  originData <- as.matrix(read.csv(filename, sep = "\t", quote="", header=FALSE, comment="!"));
   y <- originData[,1];
   size <- nrow(originData);
   x <- c(1:size);
-  jpeg(file=filename2);
+  boxtext=paste(expression(alpha),"=",para);
+  jpeg(file="./result/images/convergence.jpeg");
   plot(x,y,type="o",pch=1,col="red");
+  text(80000,500,boxtext,cex=2);
   dev.off();
 }
 
@@ -693,6 +755,8 @@ calculateMatchSet_i <- function(filename)
 }
 
 drawMatchSet_i <- function(filename,numspecies)
+# This function doesn't work now. Because the match-set-i.data was changed.
+# The percentage = # of qualified match-sets/ all match-sets including match-sets containing uncharacterized proteins
 {
   originData <- as.matrix(read.csv(filename,sep="\t",quote="",header=FALSE,comment="#"));
   browser();

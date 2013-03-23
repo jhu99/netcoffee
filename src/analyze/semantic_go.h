@@ -176,6 +176,8 @@ bool GoList<NetworkPoolType,Option>::getMatchSet_i(std::string& filename,Network
 	unsigned *qNumMatchSet = new unsigned [_numSpecies+1];
 	//if(!input.is_open()) return false;
 	unsigned qNumNode=0;
+	unsigned qNumMatchSet_all=0;
+	unsigned numMatchSet_all=0;
 	std::unordered_map<std::string,int> coveredmap;
 	while(std::getline(input,line))
 	{
@@ -193,12 +195,12 @@ bool GoList<NetworkPoolType,Option>::getMatchSet_i(std::string& filename,Network
 	      streamline >> pattern;
 	      protein=pattern.substr(1,pattern.size()-1);
 	      numProtein[networks.getHost(protein)]++;
-	      //msize++;
-	      if(coveredmap.find(protein)==coveredmap.end())
-	      {
-			  coveredmap[protein]=1;
-			  msize++;
-		  }
+	      msize++;
+	      //if(coveredmap.find(protein)==coveredmap.end())
+	      //{
+			  //coveredmap[protein]=1;
+			  //msize++;
+		  //}
 	    }
 	    for(short k=0;k<_numSpecies;k++)
 	    {
@@ -209,6 +211,7 @@ bool GoList<NetworkPoolType,Option>::getMatchSet_i(std::string& filename,Network
 	      }
 	    }
 	    numMatchSet[numSpecies]++;
+	    numMatchSet_all++;
 	    std::getline(input,nextline);
 	    std::stringstream nextstreamline(nextline);
 	    nextstreamline >> funscore.rfunsim >> funscore.funsim >> funscore.rfunsimall >> funscore.funsimall >> funscore.mf >> funscore.bp >> funscore.cc;
@@ -216,6 +219,7 @@ bool GoList<NetworkPoolType,Option>::getMatchSet_i(std::string& filename,Network
 	    {
 			qNumMatchSet[numSpecies]++;
 			qNumNode+=msize;
+			qNumMatchSet_all++;
 		}
 	    outputMatchSet_i(line,nextline,numSpecies);
 	}
@@ -349,7 +353,7 @@ bool GoList<NetworkPoolType,Option>::getAveFunSim(AlignmentNodeVector* pRecords,
       std::stringstream ss;
       ss << termfinder << _numQualified;
       termfinder = ss.str();
-      system(termfinder.c_str());
+      //system(termfinder.c_str());
     }
   //system("./bin/termfinderClient.sh ");
   return true;
