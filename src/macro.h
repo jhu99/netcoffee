@@ -4,7 +4,7 @@ Date: 28.06.2012*/
 
 #ifndef MACRO_H_
 #define MACRO_H_
-const unsigned int MAXIMUM_RECORDS = 500000;//maximum number of records of alignment nodes
+const unsigned int MAXIMUM_RECORDS = 50000000;//maximum number of records of alignment nodes
 const unsigned int NUM_SPECIES=4;
 const int LISTSIZE=3;
 const unsigned int NUM_INITIAL=1000;// optional; initial step can also be controlled by inner variables.
