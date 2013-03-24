@@ -506,7 +506,7 @@ bool
 {
   for(NodeIt it(*_g);it!=lemon::INVALID;++it)
   {
-    for(unsigned i=0;i<NUM_SPECIES;i++)
+    for(unsigned i=0;i<_numSpecies;i++)
     {
       unsigned select=(*_node2label)[it];
       //std::string protein=rs
@@ -1025,7 +1025,7 @@ float
   float edgescore=0.0;
   _delta.tozero();
   nodescore=rs.getRecordScore(select);
-  for(unsigned i=0; i<NUM_SPECIES; ++i)
+  for(unsigned i=0; i<_numSpecies; ++i)
   {
     std::string protein=rs.getRecords(select,i);
     Label2NodeMap* label2Node=getLabel2Node(i);

@@ -112,6 +112,7 @@ SimulatedAnnealing<RS,ST,NP,OP>::initial2(RS& recordstore,NP& np)
   std::uniform_int_distribution<unsigned> sample_distribution(0,recordstore.length-1);
   int num=0;
   _k=_T_CON;
+  _Kmax=600;
   while(num<500)
   {
     unsigned select=sample_distribution(generator);

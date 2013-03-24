@@ -906,8 +906,7 @@ RecordStore<KpGraph,Option>::readHomoList2(MapType& mymap,
   std::string line;
   std::string protein1="";
   std::string protein2="";
-  int num2,num3,num4,num5,num6,num7,num8;
-  float num1,bitscore;
+
   double evalue;
   if(!input.is_open())
   {
@@ -917,8 +916,7 @@ RecordStore<KpGraph,Option>::readHomoList2(MapType& mymap,
   while(std::getline(input,line))
   {
     std::stringstream lineStream(line);
-    lineStream >> protein1 >> protein2 >> num1 >> num2 >> num3 >> num4
-    >> num5 >> num6 >> num7 >> num8 >> evalue >> bitscore;
+    lineStream >> protein1 >> protein2 >> evalue;
     /// Check the validation of protein1 and protein2. Isf they are not in networks, then ignore.
     if(inv1->find(protein1)==inv1->end() ||
        inv2->find(protein2)==inv2->end()
