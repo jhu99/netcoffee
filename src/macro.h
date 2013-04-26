@@ -4,7 +4,7 @@ Date: 28.06.2012*/
 
 #ifndef MACRO_H_
 #define MACRO_H_
-const unsigned int MAXIMUM_RECORDS = 50000000;//maximum number of records of alignment nodes
+const unsigned int MAXIMUM_RECORDS = 500000;// M-NetAligner 50000000 NetCoffee 500000
 const unsigned int NUM_SPECIES=4;
 const int LISTSIZE=3;
 const unsigned int NUM_INITIAL=1000;// optional; initial step can also be controlled by inner variables.
@@ -17,7 +17,7 @@ const int NUM_OFFSET_BARS=90;
 const int NUM_GO_SHARED=10;
 const float TEMP_MAX=100;
 const float TEMP_MIN=10;
-const unsigned K_MAX=100;//t_coffee 1000
+const unsigned K_MAX=100;
 const int N_MAX=2000;
 const float T_CON=0.005;
 const float _T_CON=0.003;
