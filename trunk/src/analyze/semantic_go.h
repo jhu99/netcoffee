@@ -194,6 +194,7 @@ bool GoList<NetworkPoolType,Option>::getMatchSet_i(std::string& filename,Network
 	    {
 	      streamline >> pattern;
 	      protein=pattern.substr(1,pattern.size()-1);
+	      if(networks.getHost(protein)==100) continue;
 	      numProtein[networks.getHost(protein)]++;
 	      msize++;
 	      //if(coveredmap.find(protein)==coveredmap.end())
@@ -224,7 +225,8 @@ bool GoList<NetworkPoolType,Option>::getMatchSet_i(std::string& filename,Network
 	    outputMatchSet_i(line,nextline,numSpecies);
 	}
 	std::cout << "#" << filename << std::endl;
-	std::cout <<"#Proteins covered by qualified match-sets:"<< std::endl << qNumNode << "\t"<< qNumNode/(1.0*networks.allNodeNum) << std::endl;
+	std::cout <<"#Proteins covered by qualified match-sets: "<< qNumNode << "\t"<< qNumNode/(1.0*networks.allNodeNum) << std::endl;
+	std::cout <<"# Number of qualified match-sets of the alignment:"<< std::endl << qNumMatchSet_all <<"\t" << numMatchSet_all <<std::endl;
 	//for(int i=1;i<=_numSpecies;i++)
 	//{
 		//float ratio=0.0;
@@ -392,9 +394,9 @@ bool GoList<NetworkPoolType,Option>::readGeneOntology(const char* filename)
       else break;
     }
 
-    /// If GO_term was inferred from IEA or ISS, ignore it.
+    /// If GO_term was inferred from IEA or ISS, ignore it. Set this restriction as comments when test on alignments of dataset-3
     if(gorecord[2].compare("IEA")==0 ||gorecord[2].compare("ISS")==0)
-      continue;
+      continue; 
     GOntology& record=go_map[gorecord[0]];
     if(gorecord[3].compare("C")==0)
     {

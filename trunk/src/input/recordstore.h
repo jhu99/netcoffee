@@ -569,7 +569,7 @@ RecordStore<KpGraph,Option>::createBpGraph(KpGraph& kpgraph,
     unsigned stWeight = bp12->stWeight[kst];
     float weight =0.0;
     if(ni == nj)
-		weight= alpha*(sescore-minNodeScore)/(maxNodeScore-minNodeScore);
+		weight= (1-alpha)*(sescore-minNodeScore)/(maxNodeScore-minNodeScore);
 	else
         weight = combineScore(sescore, stWeight);// TODO: give a wise choice.
     edgemap->set(e,weight);
@@ -1103,8 +1103,8 @@ RecordStore<KpGraph,Option>::combineScore(float seScore, unsigned stScore)
   std::string filename(resultfolder);
   filename.append("scoreRecords.txt");
   std::ofstream output(filename.c_str(),std::ios_base::out|std::ios_base::app);
-  output <<"sequence score\t"<<seScore<<"\t"<<alpha*((seScore-minNodeScore)/(maxNodeScore-minNodeScore))<<"\t structure score\t"<<stScore<<"\t"<<(1-alpha)*pow(static_cast<double>(stScore)/maxStrScore,FACTOR_EDGE)<<std::endl;
+  output <<"sequence score\t"<<seScore<<"\t"<<(1-alpha)*((seScore-minNodeScore)/(maxNodeScore-minNodeScore))<<"\t structure score\t"<<stScore<<"\t"<<alpha*pow(static_cast<double>(stScore)/maxStrScore,FACTOR_EDGE)<<std::endl;
   output.close();
-  return alpha*((seScore-minNodeScore)/(maxNodeScore-minNodeScore)) + (1-alpha)*pow(static_cast<double>(stScore)/maxStrScore,FACTOR_EDGE);
+  return (1-alpha)*((seScore-minNodeScore)/(maxNodeScore-minNodeScore)) + alpha*pow(static_cast<double>(stScore)/maxStrScore,FACTOR_EDGE);
 }
 #endif //RECORDSTORE

@@ -10,7 +10,7 @@ It starts at Wed 27 Feb 2013 10:43:54 AM CET.
 It starts at Wed 27 Feb 2013 10:43:54 AM CET.
 It starts at Wed 27 Feb 2013 10:43:54 AM CET.
 It starts at Wed 27 Feb 2013 10:43:54 AM CET.
-It starts at Wed 27 Feb 2013 10:43:54 AM CET.
+It starts at Wed 27 Feb 2013 10:43:54 AM CET.	
 The parameter of alpha is 0.1 .
 It tooks 9072 seconds.
 The parameter of alpha is 0.2 .
@@ -125,3 +125,53 @@ It takes u: 117.97s, s: 22.43s, cu: 0s, cs: 0s, real: 467.109s seconds to obtain
 It takes u: 121.61s, s: 21.37s, cu: 0s, cs: 0s, real: 468.191s seconds to obtain the alignment with alpha 0.2.
 ------------------------NETCOFFEE------------------------------
 It takes u: 125.49s, s: 21.02s, cu: 0s, cs: 0s, real: 469.003s seconds to obtain the alignment with alpha 0.1.
+
+================================================================
+==== RUN FOR SIX SPECIES ======================================
+================================================================
+
+------------------------GRAEMLIN 2.0------------------------------
+GRAEMLIN 2.0 took 23973 seconds for six species.
+
+------------------------NETCOFFEE------------------------------
+It takes u: 17441.1s, s: 4.94s, cu: 0s, cs: 0s, real: 17543.5s seconds to obtain the alignment with alpha 0.7.
+------------------------NETCOFFEE------------------------------
+It takes u: 17489.6s, s: 7.49s, cu: 0s, cs: 0s, real: 17609.2s seconds to obtain the alignment with alpha 0.5.
+------------------------NETCOFFEE------------------------------
+It takes u: 17522.6s, s: 7.78s, cu: 0s, cs: 0s, real: 17643s seconds to obtain the alignment with alpha 0.4.
+------------------------NETCOFFEE------------------------------
+It takes u: 17912.3s, s: 10.6s, cu: 0s, cs: 0s, real: 18023.7s seconds to obtain the alignment with alpha 0.3.
+------------------------NETCOFFEE------------------------------
+It takes u: 18727.5s, s: 8s, cu: 0s, cs: 0s, real: 18838.2s seconds to obtain the alignment with alpha 0.6.
+
+--------ISORANKN--------------
+It starts at Thu 28 Mar 2013 09:47:43 AM CET.
+--------ISORANKN--------------
+--------ISORANKN--------------
+--------ISORANKN--------------
+--------ISORANKN--------------
+It starts at Thu 28 Mar 2013 09:47:43 AM CET.
+It starts at Thu 28 Mar 2013 09:47:43 AM CET.
+It starts at Thu 28 Mar 2013 09:47:43 AM CET.
+It starts at Thu 28 Mar 2013 09:47:43 AM CET.
+------------------------NETCOFFEE------------------------------
+It takes u: 23459.7s, s: 4.73s, cu: 0s, cs: 0s, real: 23571.8s seconds to obtain the alignment with alpha 0.3.
+------------------------NETCOFFEE------------------------------
+It takes u: 24574.1s, s: 5.34s, cu: 0s, cs: 0s, real: 24689.3s seconds to obtain the alignment with alpha 0.5.
+------------------------NETCOFFEE------------------------------
+It takes u: 24813s, s: 4.41s, cu: 0s, cs: 0s, real: 24928.8s seconds to obtain the alignment with alpha 0.6.
+------------------------NETCOFFEE------------------------------
+It takes u: 25329.5s, s: 8.06s, cu: 0s, cs: 0s, real: 25452.3s seconds to obtain the alignment with alpha 0.4.
+------------------------NETCOFFEE------------------------------
+It takes u: 25617.7s, s: 7.83s, cu: 0s, cs: 0s, real: 25743.4s seconds to obtain the alignment with alpha 0.7.
+The parameter of alpha is 0.7 .
+ISORANK-N took 256889 seconds for six species.
+The parameter of alpha is 0.6 .
+ISORANK-N took 256896 seconds for six species.
+The parameter of alpha is 0.5 .
+ISORANK-N took 256900 seconds for six species.
+The parameter of alpha is 0.4 .
+ISORANK-N took 256903 seconds for six species.
+The parameter of alpha is 0.3 .
+ISORANK-N took 256906 seconds for six species.
+

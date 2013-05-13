@@ -98,7 +98,7 @@ typename NetworkPool<GR,BP>::GraphData* NetworkPool<GR,BP>::getGraph(int i)
 template<typename GR, typename BP>
 unsigned NetworkPool<GR,BP>::getHost(std::string protein)
 {
-  assert(proteinHost.find(protein)!=proteinHost.end());
+  if(proteinHost.find(protein)==proteinHost.end()) return 100;// 100 represents protein doesn't exist in input networks.
   return proteinHost[protein];
 }
 
