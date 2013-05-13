@@ -19,11 +19,76 @@ format <- function(filelist)#filename1 inputfile filename2 outputfile
     write.table(simpleData,file=filename2,sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE);
   }
 }
+format_dip <- function(filelist)#filename1 inputfile filename2 outputfile
+{
+  for(filename in filelist)
+  {
+    originData <- as.matrix(read.csv(filename, sep = "\t", quote="", header=TRUE, row.names=NULL,comment="!"));
+    simpleData <- originData;
+    nrow <- dim(simpleData)[1];
+    for(i in 1:nrow)
+    {
+      protein1 <- simpleData[i,1];
+      protein2 <- simpleData[i,2];
+      part1 <- strsplit(protein1,split="|",fixed=TRUE)[[1]][1];
+      part2 <- strsplit(protein2,split="|",fixed=TRUE)[[1]][1];
+      simpleData[i,1] <- part1;
+      simpleData[i,2] <- part2;
+    }
+    filename2 <- paste(filename,'data',sep=".");
+    write.table(simpleData[,c(1,2,10,11)],file=filename2,sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE);
+  }
+}
+format_dip_blast <- function(filelist)#filename1 inputfile filename2 outputfile
+{
+  for(filename in filelist)
+  {
+    originData <- as.matrix(read.csv(filename, sep = "\t", quote="", header=TRUE, row.names=NULL,comment="!"));
+    simpleData <- originData;
+    nrow <- dim(simpleData)[1];
+    for(i in 1:nrow)
+    {
+      protein1 <- simpleData[i,1];
+      protein2 <- simpleData[i,2];
+      part1 <- strsplit(protein1,split="|",fixed=TRUE)[[1]][3];
+      part2 <- strsplit(protein2,split="|",fixed=TRUE)[[1]][3];
+      simpleData[i,1] <- part1;
+      simpleData[i,2] <- part2;
+    }
+    filename2 <- paste(filename,'data',sep=".");
+    write.table(simpleData,file=filename2,sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE);
+  }
+}
+format_dip_int2 <- function(filelist)
+{
+  for(filename in filelist)
+  {
+    originData <- as.matrix(read.csv(filename, sep = "\t", quote="", header=TRUE, row.names=NULL,comment="!"));
+    simpleData <- originData;
+    nrow <- dim(simpleData)[1];
+    ones <- rep(0.9,nrow);
+    simpleData <- cbind(simpleData,ones);
+    filename2 <- paste(filename,'data',sep=".");
+    write.table(simpleData,file=filename2,sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE);
+  }
+}
 formatSelection <- function(filename,filename2,cols)#filename1 inputfile filename2 outputfile
 {
   originData <- as.matrix(read.csv(filename, sep = "\t", quote="", header=TRUE, comment="!"));
   simpleData <- originData[,cols];
   write.table(simpleData,file=filename2,sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE);
+}
+
+formatNet2Tab <- function(filelist)
+{
+	for (filename in filelist)
+	{
+		filename2=paste(filename,".tab",sep="");
+		originData <- read.csv(filename, sep = "\t", quote="", header=FALSE, comment="!", skip=2);
+		simpleData <- originData[,c(1,2)];
+    simpleData=rbind(c("INTERACTOR_A","INTERACTOR_B"),simpleData);
+		write.table(simpleData,file=filename2,sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE);
+	}
 }
 formatModel <- function(fileslist)
 {
@@ -382,13 +447,13 @@ drawblastdistribitscore <- function(filelist)
     logratio <- log10(score[,2]/score[,1]);
     filename2 = paste(filename,"jpeg", sep="-bit.");
     filename3 = paste(filename,"logratio.jpeg", sep="-bit-");
-    jpeg(file=filename2)
+    jpeg(file=filename2,quality=100,width=1200,height=1200,pointsize=34)
     par(mar=c(5,5,4,2)+0.3)
     plot(x,score[,1],type="o",,pch=1,col="red",log="y",xlab="bitscore",ylab="Probability",cex.lab=2.0,cex.axis=1.5,cex.main=2.0);
     lines(x,score[,2],type="o",col="blue",pch=4);
     legend("topright",legend=c("N Model","H Model"),lwd=2.5,text.col=c("red","blue"),col=c("red","blue"),pch=c(1,4));
     dev.off();
-    jpeg(file=filename3)
+    jpeg(file=filename3,quality=100,width=1200,height=1200,pointsize=34)
     par(mar=c(5,5,4,2)+0.3)
     plot(x[1:86],logratio[1:86],type="o",pch=1,col="red",log="x",xlab="e-Value",ylab="Score",cex.lab=2.0,cex.axis=1.5,cex.main=2.0);
     dev.off();
@@ -406,14 +471,14 @@ drawblastdistribitscore <- function(filelist)
   logratio <- log10(allscore[,2]/allscore[,1]);
   write.table(logratio,file="./dataset/score_composit.bmodel",sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE);
   
-  jpeg(file="./result/images/composite-bit.jpeg")
+  jpeg(file="./result/images/composite-bit.jpeg",quality=100,width=1200,height=1200,pointsize=34)
   par(mar=c(5,5,4,2)+0.3)
   plot(x,allscore[,1],type="o",pch=1,log="y",xlab="bitscore",ylab="Probability",cex.lab=2.0,cex.axis=1.5);
   lines(x,allscore[,2],type="o",pch=4);
   legend("topright",legend=c("N Model","H Model"),lwd=2.5,pch=c(1,4));
   dev.off();
   
-  jpeg(file="./result/images/logratio-bit.jpeg")
+  jpeg(file="./result/images/logratio-bit.jpeg",quality=100,width=1200,height=1200,pointsize=34)
   par(mar=c(5,5,4,2)+0.3)
   plot(x[1:86],logratio[1:86],type="o",pch=1,col="red",log="x",xlab="bitscore",ylab="Score",cex.lab=2.0,cex.axis=1.5,cex.main=2.0);
   dev.off();
@@ -443,13 +508,13 @@ drawblastdistri <- function(filelist)
     logratio <- log10(score[,2]/score[,1]);
     filename2 = paste(filename,"jpeg", sep=".");
     filename3 = paste(filename,"logratio.jpeg", sep="-");
-    jpeg(file=filename2)
+    jpeg(file=filename2,quality=100,width=1200,height=1200,pointsize=34)
     par(mar=c(5,5,4,2)+0.3)
     plot(x,score[,1],type="o",,pch=1,col="red",log="xy",xlab="e-Value",ylab="Probability",cex.lab=2.0,cex.axis=1.5,cex.main=2.0);
     lines(x,score[,2],type="o",col="blue",pch=4);
     legend("topleft",legend=c("N Model","H Model"),lwd=2.5,text.col=c("red","blue"),col=c("red","blue"),pch=c(1,4));
     dev.off();
-    jpeg(file=filename3)
+    jpeg(file=filename3,quality=100,width=1200,height=1200,pointsize=34)
     par(mar=c(5,5,4,2)+0.3)
     plot(x[1:86],logratio[1:86],type="o",pch=1,col="red",log="x",xlab="e-Value",ylab="Score",cex.lab=2.0,cex.axis=1.5,cex.main=2.0);
     dev.off();
@@ -467,14 +532,14 @@ drawblastdistri <- function(filelist)
   logratio <- log10(allscore[,2]/allscore[,1]);
   write.table(logratio,file="./dataset/score_composit.model",sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE);
   
-  jpeg(file="./result/images/composite.jpeg")
+  jpeg(file="./result/images/composite.jpeg",quality=100,width=1200,height=1200,pointsize=34)
   par(mar=c(5,5,4,2)+0.3)
   plot(x,allscore[,1],type="o",pch=1,log="xy",xlab="e-Value",ylab="Probability",cex.lab=2.0,cex.axis=1.5);
   lines(x,allscore[,2],type="o",pch=4);
   legend("topleft",legend=c("N Model","H Model"),lwd=2.5,pch=c(1,4));
   dev.off();
   
-  jpeg(file="./result/images/logratio.jpeg")
+  jpeg(file="./result/images/logratio.jpeg",quality=100,width=1200,height=1200,pointsize=34)
   par(mar=c(5,5,4,2)+0.3)
   plot(x[1:86],logratio[1:86],type="o",pch=1,col="red",log="x",xlab="e-Value",ylab="Score",cex.lab=2.0,cex.axis=1.5,cex.main=2.0);
   dev.off();
@@ -500,6 +565,18 @@ convertGOA2fsst <- function(filelist)
     originData <- as.matrix(read.csv(filename, sep = "\t", quote="", header=FALSE, comment="!"));
     DataView <- originData[,c(2,5,7,9)];
     #DataView <- originData[,c(1,2,12)]
+#    numrow <- dim(DataView)[1];
+#    newData <- DataView;
+#    j=0;
+#    #browser();
+#    for(i in 1:numrow)
+#    {
+#       if(DataView[i,3]=="IEA" || DataView[i,3]=="ISS")
+#		next;
+#	   j=j+1;
+#       newData[j,]=DataView[i,];
+#    }
+#    write.table(newData[1:j,],file=outfilename,sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE);
     write.table(DataView,file=outfilename,sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE);
   }
 }
@@ -647,8 +724,8 @@ plotConvergency <- function(filename, para)
   size <- nrow(originData);
   x <- c(1:size);
   boxtext=paste(expression(alpha),"=",para);
-  jpeg(file="./result/images/convergence.jpeg");
-  plot(x,y,type="o",pch=1,col="red");
+  jpeg(file="./result/images/convergence.jpeg",quality=100,width=1200,height=1200,pointsize=34);
+  plot(x,y,type="o",pch=1,col="red",cex.lab=3.0,cex.axis=2.5,cex.main=2.0);
   text(80000,500,boxtext,cex=2);
   dev.off();
 }
@@ -760,24 +837,18 @@ drawMatchSet_i <- function(filename,numspecies)
 {
   originData <- as.matrix(read.csv(filename,sep="\t",quote="",header=FALSE,comment="#"));
   browser();
-  mydata <- as.numeric(originData[,3]);
-  dim(mydata) <- c(numspecies,18);
-  result=(mydata[1,]+mydata[2,]+mydata[3,]+mydata[4,]+mydata[5,]);
-  net=result[seq(1,18,by=2)]
-  iso=result[seq(2,18,by=2)]
-  p1<-net/5;
-  p2<-iso/3;
-  x<-p1[3:7];
-  x<-rbind(x,p2[3:7]);
-  x<- 100*x;
+  result=originData[,1]/(originData[,2]);
+  net=result[seq(1,10,by=2)];
+  iso=result[seq(2,10,by=2)];
+  x <- net;
+  x <- rbind(x,iso);
+  y <- x*100;
   browser();
-  jpeg(filename="./result/images/precision.jpeg");
+  jpeg(filename="./result/images/precision.jpeg",quality=100,width=1200,height=1200,pointsize=34);
   par(mar=c(5,5,4,2)+0.1)
-  barplot(x,beside=TRUE,names.arg=c(0.3,0.4,0.5,0.6,0.7), ylab="Percentage(%)",col=c("gray","white"),cex.names=1.5,cex.lab=2.0,,cex.main=2.0,cex.axis=1.5,ylim=c(0,60));
+  barplot(y,beside=TRUE,names.arg=c(0.3,0.4,0.5,0.6,0.7), ylab="Percentage(%)",col=c("gray","white"),cex.names=1.5,cex.lab=2.0,,cex.main=2.0,cex.axis=1.5,ylim=c(0,60));
   #legend("topleft",legend=c("NetCoffee","IsoRank-N"),lwd=2.5,col=c("gray"));
   dev.off()
-  
-  print(result);
 }
 
 drawBoxplotMulFunsim <- function()
@@ -883,7 +954,9 @@ drawBoxplotMatchSet_i <- function()
 {
   matchset <- c("matchsets-three.txt", "matchsets-four.txt","matchsets-five.txt");
   figlabel <- c("(a) i=","(b) i=","(c) i=","(d) i=","(e) i=","(f) i=","(g) i=","(h) i=","(i) i=");
+  #for graemlin data
   species=3;
+  #for graemlin data
   fignum=1;
   for (mat in matchset )
   {
@@ -891,12 +964,15 @@ drawBoxplotMatchSet_i <- function()
     filelist <- c();
 	  for (i in ALPHA)
 	  { 
-	    filename1 =paste("./result/","five_species",sep="");
+	    filename1 =paste("./result/","six_species",sep="");
 		  filename =paste(filename1,"/netcoffee/alpha_",sep="");
 		  filename2 =paste(filename1,"/isorankn/alpha_",sep="");
 		  filename1 =paste(filename,i,sep="");
 		  filename1 =paste(filename1,mat,sep="/");
 		  filename2 =paste(filename2,i,sep="");
+		  #for graemlin data
+		  filename2="./result/six_species/graemlin";
+		  #for graemlin data
 		  filename2 =paste(filename2,mat,sep="/");
 		  filelist <- rbind(filelist,filename1);
 		  filelist <- rbind(filelist,filename2);
@@ -924,11 +1000,13 @@ drawBoxplotMatchSet_i <- function()
   	data9 <- originData9[,c(1,5,6)];
   	data10 <- originData10[,c(1,5,6)];
 
+  	xcolnames = seq(from=0.3,to=0.7,by=0.1);
+
     boxtext=paste(figlabel[fignum], species, sep="");
   	fignum=fignum+1;
   	output3=paste("./result/images/bp_",mat,sep="");
     output3=paste(output3,"jpeg",sep=".")
-  jpeg(filename=output3);
+  jpeg(filename=output3,quality=100,width=1200,height=1200,pointsize=34);
   par(mar=c(5,5,4,2)+0.1)
 	boxplot(data1[,3],data2[,3],
 			data3[,3],data4[,3],
@@ -936,12 +1014,14 @@ drawBoxplotMatchSet_i <- function()
 			data7[,3],data8[,3],
 			data9[,3],data10[,3],
 			ylim=c(0,1.2),
-			names=c(0.3,0.3,0.4,0.4,0.5,0.5,0.6,0.6,0.7,0.7),
+			xaxt="n",
+			#names=c(0.3,0.4,0.5,0.6,0.7),
 			border=c("black","antiquewhite4","black","antiquewhite4","black","antiquewhite4","black","antiquewhite4","black","antiquewhite4"),
 			col= c("gray","white","gray","white","gray","white","gray","white","gray","white"),
 			cex.lab=2.0,cex.axis=1.5,cex.main=2.0,ylab=expression(bar("BPscore")));
 			#legend("topleft",legend=c("NetCoffee","IsoRank-N"),lwd=2.5,col=c("gray","black"),pch=c(15,22));
 			text(5,1.1,boxtext,cex=2);
+			axis(1, at = c(1.5,3.5,5.5,7.5,9.5), labels = xcolnames, cex.axis=1.5);
 	dev.off()
 	
 	boxtext=paste(figlabel[fignum], species, sep="");
@@ -949,7 +1029,7 @@ drawBoxplotMatchSet_i <- function()
   
     output2=paste("./result/images/mf_",mat,sep="");
     output2=paste(output2,"jpeg",sep=".")
-  jpeg(filename=output2);
+  jpeg(filename=output2,quality=100,width=1200,height=1200,pointsize=34);
   par(mar=c(5,5,4,2)+0.1)
 	boxplot(data1[,2],data2[,2],
 			data3[,2],data4[,2],
@@ -957,19 +1037,21 @@ drawBoxplotMatchSet_i <- function()
 			data7[,2],data8[,2],
 			data9[,2],data10[,2],
 			ylim=c(0,1.2),
-			names=c(0.3,0.3,0.4,0.4,0.5,0.5,0.6,0.6,0.7,0.7),
+			xaxt="n",
+			#names=c(0.3,0.4,0.5,0.6,0.7),
 			border = c("black","antiquewhite4","black","antiquewhite4","black","antiquewhite4","black","antiquewhite4","black","antiquewhite4"),
 			col= c("gray","white","gray","white","gray","white","gray","white","gray","white"),
 			cex.lab=2.0,cex.axis=1.5,cex.main=2.0,ylab=expression(bar("MFscore")));
 			#legend("topleft",legend=c("NetCoffee","IsoRank-N"),lwd=2.5,col=c("black","antiquewhite4"),pch=c(15,22));
 			text(5,1.1,boxtext,cex=2);
+			axis(1, at = c(1.5,3.5,5.5,7.5,9.5), labels = xcolnames, cex.axis=1.5);
 	dev.off()
 	
 	boxtext=paste(figlabel[fignum], species, sep="");
   	fignum=fignum+1;    
     output1=paste("./result/images/rfunsim_",mat,sep="");
     output1=paste(output1,"jpeg",sep=".")
-    jpeg(filename=output1);
+    jpeg(filename=output1,quality=100,width=1200,height=1200,pointsize=34);
   par(mar=c(5,5,4,2)+0.1)
 	boxplot(data1[,1],data2[,1],
 			data3[,1],data4[,1],
@@ -977,12 +1059,14 @@ drawBoxplotMatchSet_i <- function()
 			data7[,1],data8[,1],
 			data9[,1],data10[,1],
 			ylim=c(0,1.2),
-			names=c(0.3,0.3,0.4,0.4,0.5,0.5,0.6,0.6,0.7,0.7),
+			xaxt="n",
+			#names=c(0.3,0.4,0.5,0.6,0.7),
 			border = c("black","antiquewhite4","black","antiquewhite4","black","antiquewhite4","black","antiquewhite4","black","antiquewhite4"),
 			col= c("gray","white","gray","white","gray","white","gray","white","gray","white"),
 			cex.lab=2.0,cex.axis=1.5,cex.main=2.0,ylab=expression(bar("rfunSim")));
 			#legend("topleft",legend=c("NetCoffee","IsoRank-N"),lwd=2.5,col=c("black","antiquewhite4"),pch=c(15,22));
 			text(5,1.1,boxtext,cex=2);
+	axis(1, at = c(1.5,3.5,5.5,7.5,9.5), labels = xcolnames, cex.axis=1.5);
 	dev.off()
 
 	species=species+1;

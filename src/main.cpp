@@ -96,7 +96,7 @@ bool setParser(ArgParser& parser, Option& myoption)
   .refOption("alignmentfile","The filename of alignment which is required to either create or analyse.",myoption.alignmentfile)
   .refOption("avefunsimfile", "The filename for functional similarity of alignment.", myoption.avefunsimfile)
   .refOption("recordsfile", "Records file for writing and reading. It is used to store the triplet edges.", myoption.recordsfile)
-  .refOption("alpha", "Prameter controlling how much sequence similarity contributes. Default is 0.5.", myoption.alpha)
+  .refOption("alpha", "Prameter controlling how much topology score contributes to the alignment score. Default is 0.5.", myoption.alpha)
   .refOption("edgefactor", "The factor of the power law normalization. Default is 0.1.", myoption.alpha)
   .refOption("numspecies","Number of the species compared. Default is 4.", myoption.numspecies)
   .refOption("profile","Profile of input parameters.", myoption.profile)
@@ -242,8 +242,8 @@ int main(int argc, char** argv)
       // Analyze the alignment results in term of semantic similarity with GO.
       // Get average score.
       analyzer.readAlignment(myoption.alignmentfile.c_str());/// alignment file must strictly on the format
-      analyzer.convert_fsst();
-      analyzer.deleteRedundancy();
+      //analyzer.convert_fsst();
+      //analyzer.deleteRedundancy();
       analyzer.getMulFunSim(myoption.avefunsimfile);// avefunsimfile is fsst.result file
     }
     else if(myoption.task==2)
@@ -280,7 +280,8 @@ int main(int argc, char** argv)
       networks.initNetworkPool(myoption.networkfiles);
       myformat.removeBiEdges(networks);
     }else if(myoption.task==3)
-    {	
+    {
+	  // discard these match-sets containing only one protein.	
       FormatType myformat(myoption);
       std::string outfile("./result/alignment_netcoffee.data");
       myformat.formatAlignment(myoption.alignmentfile,outfile);
@@ -290,8 +291,28 @@ int main(int argc, char** argv)
 	  FormatType myformat(myoption);
 	  myformat.retrieveKOnumber(myoption.formatfile);
 	}
-	else
+	else if(myoption.task==5)
 	{
+	  // format graemlin homology data to evals format.
+	  FormatType myformat(myoption);
+	  networks.initNetworkPool(myoption.networkfiles);
+    myformat.extractHomologyProteins(myoption.formatfile,networks);
+	}else if(myoption.task==6)
+	{
+		// extract GO association data for a list of proteins.
+		FormatType myformat(myoption);
+		myformat.extractGoAssociation(myoption.formatfile);
+	}
+	else if(myoption.task==7)
+	{
+		// discard isolated nodes in graemlin alignment and format alignment into uniprot_id alignment
+		FormatType myformat(myoption);
+		myformat.extractGraemlinAlignment(myoption.formatfile,myoption.alignmentfile);
+	}
+	else if(myoption.task==8)
+	{
+		FormatType myformat(myoption);
+		myformat.retrieveKOgroups(myoption.alignmentfile);
 	}
   }
   mylog.close();
