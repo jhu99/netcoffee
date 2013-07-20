@@ -68,8 +68,8 @@ public:
   
 	NetworkPool();
 	~NetworkPool();
-	bool initNetworkPool(std::vector<std::string>&);
-	bool readNetwork(std::string&,short);
+	bool initNetworkPool(std::vector<std::string>&,int);
+	bool readNetwork(std::string&,int);
   GraphData* getGraph(int);
   unsigned getHost(std::string);
   bool existNode(std::string);
@@ -112,21 +112,24 @@ bool NetworkPool<GR,BP>::existNode(std::string protein)
 }
 
 template<typename GR, typename BP>
-bool NetworkPool<GR,BP>::initNetworkPool(std::vector<std::string> &filelist)
+bool NetworkPool<GR,BP>::initNetworkPool(std::vector<std::string> &filelist,int numthreads)
 {
   std::vector<std::string>::iterator it;
-  short i=0;
-  for(it=filelist.begin();it!=filelist.end();++i,++it)
+  int i,fsize;
+	fsize=filelist.size();
+	_graphSet.resize(fsize);
+//#pragma omp parallel for num_threads(numthreads) shared(fsize)
+  for(i=0;i<fsize;++i)
   {
-    readNetwork(*it,i);
+    readNetwork(filelist[i],i);
   }
   return 1;
 }
 
 template<typename GR, typename BP>
-bool NetworkPool<GR,BP>::readNetwork(std::string &filename,short i)
+bool NetworkPool<GR,BP>::readNetwork(std::string &filename,int i)
 {
-  GraphData *data = new GraphData();
+  GraphData *data = new GraphData();// private
   std::string line;
   std::unordered_map<std::string,int> interactionmap;
   std::ifstream input(filename.c_str());
@@ -135,7 +138,7 @@ bool NetworkPool<GR,BP>::readNetwork(std::string &filename,short i)
     std::cerr << filename <<"cannot be opened!"<<std::endl;
     return 0;
   }
-  _graphSet.push_back(data);
+  _graphSet[i]=data;// work sharing
   std::getline(input,line);/// Skip header line: INTERACTOR A INTERACTOR B
   while(std::getline(input,line))
   {
@@ -165,7 +168,8 @@ bool NetworkPool<GR,BP>::readNetwork(std::string &filename,short i)
       node1 = data->g->addNode();
       data->label->set(node1,protein1);
       (*(data->invIdNodeMap))[protein1] = node1;
-      proteinHost[protein1] = i;
+//#pragma omp critical
+      proteinHost[protein1] = i;// shared variable
       data->nodeNum++;
     }else
     {
@@ -197,14 +201,18 @@ bool NetworkPool<GR,BP>::readNetwork(std::string &filename,short i)
 	  if(maxNode < (*data->degreeMap)[mynode])
 		maxNode=(*data->degreeMap)[mynode];
   }
-  if(g_verbosity>=VERBOSE_NON_ESSENTIAL)
-  {
-    std::cerr <<filename <<" has been read successfully!"<<std::endl;
-    std::cerr <<"# of proteins:"<< data->nodeNum <<"\t"<<std::endl;
-    std::cerr <<"# of interactions:"<<data->edgeNum<<std::endl;
-    std::cerr <<"the largest degree:"<< maxNode << std::endl;
-  }
-  allNodeNum+=data->nodeNum;
+#pragma omp critical
+	{
+		if(g_verbosity>=VERBOSE_NON_ESSENTIAL)
+		{
+			std::cerr <<filename <<" has been read successfully!"<<std::endl;
+			std::cerr <<"# of proteins:"<< data->nodeNum <<"\t"<<std::endl;
+			std::cerr <<"# of interactions:"<<data->edgeNum<<std::endl;
+			std::cerr <<"the largest degree:"<< maxNode << std::endl;
+		}
+	}
+//#pragma omp atomic// it also works #pragma omp critical
+  allNodeNum+=data->nodeNum;// reduction
   return 1;
 }
 #endif //NETWORKPOOL_H_

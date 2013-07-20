@@ -950,6 +950,111 @@ drawEdgeScoreDistri <- function()
   dev.off();
 }
 
+drawBoxplotZeroMatchSet <- function()
+{
+  matchset <- c("matchsets-three.txt", "matchsets-four.txt","matchsets-five.txt");
+  figlabel <- c("(a) i=","(b) i=","(c) i=","(d) i=","(e) i=","(f) i=","(g) i=","(h) i=","(i) i=");
+  #for graemlin data
+  species=3;
+  #for graemlin data
+  fignum=1;
+  for (mat in matchset )
+  {
+    ALPHA <- c(0.0,0.3,0.4,0.5,0.6,0.7);
+    filelist <- c();
+	  for (i in ALPHA)
+	  { 
+	      filename1 =paste("./result/","five_species",sep="");
+		  filename =paste(filename1,"/netcoffee/alpha_",sep="");
+		  filename1 =paste(filename,i,sep="");
+		  filename1 =paste(filename1,mat,sep="/");
+		  filelist <- rbind(filelist,filename1);
+	  }
+    print(filelist);
+    originData1 <- as.matrix(read.csv(filelist[1],sep="\t",quote="",header=FALSE,comment="#"));
+  	originData2 <- as.matrix(read.csv(filelist[2],sep="\t",quote="",header=FALSE,comment="#"));
+  	originData3 <- as.matrix(read.csv(filelist[3],sep="\t",quote="",header=FALSE,comment="#"));
+  	originData4 <- as.matrix(read.csv(filelist[4],sep="\t",quote="",header=FALSE,comment="#"));
+  	originData5 <- as.matrix(read.csv(filelist[5],sep="\t",quote="",header=FALSE,comment="#"));
+  	originData6 <- as.matrix(read.csv(filelist[6],sep="\t",quote="",header=FALSE,comment="#"));
+    
+    data1 <- originData1[,c(1,5,6)];
+    data2 <- originData2[,c(1,5,6)];
+  	data3 <- originData3[,c(1,5,6)];
+  	data4 <- originData4[,c(1,5,6)];
+  	data5 <- originData5[,c(1,5,6)];
+  	data6 <- originData6[,c(1,5,6)];
+
+  	xcolnames = c(0.0,0.3,0.4,0.5,0.6,0.7);
+
+    boxtext=paste(figlabel[fignum], species, sep="");
+  	fignum=fignum+1;
+  	output3=paste("./result/images/bp_net_",mat,sep="");
+    output3=paste(output3,"jpeg",sep=".")
+    jpeg(filename=output3,quality=100,width=1200,height=1200,pointsize=34);
+    par(mar=c(5,5,4,2)+0.1);
+	boxplot(data1[,3],data2[,3],
+			data3[,3],data4[,3],
+			data5[,3],data6[,3],
+			ylim=c(0,1.2),
+			#xaxt="n",
+			names=c(0.0, 0.3,0.4,0.5,0.6,0.7),
+			border=c("black","antiquewhite4","black","antiquewhite4","black","antiquewhite4"),
+			col= c("gray","gray","gray","gray","gray","gray"),
+			cex.lab=2.0,cex.axis=1.5,cex.main=2.0,ylab=expression(bar("BPscore")));
+			#legend("topleft",legend=c("NetCoffee","IsoRank-N"),lwd=2.5,col=c("gray","black"),pch=c(15,22));
+			text(5,1.1,boxtext,cex=2);
+			#axis(1, at = c(1.5,3.5,5.5,7.5,9.5), labels = xcolnames, cex.axis=1.5);
+	dev.off()
+	
+	boxtext=paste(figlabel[fignum], species, sep="");
+  	fignum=fignum+1;
+    
+    browser();
+  
+    output2=paste("./result/images/mf_net_",mat,sep="");
+    output2=paste(output2,"jpeg",sep=".")
+  jpeg(filename=output2,quality=100,width=1200,height=1200,pointsize=34);
+  par(mar=c(5,5,4,2)+0.1)
+	boxplot(data1[,2],data2[,2],
+			data3[,2],data4[,2],
+			data5[,2],data6[,2],
+			ylim=c(0,1.2),
+			#xaxt="n",
+			names=c(0.0,0.3,0.4,0.5,0.6,0.7),
+			border = c("black","antiquewhite4","black","antiquewhite4","black","antiquewhite4"),
+			col= c("gray","gray","gray","gray","gray","gray"),
+			cex.lab=2.0,cex.axis=1.5,cex.main=2.0,ylab=expression(bar("MFscore")));
+			#legend("topleft",legend=c("NetCoffee","IsoRank-N"),lwd=2.5,col=c("black","antiquewhite4"),pch=c(15,22));
+			text(5,1.1,boxtext,cex=2);
+			#axis(1, at = c(1.5,3.5,5.5,7.5,9.5), labels = xcolnames, cex.axis=1.5);
+	dev.off()
+	
+	boxtext=paste(figlabel[fignum], species, sep="");
+  	fignum=fignum+1;    
+    output1=paste("./result/images/rfunsim_net_",mat,sep="");
+    output1=paste(output1,"jpeg",sep=".")
+    jpeg(filename=output1,quality=100,width=1200,height=1200,pointsize=34);
+  par(mar=c(5,5,4,2)+0.1)
+	boxplot(data1[,1],data2[,1],
+			data3[,1],data4[,1],
+			data5[,1],data6[,1],
+			ylim=c(0,1.2),
+			#xaxt="n",
+			names=c(0.0,0.3,0.4,0.5,0.6,0.7),
+			border = c("black","antiquewhite4","black","antiquewhite4","black","antiquewhite4"),
+			col= c("gray","gray","gray","gray","gray","gray"),
+			cex.lab=2.0,cex.axis=1.5,cex.main=2.0,ylab=expression(bar("rfunSim")));
+			#legend("topleft",legend=c("NetCoffee","IsoRank-N"),lwd=2.5,col=c("black","antiquewhite4"),pch=c(15,22));
+			text(5,1.1,boxtext,cex=2);
+	#axis(1, at = c(1.5,3.5,5.5,7.5,9.5), labels = xcolnames, cex.axis=1.5);
+	dev.off()
+
+	species=species+1;
+    
+  }
+}
+
 drawBoxplotMatchSet_i <- function()
 {
   matchset <- c("matchsets-three.txt", "matchsets-four.txt","matchsets-five.txt");

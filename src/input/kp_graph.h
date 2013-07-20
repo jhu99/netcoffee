@@ -37,6 +37,16 @@ public:
     StWeightMap stWeight;
   }BpGraph;
   TEMPLATE_GRAPH_TYPEDEFS(Graph);
+	typedef struct _PrivateVariable
+	{
+		typename NetworkPool::GraphData *network_1,*network_2,*network_k;
+		BpGraph *bp12,*bp1k,*bp2k;
+		EdgeMap::iterator it,pt;
+		int nc,x;
+		std::string protein1,protein2,protein3,protein4,protein5,protein6,kst1,kst2,kst3,kst4,kst5,kst6;//Protein in left and right circles.
+		Node nodeA1,nodeA2,nodeA3,nodeB1,nodeB2,nodeB3;
+		_PrivateVariable(){nc=0;x=0;}
+	}PrivateVariable;
   
   std::vector<std::string> fileList;
   std::vector<BpGraph*> graphs;
@@ -47,8 +57,9 @@ public:
   int  getBpIndex(int,int);
   bool readHomoList(std::string&,BpGraph*,int,int);
   bool constructGraph();
+	bool reweighting_parallel(NetworkPool&,int,int,PrivateVariable&);
   bool reweighting(NetworkPool&,int,int);
-  bool reweightingAll(NetworkPool&);
+  bool reweightingAll(NetworkPool&,int);
   bool isEdge(std::string protein,GraphData*);
   bool createBpGraph(Graph&,OrigLabelNodeMap&,InvOrigLabelNodeMap&,EdgeWeight&,NetworkPool&);
 };
@@ -131,6 +142,7 @@ bool KpGraph<NetworkPool>::constructGraph()
   int i=0;
   for(int ni=0;ni<numSpecies;ni++)
   {
+//#pragma omp parallel for
     for(int nj=ni;nj<numSpecies;nj++,i++)
     {
 		graphs.push_back(new BpGraph());
@@ -210,15 +222,57 @@ bool KpGraph<NetworkPool>::readHomoList(std::string& filename,BpGraph* graph,int
 }
 
 template<typename NetworkPool>
-bool KpGraph<NetworkPool>::reweightingAll(NetworkPool& networkpool)
+bool KpGraph<NetworkPool>::reweightingAll(NetworkPool& networkpool,int numthreads)
 {
   constructGraph();
-  for(int ni=0;ni<numSpecies-1;ni++)
-    for(int nj=ni+1;nj<numSpecies;nj++)
-      reweighting(networkpool,ni,nj);
+	int ni,nj;
+	ni=nj=0;
+	//int nspecies=numSpecies;
+
+	PrivateVariable myPrivateVariable;
+#pragma omp parallel for num_threads(numthreads) shared(ni,nj,networkpool) schedule(dynamic,1) private(myPrivateVariable)
+	for(int num=0;num<numSpecies*(numSpecies-1)/2;num++)
+	{
+		#pragma omp critical
+		{
+			if(nj<numSpecies-1)nj++;
+			else{ni++;nj=ni+1;}
+		}
+		reweighting_parallel(networkpool,ni,nj,myPrivateVariable);
+	}
   return true;
 }
 
+template<typename NetworkPool>
+bool KpGraph<NetworkPool>::reweighting_parallel(NetworkPool& networkpool,int ni,int nj,PrivateVariable& myPrivateVariable)
+{
+  //myindex=getBpIndex(ni,nj);
+	//EdgeMap::iterator it;
+#pragma omp critical
+	{  
+		std::cout << omp_get_thread_num() << " " <<ni <<" "<< nj<< std::endl;
+	}
+	myPrivateVariable.network_1 = networkpool.getGraph(ni);// The first network
+  myPrivateVariable.network_2 = networkpool.getGraph(nj);// The second network
+	myPrivateVariable.bp12=graphs[getBpIndex(ni,nj)];
+	for(myPrivateVariable.it=myPrivateVariable.bp12->redBlue.begin();myPrivateVariable.it!=myPrivateVariable.bp12->redBlue.end();++myPrivateVariable.it,++myPrivateVariable.nc)
+  {
+    myPrivateVariable.protein1=myPrivateVariable.it->first;
+    myPrivateVariable.protein2=myPrivateVariable.it->second;
+    if(!isEdge(myPrivateVariable.protein1,myPrivateVariable.network_1)||!isEdge(myPrivateVariable.protein2,myPrivateVariable.network_2))continue;
+    myPrivateVariable.kst1.append(myPrivateVariable.protein1);myPrivateVariable.kst1.append(myPrivateVariable.protein2);
+    myPrivateVariable.nodeA1=(*myPrivateVariable.network_1->invIdNodeMap)[myPrivateVariable.protein1];
+    myPrivateVariable.nodeA2=(*myPrivateVariable.network_2->invIdNodeMap)[myPrivateVariable.protein2];
+		for(x=nj+1;x<numSpecies;++x)
+    {
+			network_k = networkpool.getGraph(x);// The third network
+      bp1k=graphs[getBpIndex(ni,x)];
+      bp2k=graphs[getBpIndex(nj,x)];
+      range=bp1k->redBlue.equal_range(protein1);
+		}
+	}
+	return true;
+}
 template<typename NetworkPool>
 bool KpGraph<NetworkPool>::reweighting(NetworkPool& networkpool,int ni,int nj)
 {

@@ -175,3 +175,8 @@ ISORANK-N took 256903 seconds for six species.
 The parameter of alpha is 0.3 .
 ISORANK-N took 256906 seconds for six species.
 
+================================================================
+==== RUN FOR FIVE SPECIES ======================================
+================================================================
+------------------------NETCOFFEE------------------------------
+It takes u: 1272.04s, s: 16.38s, cu: 0s, cs: 0s, real: 1412.78s seconds to obtain the alignment with alpha 0.

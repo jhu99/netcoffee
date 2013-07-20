@@ -5,6 +5,7 @@ Data: 18.06.2012*/
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <omp.h>
 #include <lemon/list_graph.h>
 #include <lemon/smart_graph.h>
 #include <lemon/arg_parser.h>
@@ -44,6 +45,7 @@ typedef struct _Option
   double threshold;
   int numspecies;
   int nmax;
+	int numthreads;
   std::string alignmentfile;
   std::string avefunsimfile;
   std::string recordsfile;
@@ -64,6 +66,7 @@ typedef struct _Option
   analyze(false), model(false),bscore(false),task(0),edgefactor(0.1),alpha(0.5),beta(1.0),threshold(0.4),numspecies(5),nmax(2000)
   {
     profile="./profile.input";
+		numthreads=omp_get_max_threads();
   }
 }Option;
 
@@ -99,6 +102,7 @@ bool setParser(ArgParser& parser, Option& myoption)
   .refOption("alpha", "Prameter controlling how much topology score contributes to the alignment score. Default is 0.5.", myoption.alpha)
   .refOption("edgefactor", "The factor of the power law normalization. Default is 0.1.", myoption.alpha)
   .refOption("numspecies","Number of the species compared. Default is 4.", myoption.numspecies)
+	.refOption("numthreads","Number of threads running in parallel.", myoption.numthreads)
   .refOption("profile","Profile of input parameters.", myoption.profile)
   .refOption("formatfile","Profile of input parameters.", myoption.formatfile)
   .refOption("orthologyfile","Training data for orthology model.", myoption.orthologyfile)
@@ -169,7 +173,7 @@ int main(int argc, char** argv)
     else if(myoption.task==1)
     {
       t.restart();
-      networks.initNetworkPool(myoption.networkfiles);
+			networks.initNetworkPool(myoption.networkfiles,myoption.numthreads);
       records.createRecords_MNetAligner(myoption.blastfiles,networks);
       t.stop();
       mylog <<"------------------------M-NETALIGNER-------------------------"<<std::endl;
@@ -182,7 +186,7 @@ int main(int argc, char** argv)
     else if(myoption.task==3)
     {
       /// Construct triple nodes using tcoffee.
-      networks.initNetworkPool(myoption.networkfiles);
+      networks.initNetworkPool(myoption.networkfiles,myoption.numthreads);
       kpgraph.constructGraph();
       //records.createRecords_t(kpgraph,networks);
     }
@@ -192,7 +196,7 @@ int main(int argc, char** argv)
   {
     t.restart();
     SimulatedAnnealingType simAnnealing(myoption);
-    networks.initNetworkPool(myoption.networkfiles);
+    networks.initNetworkPool(myoption.networkfiles,myoption.numthreads);
     if(myoption.task==0)
     {
       // run simulated annealing on multiple networks.
@@ -231,7 +235,7 @@ int main(int argc, char** argv)
     {
       // Figure out annotation information of proteins.
       // Figure out coverage performance of the alignment.
-      networks.initNetworkPool(myoption.networkfiles);
+      networks.initNetworkPool(myoption.networkfiles,myoption.numthreads);
       std::cout << "Annotation information of proteins in " << myoption.alignmentfile <<std::endl;
       analyzer.readAlignment(myoption.alignmentfile.c_str());/// alignment file must strictly on the format
       analyzer.getAlignmentCoverage(networks);
@@ -242,14 +246,14 @@ int main(int argc, char** argv)
       // Analyze the alignment results in term of semantic similarity with GO.
       // Get average score.
       analyzer.readAlignment(myoption.alignmentfile.c_str());/// alignment file must strictly on the format
-      //analyzer.convert_fsst();
-      //analyzer.deleteRedundancy();
+      analyzer.convert_fsst();
+      analyzer.deleteRedundancy();
       analyzer.getMulFunSim(myoption.avefunsimfile);// avefunsimfile is fsst.result file
     }
     else if(myoption.task==2)
     {
       // Get average score for match-sets conserved by i species.
-      networks.initNetworkPool(myoption.networkfiles);
+      networks.initNetworkPool(myoption.networkfiles,myoption.numthreads);
       analyzer.getMatchSet_i(myoption.avefunsimfile,networks);
     }
     else if(myoption.task==3)
@@ -277,7 +281,7 @@ int main(int argc, char** argv)
     {
       // discard bipartite edges whose involving proteins donnot appear in the ppi networks.
       FormatType myformat(myoption);
-      networks.initNetworkPool(myoption.networkfiles);
+      networks.initNetworkPool(myoption.networkfiles,myoption.numthreads);
       myformat.removeBiEdges(networks);
     }else if(myoption.task==3)
     {
@@ -295,7 +299,7 @@ int main(int argc, char** argv)
 	{
 	  // format graemlin homology data to evals format.
 	  FormatType myformat(myoption);
-	  networks.initNetworkPool(myoption.networkfiles);
+	  networks.initNetworkPool(myoption.networkfiles,myoption.numthreads);
     myformat.extractHomologyProteins(myoption.formatfile,networks);
 	}else if(myoption.task==6)
 	{
