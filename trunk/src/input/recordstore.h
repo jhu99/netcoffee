@@ -197,6 +197,7 @@ public:
   std::string resultfolder;
   unsigned length;
   unsigned numSpecies;
+	int numThreads;
   float maxNodeScore;
   float minNodeScore;
   unsigned maxStrScore;
@@ -257,6 +258,7 @@ RecordStore<KpGraph,Option>::RecordStore(std::string& filename1,
 ,matchingEdges(NULL)
 ,length(0)
 ,numSpecies(myoption.numspecies)
+,numThreads(myoption.numthreads)
 ,maxNodeScore(0.0)
 ,minNodeScore(0.0)
 ,maxStrScore(0)
@@ -498,7 +500,7 @@ RecordStore<KpGraph,Option>::createBpGraphAll(KpGraph& kpgraph,NetworkPool& netw
   filename.append("scoreRecords.txt");
   std::ofstream output(filename.c_str());
   output.close();
-  kpgraph.reweightingAll(networkpool);
+  kpgraph.reweightingAll(networkpool,numThreads);
   readScore(rfile.c_str());
   int i=0;
   for(unsigned ni=0;ni<numSpecies;ni++)
