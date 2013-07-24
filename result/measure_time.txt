@@ -180,3 +180,13 @@ ISORANK-N took 256906 seconds for six species.
 ================================================================
 ------------------------NETCOFFEE------------------------------
 It takes u: 1272.04s, s: 16.38s, cu: 0s, cs: 0s, real: 1412.78s seconds to obtain the alignment with alpha 0.
+------------------------NETCOFFEE------------------------------
+It takes u: 4.51s, s: 0.09s, cu: 0s, cs: 0s, real: 4.51202s seconds to obtain the alignment with alpha 0.5.
+------------------------NETCOFFEE------------------------------
+It takes u: 2506.78s, s: 0.98s, cu: 0s, cs: 0s, real: 1311.69s seconds to obtain the alignment with alpha 0.5.
+------------------------NETCOFFEE------------------------------
+It takes u: 0.02s, s: 0.01s, cu: 0s, cs: 0s, real: 205.38s seconds to obtain the alignment with alpha 0.5.
+------------------------NETCOFFEE------------------------------
+It takes u: 0s, s: 0s, cu: 0s, cs: 0s, real: 0.00997519s seconds to obtain the alignment with alpha 0.5.
+------------------------NETCOFFEE------------------------------
+It takes u: 0.01s, s: 0s, cu: 0s, cs: 0s, real: 0.00530195s seconds to obtain the alignment with alpha 0.5.

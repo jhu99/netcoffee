@@ -42,9 +42,11 @@ public:
 		typename NetworkPool::GraphData *network_1,*network_2,*network_k;
 		BpGraph *bp12,*bp1k,*bp2k;
 		EdgeMap::iterator it,pt;
+		IncEdgeIt ie,pe,me;
 		int nc,x;
 		std::string protein1,protein2,protein3,protein4,protein5,protein6,kst1,kst2,kst3,kst4,kst5,kst6;//Protein in left and right circles.
 		Node nodeA1,nodeA2,nodeA3,nodeB1,nodeB2,nodeB3;
+		std::pair<EdgeMap::iterator,EdgeMap::iterator> range;
 		_PrivateVariable(){nc=0;x=0;}
 	}PrivateVariable;
   
@@ -57,7 +59,7 @@ public:
   int  getBpIndex(int,int);
   bool readHomoList(std::string&,BpGraph*,int,int);
   bool constructGraph();
-	bool reweighting_parallel(NetworkPool&,int,int,PrivateVariable&);
+  bool reweighting_parallel(NetworkPool&,int,int,PrivateVariable&);
   bool reweighting(NetworkPool&,int,int);
   bool reweightingAll(NetworkPool&,int);
   bool isEdge(std::string protein,GraphData*);
@@ -240,36 +242,105 @@ bool KpGraph<NetworkPool>::reweightingAll(NetworkPool& networkpool,int numthread
 		}
 		reweighting_parallel(networkpool,ni,nj,myPrivateVariable);
 	}
+	//#pragma omp parallel for collapse(2) for() for();; omp_set_nested(1);
   return true;
 }
 
 template<typename NetworkPool>
 bool KpGraph<NetworkPool>::reweighting_parallel(NetworkPool& networkpool,int ni,int nj,PrivateVariable& myPrivateVariable)
 {
-  //myindex=getBpIndex(ni,nj);
-	//EdgeMap::iterator it;
-#pragma omp critical
+	#pragma omp critical
 	{  
-		std::cout << omp_get_thread_num() << " " <<ni <<" "<< nj<< std::endl;
+	std::cout << omp_get_thread_num() << " " <<ni <<" "<< nj<< std::endl;
 	}
 	myPrivateVariable.network_1 = networkpool.getGraph(ni);// The first network
-  myPrivateVariable.network_2 = networkpool.getGraph(nj);// The second network
+	myPrivateVariable.network_2 = networkpool.getGraph(nj);// The second network
 	myPrivateVariable.bp12=graphs[getBpIndex(ni,nj)];
 	for(myPrivateVariable.it=myPrivateVariable.bp12->redBlue.begin();myPrivateVariable.it!=myPrivateVariable.bp12->redBlue.end();++myPrivateVariable.it,++myPrivateVariable.nc)
-  {
-    myPrivateVariable.protein1=myPrivateVariable.it->first;
-    myPrivateVariable.protein2=myPrivateVariable.it->second;
-    if(!isEdge(myPrivateVariable.protein1,myPrivateVariable.network_1)||!isEdge(myPrivateVariable.protein2,myPrivateVariable.network_2))continue;
-    myPrivateVariable.kst1.append(myPrivateVariable.protein1);myPrivateVariable.kst1.append(myPrivateVariable.protein2);
-    myPrivateVariable.nodeA1=(*myPrivateVariable.network_1->invIdNodeMap)[myPrivateVariable.protein1];
-    myPrivateVariable.nodeA2=(*myPrivateVariable.network_2->invIdNodeMap)[myPrivateVariable.protein2];
-		for(x=nj+1;x<numSpecies;++x)
-    {
-			network_k = networkpool.getGraph(x);// The third network
-      bp1k=graphs[getBpIndex(ni,x)];
-      bp2k=graphs[getBpIndex(nj,x)];
-      range=bp1k->redBlue.equal_range(protein1);
+	{
+	    myPrivateVariable.protein1=myPrivateVariable.it->first;
+	    myPrivateVariable.protein2=myPrivateVariable.it->second;
+	    if(!isEdge(myPrivateVariable.protein1,myPrivateVariable.network_1)||!isEdge(myPrivateVariable.protein2,myPrivateVariable.network_2))continue;
+	    myPrivateVariable.kst1.append(myPrivateVariable.protein1);myPrivateVariable.kst1.append(myPrivateVariable.protein2);
+	    myPrivateVariable.nodeA1=(*myPrivateVariable.network_1->invIdNodeMap)[myPrivateVariable.protein1];
+	    myPrivateVariable.nodeA2=(*myPrivateVariable.network_2->invIdNodeMap)[myPrivateVariable.protein2];
+		for(myPrivateVariable.x=nj+1;myPrivateVariable.x<numSpecies;++myPrivateVariable.x)
+	    {
+			myPrivateVariable.network_k = networkpool.getGraph(myPrivateVariable.x);// The third network
+			myPrivateVariable.bp1k=graphs[getBpIndex(ni,myPrivateVariable.x)];
+			myPrivateVariable.bp2k=graphs[getBpIndex(nj,myPrivateVariable.x)];
+			myPrivateVariable.range=myPrivateVariable.bp1k->redBlue.equal_range(myPrivateVariable.protein1);
+			for(myPrivateVariable.pt=myPrivateVariable.range.first;myPrivateVariable.pt!=myPrivateVariable.range.second;++myPrivateVariable.pt)
+		    {
+		        myPrivateVariable.protein3=myPrivateVariable.pt->second;
+		        if(!isEdge(myPrivateVariable.protein3,myPrivateVariable.network_k))continue;
+		        myPrivateVariable.nodeA3 =(*myPrivateVariable.network_k->invIdNodeMap)[myPrivateVariable.protein3];
+		        myPrivateVariable.kst2.append(myPrivateVariable.protein1);
+		        myPrivateVariable.kst2.append(myPrivateVariable.protein3);
+		        myPrivateVariable.kst3.append(myPrivateVariable.protein2);
+		        myPrivateVariable.kst3.append(myPrivateVariable.protein3);
+		        if(myPrivateVariable.bp2k->stWeight.find(myPrivateVariable.kst3)!=myPrivateVariable.bp2k->stWeight.end())
+		        {
+		          /// Find a left circle. Then we need to check whether there exist a right circle.
+		          for(myPrivateVariable.ie=IncEdgeIt(*(myPrivateVariable.network_1->g),myPrivateVariable.nodeA1);myPrivateVariable.ie!=lemon::INVALID;++myPrivateVariable.ie)
+		          {
+					  myPrivateVariable.nodeB1=myPrivateVariable.network_1->g->runningNode(myPrivateVariable.ie);
+			            myPrivateVariable.protein4=(*myPrivateVariable.network_1->label)[myPrivateVariable.nodeB1];
+			            if(!isEdge(myPrivateVariable.protein4,myPrivateVariable.network_1))continue;
+			            for(myPrivateVariable.pe=IncEdgeIt((*myPrivateVariable.network_2->g),myPrivateVariable.nodeA2);myPrivateVariable.pe!=lemon::INVALID;++myPrivateVariable.pe)
+			            {
+			              myPrivateVariable.nodeB2=myPrivateVariable.network_2->g->runningNode(myPrivateVariable.pe);
+			              myPrivateVariable.protein5=(*myPrivateVariable.network_2->label)[myPrivateVariable.nodeB2];
+			              if(!isEdge(myPrivateVariable.protein5,myPrivateVariable.network_2))continue;
+			              myPrivateVariable.kst4.append(myPrivateVariable.protein4);
+			              myPrivateVariable.kst4.append(myPrivateVariable.protein5);
+						  for(myPrivateVariable.me=IncEdgeIt((*myPrivateVariable.network_k->g),myPrivateVariable.nodeA3);myPrivateVariable.me!=lemon::INVALID;++myPrivateVariable.me)
+			              {
+			                myPrivateVariable.nodeB3=myPrivateVariable.network_k->g->runningNode(myPrivateVariable.me);
+			                myPrivateVariable.protein6=(*myPrivateVariable.network_k->label)[myPrivateVariable.nodeB3];
+			                if(!isEdge(myPrivateVariable.protein6,myPrivateVariable.network_k))continue;
+			                myPrivateVariable.kst5.append(myPrivateVariable.protein4);
+			                myPrivateVariable.kst5.append(myPrivateVariable.protein6);
+			                myPrivateVariable.kst6.append(myPrivateVariable.protein5);
+			                myPrivateVariable.kst6.append(myPrivateVariable.protein6);
+			                if(myPrivateVariable.bp1k->stWeight.find(myPrivateVariable.kst5)!=myPrivateVariable.bp1k->stWeight.end()
+			                  && myPrivateVariable.bp2k->stWeight.find(myPrivateVariable.kst6)!=myPrivateVariable.bp2k->stWeight.end())
+			                  {
+			                    /// reweight on match edges.
+			                    myPrivateVariable.bp1k->stWeight[myPrivateVariable.kst2]++;
+			                    myPrivateVariable.bp1k->stWeight[myPrivateVariable.kst5]++;
+			                    myPrivateVariable.bp2k->stWeight[myPrivateVariable.kst3]++;
+			                    myPrivateVariable.bp2k->stWeight[myPrivateVariable.kst6]++;
+			                    myPrivateVariable.bp12->stWeight[myPrivateVariable.kst1]++;
+			                    #pragma omp flush(maxStrWeight)
+			                    if(maxStrWeight < myPrivateVariable.bp12->stWeight[myPrivateVariable.kst1])
+			                    {
+			                    #pragma omp critical
+			                    {			                    
+			                      maxStrWeight = myPrivateVariable.bp12->stWeight[myPrivateVariable.kst1];}
+								}
+			                    if(myPrivateVariable.bp12->stWeight.find(myPrivateVariable.kst4)!=myPrivateVariable.bp12->stWeight.end())
+			                    {
+			                      myPrivateVariable.bp12->stWeight[myPrivateVariable.kst4]++;
+			                      #pragma omp flush(maxStrWeight)
+			                      if(maxStrWeight < myPrivateVariable.bp12->stWeight[myPrivateVariable.kst4])
+			                      {
+			                      #pragma omp critical
+			                      {			                      
+			                        maxStrWeight = myPrivateVariable.bp12->stWeight[myPrivateVariable.kst4];}
+								  }
+			                    }
+			                  }
+			                  myPrivateVariable.kst5.clear();myPrivateVariable.kst6.clear();
+						  }
+						  myPrivateVariable.kst4.clear();
+						}
+				  }
+				}
+				 myPrivateVariable.kst2.clear();myPrivateVariable.kst3.clear();
+			}
 		}
+		myPrivateVariable.kst1.clear();
 	}
 	return true;
 }
