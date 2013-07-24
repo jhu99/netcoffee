@@ -16,9 +16,9 @@ endif
 LEMON = include/lemon-1.2.3
 
 ifeq ($(MODE),Debug)
-	CXXFLAGS = -Wall -g3 -DDEBUG -std=c++0x -DVERBOSE -I$(LEMON)/ -Isrc/ -Isrc/input/ -Isrc/algorithms/
+	CXXFLAGS = -Wall -g3 -DDEBUG -std=c++0x -fopenmp -DVERBOSE -I$(LEMON)/ -Isrc/ -Isrc/input/ -Isrc/algorithms/
 else
-	CXXFLAGS = -Wall -O3 -ffast-math -fcaller-saves -finline-functions -std=c++0x -DNDEBUG -I$(LEMON)/ -Isrc/ -Isrc/input/ -Isrc/algorithms/
+	CXXFLAGS = -Wall -O3 -ffast-math -fcaller-saves -finline-functions -std=c++0x -fopenmp -DNDEBUG -I$(LEMON)/ -Isrc/ -Isrc/input/ -Isrc/algorithms/
 endif
 
 all: netcoffee move

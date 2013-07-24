@@ -63,9 +63,9 @@ typedef struct _Option
   std::vector<std::string> associationfiles;/// gene ontology association
   _Option()
   : out(false), create_records(false),
-  analyze(false), model(false),bscore(false),task(0),edgefactor(0.1),alpha(0.5),beta(1.0),threshold(0.4),numspecies(5),nmax(2000)
+  analyze(false), model(false),bscore(false),task(1),edgefactor(0.1),alpha(0.5),beta(1.0),threshold(0.4),numspecies(4),nmax(2000)
   {
-    profile="./profile.input";
+    profile="./test_profile.input";
 		numthreads=omp_get_max_threads();
   }
 }Option;
@@ -122,8 +122,8 @@ bool runParser(ArgParser& myparser, Option& myoption)
 {
   std::string filename;
   ProcessProfile<Option> myprofile(myoption.profile);
-  myprofile.getOption(myoption);
   myparser.run();
+  myprofile.getOption(myoption);
   filename.append(myoption.resultfolder);
   filename.append(myoption.avefunsimfile);
   myoption.avefunsimfile=filename;
@@ -209,7 +209,7 @@ int main(int argc, char** argv)
     {
       // run simulated annealing on multiple networks with tcoffee technique.
       records.createBpGraphAll(kpgraph,networks);
-      simAnnealing.run_t(kpgraph,records,networks);
+      //simAnnealing.run_t(kpgraph,records,networks);
       mylog <<"------------------------NETCOFFEE------------------------------"<<std::endl;
       mylog <<"It takes "<<t <<" seconds to obtain the alignment with alpha "<<myoption.alpha<<"."<<std::endl;
     }

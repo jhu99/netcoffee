@@ -19,6 +19,21 @@ format <- function(filelist)#filename1 inputfile filename2 outputfile
     write.table(simpleData,file=filename2,sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE);
   }
 }
+#format test cf file
+format_testfile <- function(filelist)#filename1 inputfile filename2 outputfile
+{
+  for(filename in filelist)
+  {
+    originData <- as.matrix(read.csv(filename, sep = " ", quote="", header=TRUE, row.names=NULL,comment="!"));
+    simpleData <- originData;
+    nrow <- dim(simpleData)[1];
+    s <- rep(10^-50,nrow);
+    simpleData <- cbind(simpleData,s);
+    filename2 <- paste(filename,'data',sep=".");
+    write.table(simpleData,file=filename,sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE);
+  }
+}
+
 format_dip <- function(filelist)#filename1 inputfile filename2 outputfile
 {
   for(filename in filelist)
