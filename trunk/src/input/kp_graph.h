@@ -58,8 +58,9 @@ public:
   KpGraph(std::vector<std::string>&,int);//{fileList=files;}
   int  getBpIndex(int,int);
   bool readHomoList(std::string&,BpGraph*,int,int);
-  bool constructGraph();
+  bool constructGraph(int);
   bool reweighting_parallel(NetworkPool&,int,int,PrivateVariable&);
+	bool outputWeight(NetworkPool&,int,int,PrivateVariable&);
   bool reweighting(NetworkPool&,int,int);
   bool reweightingAll(NetworkPool&,int);
   bool isEdge(std::string protein,GraphData*);
@@ -138,19 +139,27 @@ int KpGraph<NetworkPool>::getBpIndex(int i,int j)
 }
 
 template<typename NetworkPool>
-bool KpGraph<NetworkPool>::constructGraph()
+bool KpGraph<NetworkPool>::constructGraph(int numthreads)
 {
   graphs.clear();
-  int i=0;
-  for(int ni=0;ni<numSpecies;ni++)
-  {
-//#pragma omp parallel for
-    for(int nj=ni;nj<numSpecies;nj++,i++)
-    {
-		graphs.push_back(new BpGraph());
-		readHomoList(fileList[i],graphs[i],ni,nj);
+  int ni,nj;
+	ni=0;nj=-1;
+	int numBp=numSpecies*(numSpecies+1)/2;
+	//graphs.resize(numBp);
+#pragma omp parallel for num_threads(numthreads) shared(ni,nj) schedule(dynamic,1) ordered
+	for(int i=0;i<numBp;i++)
+	{
+		int lni,lnj;
+		#pragma omp ordered
+		{
+			if(nj<numSpecies-1)nj++;
+			else{ni++;nj=ni;}
+			lni=ni;
+			lnj=nj;
+			graphs.push_back(new BpGraph());
+		}
+		readHomoList(fileList[i],graphs[i],lni,lnj);
 	}
-  }
   return true;
 }
 
@@ -192,6 +201,10 @@ bool KpGraph<NetworkPool>::readHomoList(std::string& filename,BpGraph* graph,int
     std::cerr << filename << "cannot be opened" <<std::endl;
     return false;
   }
+#pragma omp critical
+	{
+	std::cout << omp_get_thread_num() << "\t" << ni <<"\t" << nj << std::endl;
+	}
   while(std::getline(input,line))
   {
     std::stringstream lineStream(line);
@@ -205,7 +218,7 @@ bool KpGraph<NetworkPool>::readHomoList(std::string& filename,BpGraph* graph,int
 			protein1 = protein2;
 			protein2 = temp;
 		}
-	}
+		}
 	keystring.append(protein1);keystring.append(protein2);
     if(graph->seWeight.find(keystring)!=graph->seWeight.end())
     {
@@ -226,33 +239,57 @@ bool KpGraph<NetworkPool>::readHomoList(std::string& filename,BpGraph* graph,int
 template<typename NetworkPool>
 bool KpGraph<NetworkPool>::reweightingAll(NetworkPool& networkpool,int numthreads)
 {
-  constructGraph();
+  constructGraph(numthreads);
 	int ni,nj;
 	ni=nj=0;
-	//int nspecies=numSpecies;
 
 	PrivateVariable myPrivateVariable;
 #pragma omp parallel for num_threads(numthreads) shared(ni,nj,networkpool) schedule(dynamic,1) private(myPrivateVariable)
 	for(int num=0;num<numSpecies*(numSpecies-1)/2;num++)
 	{
+		int lni,lnj;
 		#pragma omp critical
 		{
 			if(nj<numSpecies-1)nj++;
 			else{ni++;nj=ni+1;}
+			lni=ni;lnj=nj;
 		}
-		reweighting_parallel(networkpool,ni,nj,myPrivateVariable);
-	}
+		reweighting_parallel(networkpool,lni,lnj,myPrivateVariable);
+	}	
+	//#pragma omp parallel for num_threads(numthreads) shared(ni,nj,networkpool) schedule(dynamic,1) private(myPrivateVariable)
+	/*ni=nj=0;
+	for(int num=0;num<numSpecies*(numSpecies-1)/2;num++)
+	{
+			if(nj<numSpecies-1)nj++;
+			else{ni++;nj=ni+1;}
+		outputWeight(networkpool,ni,nj,myPrivateVariable);
+	}	*/
 	//#pragma omp parallel for collapse(2) for() for();; omp_set_nested(1);
   return true;
 }
 
 template<typename NetworkPool>
+bool KpGraph<NetworkPool>::outputWeight(NetworkPool& networkpool,int ni,int nj,PrivateVariable& myPrivateVariable)
+{
+	std::cout << "Thread number: "<<omp_get_thread_num() << " Bipartite graph: " <<ni <<" -> "<< nj<< std::endl;
+	myPrivateVariable.network_1 = networkpool.getGraph(ni);// The first network
+	myPrivateVariable.network_2 = networkpool.getGraph(nj);// The second network
+	myPrivateVariable.bp12=graphs[getBpIndex(ni,nj)];
+	for(myPrivateVariable.it=myPrivateVariable.bp12->redBlue.begin();myPrivateVariable.it!=myPrivateVariable.bp12->redBlue.end();++myPrivateVariable.it)
+	{
+			myPrivateVariable.protein1=myPrivateVariable.it->first;
+	    myPrivateVariable.protein2=myPrivateVariable.it->second;
+			if(!isEdge(myPrivateVariable.protein1,myPrivateVariable.network_1)||!isEdge(myPrivateVariable.protein2,myPrivateVariable.network_2))continue;
+	    myPrivateVariable.kst1.append(myPrivateVariable.protein1);myPrivateVariable.kst1.append(myPrivateVariable.protein2);
+				std::cout << myPrivateVariable.protein1 << "\t" << myPrivateVariable.protein2 <<"\t" <<myPrivateVariable.bp12->stWeight[myPrivateVariable.kst1] << std::endl;
+				myPrivateVariable.kst1.clear();
+	}
+	return true;
+}
+
+template<typename NetworkPool>
 bool KpGraph<NetworkPool>::reweighting_parallel(NetworkPool& networkpool,int ni,int nj,PrivateVariable& myPrivateVariable)
 {
-	#pragma omp critical
-	{  
-	std::cout << omp_get_thread_num() << " " <<ni <<" "<< nj<< std::endl;
-	}
 	myPrivateVariable.network_1 = networkpool.getGraph(ni);// The first network
 	myPrivateVariable.network_2 = networkpool.getGraph(nj);// The second network
 	myPrivateVariable.bp12=graphs[getBpIndex(ni,nj)];
@@ -294,6 +331,7 @@ bool KpGraph<NetworkPool>::reweighting_parallel(NetworkPool& networkpool,int ni,
 			              if(!isEdge(myPrivateVariable.protein5,myPrivateVariable.network_2))continue;
 			              myPrivateVariable.kst4.append(myPrivateVariable.protein4);
 			              myPrivateVariable.kst4.append(myPrivateVariable.protein5);
+										if(myPrivateVariable.bp12->stWeight.find(myPrivateVariable.kst4)==myPrivateVariable.bp12->stWeight.end()){myPrivateVariable.kst4.clear();continue;}
 						  for(myPrivateVariable.me=IncEdgeIt((*myPrivateVariable.network_k->g),myPrivateVariable.nodeA3);myPrivateVariable.me!=lemon::INVALID;++myPrivateVariable.me)
 			              {
 			                myPrivateVariable.nodeB3=myPrivateVariable.network_k->g->runningNode(myPrivateVariable.me);
@@ -307,29 +345,39 @@ bool KpGraph<NetworkPool>::reweighting_parallel(NetworkPool& networkpool,int ni,
 			                  && myPrivateVariable.bp2k->stWeight.find(myPrivateVariable.kst6)!=myPrivateVariable.bp2k->stWeight.end())
 			                  {
 			                    /// reweight on match edges.
+#pragma omp critical
+													{
 			                    myPrivateVariable.bp1k->stWeight[myPrivateVariable.kst2]++;
 			                    myPrivateVariable.bp1k->stWeight[myPrivateVariable.kst5]++;
 			                    myPrivateVariable.bp2k->stWeight[myPrivateVariable.kst3]++;
 			                    myPrivateVariable.bp2k->stWeight[myPrivateVariable.kst6]++;
 			                    myPrivateVariable.bp12->stWeight[myPrivateVariable.kst1]++;
-			                    #pragma omp flush(maxStrWeight)
+													myPrivateVariable.bp12->stWeight[myPrivateVariable.kst4]++;
 			                    if(maxStrWeight < myPrivateVariable.bp12->stWeight[myPrivateVariable.kst1])
 			                    {
-			                    #pragma omp critical
-			                    {			                    
-			                      maxStrWeight = myPrivateVariable.bp12->stWeight[myPrivateVariable.kst1];}
-								}
-			                    if(myPrivateVariable.bp12->stWeight.find(myPrivateVariable.kst4)!=myPrivateVariable.bp12->stWeight.end())
+			                      maxStrWeight = myPrivateVariable.bp12->stWeight[myPrivateVariable.kst1];
+													}
+													if(maxStrWeight < myPrivateVariable.bp12->stWeight[myPrivateVariable.kst4])
 			                    {
-			                      myPrivateVariable.bp12->stWeight[myPrivateVariable.kst4]++;
-			                      #pragma omp flush(maxStrWeight)
-			                      if(maxStrWeight < myPrivateVariable.bp12->stWeight[myPrivateVariable.kst4])
-			                      {
-			                      #pragma omp critical
-			                      {			                      
-			                        maxStrWeight = myPrivateVariable.bp12->stWeight[myPrivateVariable.kst4];}
-								  }
-			                    }
+			                      maxStrWeight = myPrivateVariable.bp12->stWeight[myPrivateVariable.kst4];
+													}
+													if(maxStrWeight < myPrivateVariable.bp1k->stWeight[myPrivateVariable.kst2])
+			                    {
+			                      maxStrWeight = myPrivateVariable.bp1k->stWeight[myPrivateVariable.kst2];
+													}
+													if(maxStrWeight < myPrivateVariable.bp1k->stWeight[myPrivateVariable.kst5])
+			                    {
+			                      maxStrWeight = myPrivateVariable.bp1k->stWeight[myPrivateVariable.kst5];
+													}
+													if(maxStrWeight < myPrivateVariable.bp2k->stWeight[myPrivateVariable.kst3])
+			                    {
+			                      maxStrWeight = myPrivateVariable.bp2k->stWeight[myPrivateVariable.kst3];
+													}
+													if(maxStrWeight < myPrivateVariable.bp2k->stWeight[myPrivateVariable.kst6])
+			                    {
+			                      maxStrWeight = myPrivateVariable.bp2k->stWeight[myPrivateVariable.kst6];
+													}
+													}
 			                  }
 			                  myPrivateVariable.kst5.clear();myPrivateVariable.kst6.clear();
 						  }
