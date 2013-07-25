@@ -190,3 +190,13 @@ It takes u: 0.02s, s: 0.01s, cu: 0s, cs: 0s, real: 205.38s seconds to obtain the
 It takes u: 0s, s: 0s, cu: 0s, cs: 0s, real: 0.00997519s seconds to obtain the alignment with alpha 0.5.
 ------------------------NETCOFFEE------------------------------
 It takes u: 0.01s, s: 0s, cu: 0s, cs: 0s, real: 0.00530195s seconds to obtain the alignment with alpha 0.5.
+------------------------NETCOFFEE------------------------------
+It takes u: 0.0312002s, s: 0.0624004s, cu: 0s, cs: 0s, real: 149.468s seconds to obtain the alignment with alpha 0.5.
+------------------------NETCOFFEE------------------------------
+It takes u: 0.0468003s, s: 0.0624004s, cu: 0s, cs: 0s, real: 11.818s seconds to obtain the alignment with alpha 0.5.
+------------------------NETCOFFEE------------------------------
+It takes u: 0.249602s, s: 0.421203s, cu: 0s, cs: 0s, real: 5.557s seconds to obtain the alignment with alpha 0.5.
+------------------------NETCOFFEE------------------------------
+It takes u: 0.0156001s, s: 0.0156001s, cu: 0s, cs: 0s, real: 72.2702s seconds to obtain the alignment with alpha 0.5.
+------------------------NETCOFFEE------------------------------
+It takes u: 0.0312002s, s: 0.0312002s, cu: 0s, cs: 0s, real: 98.4818s seconds to obtain the alignment with alpha 0.5.

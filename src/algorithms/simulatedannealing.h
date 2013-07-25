@@ -243,6 +243,7 @@ SimulatedAnnealing<RS,ST,NP,OP>::run_t(KpGraph& kpgraph,RS& recordstore, NP& np)
     {
       float delta = 0.0;
       unsigned select=sample_distribution(generator);
+			std::cout << select << std::endl;
       if(_x.isExist_t(select,recordstore))continue;
       int overlapValue = _x.isOverlapped_t(select,recordstore,delta);
       if(!overlapValue)/// if the matching edge is non-overlapping, ...

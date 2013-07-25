@@ -502,14 +502,29 @@ RecordStore<KpGraph,Option>::createBpGraphAll(KpGraph& kpgraph,NetworkPool& netw
   output.close();
   kpgraph.reweightingAll(networkpool,numThreads);
   readScore(rfile.c_str());
-  int i=0;
-  for(unsigned ni=0;ni<numSpecies;ni++)
-    for(unsigned nj=ni;nj<numSpecies;nj++,i++)
-      createBpGraph(kpgraph,networkpool,
+	maxStrScore = kpgraph.maxStrWeight;/// 6551
+	int ni,nj,numBp;
+	ni=0;nj=-1;
+	numBp=numSpecies*(numSpecies+1)/2;
+
+	#pragma omp parallel for num_threads(numThreads) shared(ni,nj) schedule(dynamic,1) ordered
+	for(int i=0;i<numBp;i++)
+	{
+		int lni,lnj;
+		#pragma omp ordered
+		{
+			if(nj<static_cast<int>(numSpecies)-1)nj++;
+			else{ni++;nj=ni;}
+			lni=ni;
+			lnj=nj;
+			//std::cout << omp_get_thread_num() << ni << nj << std::endl;
+		}
+		createBpGraph(kpgraph,networkpool,
                     bpgraphs[i],
                     node2labelVector[i],
                     label2nodesVector[i],
-                    edgemapVector[i],ni,nj,i);
+                    edgemapVector[i],lni,lnj,i);
+	}      
   return true;
 }
     
@@ -532,7 +547,7 @@ RecordStore<KpGraph,Option>::createBpGraph(KpGraph& kpgraph,
   network_1 = networkpool.getGraph(ni);/// The first network
   network_2 = networkpool.getGraph(nj);/// The second network
   std::string protein1,protein2;
-  maxStrScore = kpgraph.maxStrWeight;/// 6551
+  
   for(it=bp12->redBlue.begin();it!=bp12->redBlue.end();++it)
   {
     protein1=it->first;
@@ -1105,7 +1120,10 @@ RecordStore<KpGraph,Option>::combineScore(float seScore, unsigned stScore)
   std::string filename(resultfolder);
   filename.append("scoreRecords.txt");
   std::ofstream output(filename.c_str(),std::ios_base::out|std::ios_base::app);
+#pragma omp critical
+	{
   output <<"sequence score\t"<<seScore<<"\t"<<(1-alpha)*((seScore-minNodeScore)/(maxNodeScore-minNodeScore))<<"\t structure score\t"<<stScore<<"\t"<<alpha*pow(static_cast<double>(stScore)/maxStrScore,FACTOR_EDGE)<<std::endl;
+	}
   output.close();
   return (1-alpha)*((seScore-minNodeScore)/(maxNodeScore-minNodeScore)) + alpha*pow(static_cast<double>(stScore)/maxStrScore,FACTOR_EDGE);
 }

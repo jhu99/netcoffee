@@ -187,7 +187,7 @@ int main(int argc, char** argv)
     {
       /// Construct triple nodes using tcoffee.
       networks.initNetworkPool(myoption.networkfiles,myoption.numthreads);
-      kpgraph.constructGraph();
+      kpgraph.constructGraph(myoption.numthreads);
       //records.createRecords_t(kpgraph,networks);
     }
   }
@@ -209,7 +209,7 @@ int main(int argc, char** argv)
     {
       // run simulated annealing on multiple networks with tcoffee technique.
       records.createBpGraphAll(kpgraph,networks);
-      //simAnnealing.run_t(kpgraph,records,networks);
+      simAnnealing.run_t(kpgraph,records,networks);
       mylog <<"------------------------NETCOFFEE------------------------------"<<std::endl;
       mylog <<"It takes "<<t <<" seconds to obtain the alignment with alpha "<<myoption.alpha<<"."<<std::endl;
     }

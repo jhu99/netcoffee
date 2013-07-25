@@ -117,10 +117,9 @@ bool NetworkPool<GR,BP>::initNetworkPool(std::vector<std::string> &filelist,int 
   std::vector<std::string>::iterator it;
   int i,fsize;
 	fsize=filelist.size();
-	_graphSet.resize(fsize);
-//#pragma omp parallel for num_threads(numthreads) shared(fsize)
+#pragma omp parallel for num_threads(numthreads) ordered
   for(i=0;i<fsize;++i)
-  {
+	{
     readNetwork(filelist[i],i);
   }
   return 1;
@@ -138,7 +137,11 @@ bool NetworkPool<GR,BP>::readNetwork(std::string &filename,int i)
     std::cerr << filename <<"cannot be opened!"<<std::endl;
     return 0;
   }
-  _graphSet[i]=data;// work sharing
+#pragma omp ordered
+	{
+	_graphSet.push_back(data);
+	}
+  //_graphSet[i]=data;// work sharing
   std::getline(input,line);/// Skip header line: INTERACTOR A INTERACTOR B
   while(std::getline(input,line))
   {
@@ -168,8 +171,10 @@ bool NetworkPool<GR,BP>::readNetwork(std::string &filename,int i)
       node1 = data->g->addNode();
       data->label->set(node1,protein1);
       (*(data->invIdNodeMap))[protein1] = node1;
-//#pragma omp critical
+#pragma omp critical
+			{
       proteinHost[protein1] = i;// shared variable
+			}
       data->nodeNum++;
     }else
     {
@@ -180,7 +185,10 @@ bool NetworkPool<GR,BP>::readNetwork(std::string &filename,int i)
       node2 = data->g->addNode();
       data->label->set(node2,protein2);
       (*data->invIdNodeMap)[protein2] = node2;
+#pragma omp critical
+			{
       proteinHost[protein2] = i;
+			}
       data->nodeNum++;
     }else
     {
@@ -212,7 +220,10 @@ bool NetworkPool<GR,BP>::readNetwork(std::string &filename,int i)
 		}
 	}
 //#pragma omp atomic// it also works #pragma omp critical
+#pragma omp critical
+	{
   allNodeNum+=data->nodeNum;// reduction
+	}
   return 1;
 }
 #endif //NETWORKPOOL_H_
