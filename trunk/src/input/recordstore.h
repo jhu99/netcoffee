@@ -9,12 +9,14 @@ Date: 28.06.2012*/
 #include <lemon/bits/graph_extender.h>
 #include <string>
 #include <array>
+#include <set>
 #include <unordered_map>
 #include <random>
 #include <chrono>
 #include "macro.h"
 #include "verbose.h"
 #include "math.h"
+#include "function.h"
 
 template<typename KpGraph,typename Option>
 class RecordStore
@@ -247,6 +249,7 @@ public:
   bool printRecord(std::ofstream&,std::string*,float);
   bool _scoreCalculate(std::string*,RecordHashMap*,float&);
   float combineScore(float, unsigned);
+  void top10000(std::string&);
 };
 
 template<typename KpGraph,typename Option>
@@ -1126,5 +1129,60 @@ RecordStore<KpGraph,Option>::combineScore(float seScore, unsigned stScore)
 	}
   output.close();
   return (1-alpha)*((seScore-minNodeScore)/(maxNodeScore-minNodeScore)) + alpha*pow(static_cast<double>(stScore)/maxStrScore,FACTOR_EDGE);
+}
+
+template<typename KpGraph,typename Option>
+void
+RecordStore<KpGraph,Option>::top10000(std::string& filename)
+{
+	typedef struct _ElementType
+	{
+		std::string protein1;
+		std::string protein2;
+		float score;
+	}ElementType;
+	struct ElementCompare{
+		bool operator() (const ElementType& e1,const ElementType& e2) const
+		{
+			return e1.score < e2.score;
+		}
+	};
+	std::set<ElementType, ElementCompare> homoLogSet,homoLogRatioSet;
+	std::ifstream input(filename.c_str());
+	if(!input.is_open()){
+		std::cerr <<"Homology file "<<filename<< " doesn't exist!"<<std::endl;
+		return;
+	}
+	std::string line;
+	std::unordered_map<std::string,int> homomap;
+	readScore(rfile.c_str());
+	while(std::getline(input,line))
+	{
+		std::string protein1,protein2;
+		float bitscore;
+		double evalue;
+		std::stringstream lineStream(line);
+		lineStream >> protein1 >> protein2 >> bitscore >> evalue;
+		std::string keystring;
+		if(protein1.compare(protein2)<0)
+		{
+			keystring.append(protein1);
+			keystring.append(protein2);
+		}else
+		{
+			keystring.append(protein2);
+			keystring.append(protein1);
+		}
+		
+		if(homomap.find(keystring)==homomap.end())continue;
+		ElementType e1,e2;
+		e1.protein1=e2.protein1=protein1;
+		e1.protein2=e2.protein2=protein2;
+		e1.score=-log(evalue);
+		int linenum=getIndex(evalue);
+		e2.score=(*resultDistr)[linenum];
+		homoLogSet.insert(e1);
+		homoLogRatioSet.insert(e2);
+	}
 }
 #endif //RECORDSTORE

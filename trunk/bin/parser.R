@@ -89,7 +89,7 @@ format_dip_int2 <- function(filelist)
 }
 formatSelection <- function(filename,filename2,cols)#filename1 inputfile filename2 outputfile
 {
-  originData <- as.matrix(read.csv(filename, sep = "\t", quote="", header=TRUE, comment="!"));
+  originData <- as.matrix(read.csv(filename, sep = "\t", quote="", header=FALSE, comment="!"));
   simpleData <- originData[,cols];
   write.table(simpleData,file=filename2,sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE);
 }
