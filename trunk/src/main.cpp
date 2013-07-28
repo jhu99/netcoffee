@@ -65,8 +65,9 @@ typedef struct _Option
   : out(false), create_records(false),
   analyze(false), model(false),bscore(false),task(1),edgefactor(0.1),alpha(0.5),beta(1.0),threshold(0.4),numspecies(4),nmax(2000)
   {
-    profile="./test_profile.input";
+    profile="./profile.input";
 		numthreads=omp_get_max_threads();
+		resultfolder="./result/four_species/netcoffee/";
   }
 }Option;
 
@@ -95,7 +96,7 @@ bool setParser(ArgParser& parser, Option& myoption)
   .onlyOneGroup("method")
   .mandatoryGroup("method")
   /// Option for variables
-  .refOption("task","Complete different tasks. It must be used with -alignment option together.",myoption.task)
+  .refOption("task","Complete different tasks. The task was determined with other options such as -alignment together. Default is 1.",myoption.task)
   .refOption("alignmentfile","The filename of alignment which is required to either create or analyse.",myoption.alignmentfile)
   .refOption("avefunsimfile", "The filename for functional similarity of alignment.", myoption.avefunsimfile)
   .refOption("recordsfile", "Records file for writing and reading. It is used to store the triplet edges.", myoption.recordsfile)
@@ -103,7 +104,6 @@ bool setParser(ArgParser& parser, Option& myoption)
   .refOption("edgefactor", "The factor of the power law normalization. Default is 0.1.", myoption.alpha)
   .refOption("numspecies","Number of the species compared. Default is 4.", myoption.numspecies)
 	.refOption("numthreads","Number of threads running in parallel.", myoption.numthreads)
-  .refOption("profile","Profile of input parameters.", myoption.profile)
   .refOption("formatfile","Profile of input parameters.", myoption.formatfile)
   .refOption("orthologyfile","Training data for orthology model.", myoption.orthologyfile)
   .refOption("randomfile","Training data for random model.", myoption.randomfile)
@@ -122,8 +122,8 @@ bool runParser(ArgParser& myparser, Option& myoption)
 {
   std::string filename;
   ProcessProfile<Option> myprofile(myoption.profile);
+	myprofile.getOption(myoption);
   myparser.run();
-  myprofile.getOption(myoption);
   filename.append(myoption.resultfolder);
   filename.append(myoption.avefunsimfile);
   myoption.avefunsimfile=filename;

@@ -1122,7 +1122,7 @@ RecordStore<KpGraph,Option>::combineScore(float seScore, unsigned stScore)
   std::ofstream output(filename.c_str(),std::ios_base::out|std::ios_base::app);
 #pragma omp critical
 	{
-  output <<"sequence score\t"<<seScore<<"\t"<<(1-alpha)*((seScore-minNodeScore)/(maxNodeScore-minNodeScore))<<"\t structure score\t"<<stScore<<"\t"<<alpha*pow(static_cast<double>(stScore)/maxStrScore,FACTOR_EDGE)<<std::endl;
+  output <<"sequence score\t"<<seScore<<"\t"<<(1-alpha)*((seScore-minNodeScore)/(maxNodeScore-minNodeScore))<<"\t structure score\t"<<stScore/2<<"\t"<<alpha*pow(static_cast<double>(stScore)/maxStrScore,FACTOR_EDGE)<<std::endl;
 	}
   output.close();
   return (1-alpha)*((seScore-minNodeScore)/(maxNodeScore-minNodeScore)) + alpha*pow(static_cast<double>(stScore)/maxStrScore,FACTOR_EDGE);

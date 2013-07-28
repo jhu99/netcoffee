@@ -201,10 +201,6 @@ bool KpGraph<NetworkPool>::readHomoList(std::string& filename,BpGraph* graph,int
     std::cerr << filename << "cannot be opened" <<std::endl;
     return false;
   }
-#pragma omp critical
-	{
-	std::cout << omp_get_thread_num() << "\t" << ni <<"\t" << nj << std::endl;
-	}
   while(std::getline(input,line))
   {
     std::stringstream lineStream(line);
@@ -256,6 +252,7 @@ bool KpGraph<NetworkPool>::reweightingAll(NetworkPool& networkpool,int numthread
 		}
 		reweighting_parallel(networkpool,lni,lnj,myPrivateVariable);
 	}	
+
 	//#pragma omp parallel for num_threads(numthreads) shared(ni,nj,networkpool) schedule(dynamic,1) private(myPrivateVariable)
 	/*ni=nj=0;
 	for(int num=0;num<numSpecies*(numSpecies-1)/2;num++)
