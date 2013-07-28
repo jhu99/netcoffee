@@ -190,6 +190,9 @@ int main(int argc, char** argv)
       kpgraph.constructGraph(myoption.numthreads);
       //records.createRecords_t(kpgraph,networks);
     }
+    else if(myoption.task==4)
+    {
+	}
   }
 
   if(myparser.given("alignment"))
