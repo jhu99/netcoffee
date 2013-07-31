@@ -178,9 +178,9 @@ public:
   typedef std::array<RecordArrayValue*,NUM_SPECIES-2> RecordArrayArray;
   typedef std::unordered_multimap<std::string,ValueType> MapType;
   typedef std::unordered_map<std::string,double> RecordHashMap;
-  RecordArray recordarray;
-  RecordArrayArray recordarrayarray;
-  TripletArray* tripletRecord;
+  //RecordArray recordarray;
+  //RecordArrayArray recordarrayarray;
+  //TripletArray* tripletRecord;
   MatchingEdge* matchingEdges;
   Proteins* proteins;
   Proteins* proteins1;
@@ -190,8 +190,8 @@ public:
   Distribution* homoDistr;
   Distribution* resultDistr;
   DistriBar* distriBar;
-  NodeScores* nodeScores;
-  StrScores* strScores;
+  //NodeScores* nodeScores;
+  //StrScores* strScores;
   std::string hfile; /// filename of homology model
   std::string nfile; /// filename of null model
   std::string rfile; ///filename of nodescore distribution with respect of evalue
@@ -221,9 +221,9 @@ public:
   bool deleteBpGraphs();
   bool readRecords(const char*);
   bool _readRecords(const char*);
-  bool readRecords2(const char*);
+  //bool readRecords2(const char*);
   std::string getRecords(unsigned, unsigned);
-  std::string _getRecords(unsigned, unsigned);
+  //std::string _getRecords(unsigned, unsigned);
   float getRecordScore(unsigned);
   float _getRecordSeScore(unsigned);
   float _getRecordStScore(unsigned);
@@ -237,6 +237,7 @@ public:
   float getBitScore(float);
   bool readScore(const char*);
   bool createBpGraph(KpGraph&,NetworkPool&,Graph*,OrigLabelNodeMap*,                                InvOrigLabelNodeMap*, EdgeWeight*,int,int,int);
+  bool assignEdgeScore(Graph*,OrigLabelNodeMap*,EdgeWeight*,BpGraph*,bool);
   bool createBpGraphAll(KpGraph&,NetworkPool&);
   bool _createRecords(KpGraph&, NetworkPool&);
   /// bool createRecords_t(KpGraph&, NetworkPool&);
@@ -256,9 +257,10 @@ template<typename KpGraph,typename Option>
 RecordStore<KpGraph,Option>::RecordStore(std::string& filename1,
                               std::string& filename2,
                               Option& myoption)
-:recordarrayarray()
-,tripletRecord(NULL)
-,matchingEdges(NULL)
+:
+//recordarrayarray(),
+//tripletRecord(NULL),
+matchingEdges(NULL)
 ,length(0)
 ,numSpecies(myoption.numspecies)
 ,numThreads(myoption.numthreads)
@@ -286,22 +288,22 @@ RecordStore<KpGraph,Option>::RecordStore(std::string& filename1,
   homoDistr = new Distribution();
   resultDistr = new Distribution();
   distriBar = new DistriBar();
-  strScores = new StrScores();
-  nodeScores = new NodeScores();
-  recordarray = new Proteins[numSpecies];
+  //strScores = new StrScores();
+  //nodeScores = new NodeScores();
+  //recordarray = new Proteins[numSpecies];
   initialBpGraphs();
 }
 
 template<typename KpGraph,typename Option>
 RecordStore<KpGraph,Option>::~RecordStore()
 {
-  delete nodeScores;
-  delete strScores;
+  //delete nodeScores;
+  //delete strScores;
   delete nullDistr;
   delete homoDistr;
   delete distriBar;
   delete resultDistr;
-  delete [] recordarray;
+  //delete [] recordarray;
   deleteBpGraphs();
 }
 
@@ -339,124 +341,124 @@ RecordStore<KpGraph,Option>::deleteBpGraphs()
   return true;
 }
 
-template<typename KpGraph,typename Option>
-bool
-RecordStore<KpGraph,Option>::readRecords(const char* filename)
-{
-  std::ifstream input(filename);
-  std::string line;
-  if(!input.good())
-  {
-    std::cerr << filename <<"cannot be opened!"<<std::endl;
-    return 1;
-  }
+//template<typename KpGraph,typename Option>
+//bool
+//RecordStore<KpGraph,Option>::readRecords(const char* filename)
+//{
+//  std::ifstream input(filename);
+//  std::string line;
+//  if(!input.good())
+//  {
+//    std::cerr << filename <<"cannot be opened!"<<std::endl;
+//    return 1;
+//  }
+//
+//  nodeScores = new NodeScores();
+//  strScores = new StrScores();
+//  unsigned int i=0;
+//  while(std::getline(input,line))
+//  {
+//    std::stringstream lineStream(line);
+//    lineStream >> (*proteins1)[i] >> (*proteins2)[i] >> (*proteins3)[i] >> (*nodeScores)[i];
+//    i++;
+//  }
+//  return 0;
+//}
 
-  nodeScores = new NodeScores();
-  strScores = new StrScores();
-  unsigned int i=0;
-  while(std::getline(input,line))
-  {
-    std::stringstream lineStream(line);
-    lineStream >> (*proteins1)[i] >> (*proteins2)[i] >> (*proteins3)[i] >> (*nodeScores)[i];
-    i++;
-  }
-  return 0;
-}
+//template<typename KpGraph,typename Option>
+//bool
+//RecordStore<KpGraph,Option>::readRecords2(const char* filename)
+///// read records for M-NetAligner on multiple networks
+//{
+//  std::ifstream input(filename);
+//  std::string line;
+//  if(!input.good())
+//  {
+//    std::cerr << filename <<" cannot be opened!"<<std::endl;
+//    return 1;
+//  }
+//  unsigned int i=0;
+//  bool isFirstLine=true;
+//  while(std::getline(input,line))
+//  {
+//    std::stringstream lineStream(line);
+//    for(unsigned k=0;k<numSpecies;k++)
+//    {
+//      lineStream >> recordarray[k][i];
+//    }
+//    lineStream >> (*nodeScores)[i];/// no score for structural similarity.
+//    if(isFirstLine)
+//    {
+//      maxNodeScore=(*nodeScores)[i];
+//      minNodeScore=(*nodeScores)[i];
+//      isFirstLine=false;
+//    }
+//    if((*nodeScores)[i]>maxNodeScore)
+//      maxNodeScore=(*nodeScores)[i];
+//    if((*nodeScores)[i]<minNodeScore)
+//      minNodeScore=(*nodeScores)[i];
+//    i++;
+//    if(i >= MAXIMUM_RECORDS)
+//    {
+//      if(g_verbosity>=VERBOSE_DEBUG)
+//        std::cerr<<"The alingment records exceeds the maximal limit!"<<std::endl;
+//      break;
+//    }
+//  }
+//  length=i;
+//  std::cout <<length<<std::endl;
+//  return true;
+//}
 
-template<typename KpGraph,typename Option>
-bool
-RecordStore<KpGraph,Option>::readRecords2(const char* filename)
-/// read records for M-NetAligner on multiple networks
-{
-  std::ifstream input(filename);
-  std::string line;
-  if(!input.good())
-  {
-    std::cerr << filename <<" cannot be opened!"<<std::endl;
-    return 1;
-  }
-  unsigned int i=0;
-  bool isFirstLine=true;
-  while(std::getline(input,line))
-  {
-    std::stringstream lineStream(line);
-    for(unsigned k=0;k<numSpecies;k++)
-    {
-      lineStream >> recordarray[k][i];
-    }
-    lineStream >> (*nodeScores)[i];/// no score for structural similarity.
-    if(isFirstLine)
-    {
-      maxNodeScore=(*nodeScores)[i];
-      minNodeScore=(*nodeScores)[i];
-      isFirstLine=false;
-    }
-    if((*nodeScores)[i]>maxNodeScore)
-      maxNodeScore=(*nodeScores)[i];
-    if((*nodeScores)[i]<minNodeScore)
-      minNodeScore=(*nodeScores)[i];
-    i++;
-    if(i >= MAXIMUM_RECORDS)
-    {
-      if(g_verbosity>=VERBOSE_DEBUG)
-        std::cerr<<"The alingment records exceeds the maximal limit!"<<std::endl;
-      break;
-    }
-  }
-  length=i;
-  std::cout <<length<<std::endl;
-  return true;
-}
+//template<typename KpGraph,typename Option>
+//bool
+//RecordStore<KpGraph,Option>::_readRecords(const char* filename)
+//{
+//  std::ifstream input(filename);
+//  std::string line;
+//  if(!input.good())
+//  {
+//    std::cerr << filename <<" cannot be opened!"<<std::endl;
+//    return 1;
+//  }
+//  unsigned int i=0;
+//  bool isFirstLine=true;
+//  while(std::getline(input,line))
+//  {
+//    std::stringstream lineStream(line);
+//    for(unsigned k=0;k<numSpecies;k++)
+//    {
+//      lineStream >> recordarray[k][i];
+//    }
+//    lineStream >> (*nodeScores)[i] >> (*strScores)[i];
+//    if(isFirstLine)
+//    {
+//      maxNodeScore=(*nodeScores)[i];
+//      minNodeScore=(*nodeScores)[i];
+//      maxStrScore=(*strScores)[i];
+//      minStrScore=(*strScores)[i];
+//      isFirstLine=false;
+//    }
+//    if((*nodeScores)[i]>maxNodeScore)
+//      maxNodeScore=(*nodeScores)[i];
+//    if((*nodeScores)[i]<minNodeScore)
+//      minNodeScore=(*nodeScores)[i];
+//    if((*strScores)[i]>maxStrScore)
+//      maxStrScore=(*strScores)[i];
+//    if((*strScores)[i]<minStrScore)
+//      minStrScore=(*strScores)[i];
+//    i++;
+//  }
+//  length=i;
+//  return true;
+//}
 
-template<typename KpGraph,typename Option>
-bool
-RecordStore<KpGraph,Option>::_readRecords(const char* filename)
-{
-  std::ifstream input(filename);
-  std::string line;
-  if(!input.good())
-  {
-    std::cerr << filename <<" cannot be opened!"<<std::endl;
-    return 1;
-  }
-  unsigned int i=0;
-  bool isFirstLine=true;
-  while(std::getline(input,line))
-  {
-    std::stringstream lineStream(line);
-    for(unsigned k=0;k<numSpecies;k++)
-    {
-      lineStream >> recordarray[k][i];
-    }
-    lineStream >> (*nodeScores)[i] >> (*strScores)[i];
-    if(isFirstLine)
-    {
-      maxNodeScore=(*nodeScores)[i];
-      minNodeScore=(*nodeScores)[i];
-      maxStrScore=(*strScores)[i];
-      minStrScore=(*strScores)[i];
-      isFirstLine=false;
-    }
-    if((*nodeScores)[i]>maxNodeScore)
-      maxNodeScore=(*nodeScores)[i];
-    if((*nodeScores)[i]<minNodeScore)
-      minNodeScore=(*nodeScores)[i];
-    if((*strScores)[i]>maxStrScore)
-      maxStrScore=(*strScores)[i];
-    if((*strScores)[i]<minStrScore)
-      minStrScore=(*strScores)[i];
-    i++;
-  }
-  length=i;
-  return true;
-}
-
-template<typename KpGraph,typename Option>
-std::string
-RecordStore<KpGraph,Option>::_getRecords(unsigned select, unsigned species)
-{
-  return recordarray[species][select];
-}
+//template<typename KpGraph,typename Option>
+//std::string
+//RecordStore<KpGraph,Option>::_getRecords(unsigned select, unsigned species)
+//{
+//  return recordarray[species][select];
+//}
 
 /*template<typename KpGraph,typename Option>
 std::string
@@ -473,18 +475,18 @@ RecordStore<KpGraph,Option>::getRecords(unsigned select, unsigned species)
   return protein;
 }*/
 
-template<typename KpGraph,typename Option>
-float
-RecordStore<KpGraph,Option>::getRecordScore(unsigned select)
-{
-  return nodeScores->at(select);
-}
-template<typename KpGraph,typename Option>
-float
-RecordStore<KpGraph,Option>::_getRecordSeScore(unsigned select)
-{
-  return (nodeScores->at(select)-minNodeScore)/(maxNodeScore-minNodeScore);
-}
+//template<typename KpGraph,typename Option>
+//float
+//RecordStore<KpGraph,Option>::getRecordScore(unsigned select)
+//{
+//  return nodeScores->at(select);
+//}
+//template<typename KpGraph,typename Option>
+//float
+//RecordStore<KpGraph,Option>::_getRecordSeScore(unsigned select)
+//{
+//  return (nodeScores->at(select)-minNodeScore)/(maxNodeScore-minNodeScore);
+//}
 
 /*
 template<typename KpGraph,typename Option>
@@ -503,34 +505,83 @@ RecordStore<KpGraph,Option>::createBpGraphAll(KpGraph& kpgraph,NetworkPool& netw
   filename.append("scoreRecords.txt");
   std::ofstream output(filename.c_str());
   output.close();
+	std::cout << "Reweighting started!" << std::endl;
   kpgraph.reweightingAll(networkpool,numThreads);
+	std::cout << "Reweighting finished!" << std::endl;
   readScore(rfile.c_str());
 	maxStrScore = kpgraph.maxStrWeight;/// 6551
 	int ni,nj,numBp;
 	ni=0;nj=-1;
 	numBp=numSpecies*(numSpecies+1)/2;
 
-	#pragma omp parallel for num_threads(numThreads) shared(ni,nj) schedule(dynamic,1) ordered
+	std::cout << "CreateBpGraph started!" << std::endl;
+#pragma omp parallel for num_threads(numThreads) shared(ni,nj) schedule(dynamic,1)
 	for(int i=0;i<numBp;i++)
 	{
 		int lni,lnj;
-		#pragma omp ordered
+		#pragma omp critical
 		{
 			if(nj<static_cast<int>(numSpecies)-1)nj++;
 			else{ni++;nj=ni;}
 			lni=ni;
 			lnj=nj;
-			//std::cout << omp_get_thread_num() << ni << nj << std::endl;
 		}
 		createBpGraph(kpgraph,networkpool,
                     bpgraphs[i],
                     node2labelVector[i],
                     label2nodesVector[i],
                     edgemapVector[i],lni,lnj,i);
+        BpGraph* bp12=kpgraph.graphs[i];
+				bool isHomoNet(false);
+				if(lni==lnj)isHomoNet=true;
+				assignEdgeScore(bpgraphs[i],node2labelVector[i],edgemapVector[i],bp12,isHomoNet);
 	}      
+	std::cout << "CreateBpGraph finished!" << std::endl;
   return true;
 }
-    
+
+template<typename KpGraph,typename Option>
+bool
+RecordStore<KpGraph,Option>::assignEdgeScore(Graph* gr,
+											OrigLabelNodeMap* node2label,
+											EdgeWeight* edgemap,
+											BpGraph* bp12,
+											bool isHomoNet)
+{
+	Node node1,node2;
+	std::string protein1,protein2,kst;
+	float sescore,weight,serange;
+	unsigned stWeight;
+	serange=maxNodeScore-minNodeScore;
+	for(EdgeIt ie(*gr);ie!=lemon::INVALID;++ie)
+	{
+		node1=gr->u(ie);
+		node2=gr->v(ie);
+		protein1=(*node2label)[node1];
+		protein2=(*node2label)[node2];
+		kst.append(protein1);
+		kst.append(protein2);
+		if(bp12->seWeight.find(kst)==bp12->seWeight.end())
+		{
+			kst.clear();kst.append(protein2);kst.append(protein1);
+		}
+    if(!bscore){
+			sescore=getScore(bp12->seWeight[kst]);}
+	  else{
+			sescore=getBitScore(static_cast<float>(bp12->seWeight[kst]));
+		}
+    stWeight = bp12->stWeight[kst];
+    if(isHomoNet){
+			weight= (1-alpha)*(sescore-minNodeScore)/serange;
+		}
+	  else
+		{
+        weight = combineScore(sescore, stWeight);// TODO: give a wise choice.
+		}
+    edgemap->set(ie,weight);
+	}
+	return true;
+}
 template<typename KpGraph,typename Option>
 bool
 RecordStore<KpGraph,Option>::createBpGraph(KpGraph& kpgraph,
@@ -550,6 +601,10 @@ RecordStore<KpGraph,Option>::createBpGraph(KpGraph& kpgraph,
   network_1 = networkpool.getGraph(ni);/// The first network
   network_2 = networkpool.getGraph(nj);/// The second network
   std::string protein1,protein2;
+  #pragma omp critical
+  {
+	std::cout << omp_get_thread_num() << ni << nj<< std::endl;
+  }
   
   for(it=bp12->redBlue.begin();it!=bp12->redBlue.end();++it)
   {
@@ -581,18 +636,19 @@ RecordStore<KpGraph,Option>::createBpGraph(KpGraph& kpgraph,
       node2 = (*label2node)[protein2];
     }
     e = gr->addEdge(node1,node2);
-    float sescore=0.0;
-    if(!bscore)
-		sescore=getScore(bp12->seWeight[kst]);
-	else
-		sescore=getBitScore(static_cast<float>(bp12->seWeight[kst]));
-    unsigned stWeight = bp12->stWeight[kst];
-    float weight =0.0;
-    if(ni == nj)
-		weight= (1-alpha)*(sescore-minNodeScore)/(maxNodeScore-minNodeScore);
-	else
-        weight = combineScore(sescore, stWeight);// TODO: give a wise choice.
-    edgemap->set(e,weight);
+ //   float sescore=0.0;
+ //   if(!bscore){
+	//		sescore=getScore(bp12->seWeight[kst]);}
+	//else{
+	//	sescore=getBitScore(static_cast<float>(bp12->seWeight[kst]));}
+ //   unsigned stWeight = bp12->stWeight[kst];
+ //   float weight =0.0;
+ //   if(ni == nj){
+	//		weight= (1-alpha)*(sescore-minNodeScore)/(maxNodeScore-minNodeScore);}
+	//  else{
+ //       weight = combineScore(sescore, stWeight);// TODO: give a wise choice.
+	//}
+ //   edgemap->set(e,weight);
   }
   return true;
 }
@@ -799,70 +855,70 @@ RecordStore<KpGraph,Option>::printRecord(std::ofstream& output,
   return true;
 }
 
-template<typename KpGraph,typename Option>
-bool
-RecordStore<KpGraph,Option>::createRecords(const char* file1,
-                                const char* file2,
-                                const char* file3)
-{
-  
-  MapType map1,map2,map3;
-  std::unordered_map<std::string,double> list1,list2,list3;
-  std::string protein1,protein2,protein3;
-  std::ofstream output;
-  double evalue1,evalue2,evalue3;
-  float score;
-  readHomoList(map1,file1,list1);
-  readHomoList(map2,file2,list2);
-  readHomoList(map3,file3,list3);
-  typename MapType::iterator it1,it2;
-  unsigned length=0;
-  readScore(rfile.c_str());
-  if(g_verbosity > VERBOSE_ESSENTIAL)
-  {
-    output.open(recordfile.c_str());
-  }
-  //readDistribution(hfile.c_str(),nfile.c_str());
-  
-  for(it1=map1.begin();it1!=map1.end();++it1)
-  {
-    protein1 = it1->first;
-    protein2 = (it1->second).protein;
-    evalue1 = (it1->second).evalue;
-    auto range = map2.equal_range(protein2);
-    for(it2=range.first;it2!=range.second;++it2)
-    {
-      protein3 = (it2->second).protein;
-      evalue2 = (it2->second).evalue;
-      std::string keystr;
-      keystr.append(protein1);
-      keystr.append(protein3);
-      if(length == MAXIMUM_RECORDS)
-      {
-        std::cerr << "The number of records is in exceese of what expected!\n";
-        return false;
-      }
-      if(list3.find(keystr)!=list3.end())
-      {
-        evalue3 = list3[keystr];
-        (*proteins1)[length]=protein1;
-        (*proteins2)[length]=protein2;
-        (*proteins3)[length]=protein3;
-        score=scoreCalculate(evalue1,evalue2,evalue3);
-        (*nodeScores)[length]=score;
-        if(g_verbosity > VERBOSE_ESSENTIAL)
-        {
-          output <<protein1 <<"\t" << protein2 <<"\t"<<protein3<<"\t"<<score;
-          output << std::endl;
-        }
-        length++;
-      }
-    }
-  }
-  if(g_verbosity > VERBOSE_ESSENTIAL)
-    output.close();
-  return true;
-}
+//template<typename KpGraph,typename Option>
+//bool
+//RecordStore<KpGraph,Option>::createRecords(const char* file1,
+//                                const char* file2,
+//                                const char* file3)
+//{
+//  
+//  MapType map1,map2,map3;
+//  std::unordered_map<std::string,double> list1,list2,list3;
+//  std::string protein1,protein2,protein3;
+//  std::ofstream output;
+//  double evalue1,evalue2,evalue3;
+//  float score;
+//  readHomoList(map1,file1,list1);
+//  readHomoList(map2,file2,list2);
+//  readHomoList(map3,file3,list3);
+//  typename MapType::iterator it1,it2;
+//  unsigned length=0;
+//  readScore(rfile.c_str());
+//  if(g_verbosity > VERBOSE_ESSENTIAL)
+//  {
+//    output.open(recordfile.c_str());
+//  }
+//  //readDistribution(hfile.c_str(),nfile.c_str());
+//  
+//  for(it1=map1.begin();it1!=map1.end();++it1)
+//  {
+//    protein1 = it1->first;
+//    protein2 = (it1->second).protein;
+//    evalue1 = (it1->second).evalue;
+//    auto range = map2.equal_range(protein2);
+//    for(it2=range.first;it2!=range.second;++it2)
+//    {
+//      protein3 = (it2->second).protein;
+//      evalue2 = (it2->second).evalue;
+//      std::string keystr;
+//      keystr.append(protein1);
+//      keystr.append(protein3);
+//      if(length == MAXIMUM_RECORDS)
+//      {
+//        std::cerr << "The number of records is in exceese of what expected!\n";
+//        return false;
+//      }
+//      if(list3.find(keystr)!=list3.end())
+//      {
+//        evalue3 = list3[keystr];
+//        (*proteins1)[length]=protein1;
+//        (*proteins2)[length]=protein2;
+//        (*proteins3)[length]=protein3;
+//        score=scoreCalculate(evalue1,evalue2,evalue3);
+//        (*nodeScores)[length]=score;
+//        if(g_verbosity > VERBOSE_ESSENTIAL)
+//        {
+//          output <<protein1 <<"\t" << protein2 <<"\t"<<protein3<<"\t"<<score;
+//          output << std::endl;
+//        }
+//        length++;
+//      }
+//    }
+//  }
+//  if(g_verbosity > VERBOSE_ESSENTIAL)
+//    output.close();
+//  return true;
+//}
 
 template<typename KpGraph,typename Option>
 bool
@@ -1029,7 +1085,7 @@ RecordStore<KpGraph,Option>::readScore(const char * filename)
   {
     std::stringstream streamline(line);
     streamline >> probability;
-    if((linenum<86 && !bscore) || (linenum>1 && bscore) )
+    if((linenum<88 && !bscore) || (linenum>1 && bscore) )
     {
 	  if(first_line)
 	  {
@@ -1122,13 +1178,20 @@ RecordStore<KpGraph,Option>::combineScore(float seScore, unsigned stScore)
 {
   std::string filename(resultfolder);
   filename.append("scoreRecords.txt");
+  float sePart,stPart;
+  sePart=(1-alpha)*((seScore-minNodeScore)/(maxNodeScore-minNodeScore));
+  if(alpha<1e-2 || stScore<1)
+  {
+	  stPart=0;
+  }
+  else
+  {
+	  stPart=alpha*pow(static_cast<double>(stScore)/maxStrScore,FACTOR_EDGE);
+  }
   std::ofstream output(filename.c_str(),std::ios_base::out|std::ios_base::app);
-#pragma omp critical
-	{
-  output <<"sequence score\t"<<seScore<<"\t"<<(1-alpha)*((seScore-minNodeScore)/(maxNodeScore-minNodeScore))<<"\t structure score\t"<<stScore/2<<"\t"<<alpha*pow(static_cast<double>(stScore)/maxStrScore,FACTOR_EDGE)<<std::endl;
-	}
+  output <<"sequence score\t"<<seScore<<"\t"<<sePart<<"\t structure score\t"<<stScore/2<<"\t"<<stPart<<std::endl;
   output.close();
-  return (1-alpha)*((seScore-minNodeScore)/(maxNodeScore-minNodeScore)) + alpha*pow(static_cast<double>(stScore)/maxStrScore,FACTOR_EDGE);
+  return sePart+stPart;
 }
 
 template<typename KpGraph,typename Option>
@@ -1144,11 +1207,13 @@ RecordStore<KpGraph,Option>::top10000(std::string& filename)
 	struct ElementCompare{
 		bool operator() (const ElementType& e1,const ElementType& e2) const
 		{
-			return e1.score < e2.score;
+			return e1.score >= e2.score;
 		}
-	};
-	std::set<ElementType, ElementCompare> homoLogSet,homoLogRatioSet;
+	}desceasing;
+	std::vector<ElementType> homoLogSet,homoLogRatioSet;
 	std::ifstream input(filename.c_str());
+	std::ofstream output1("./result/investigation/toplog/toplog.txt");
+	std::ofstream output2("./result/investigation/toplogratio/toplogratio.txt");
 	if(!input.is_open()){
 		std::cerr <<"Homology file "<<filename<< " doesn't exist!"<<std::endl;
 		return;
@@ -1164,6 +1229,8 @@ RecordStore<KpGraph,Option>::top10000(std::string& filename)
 		std::stringstream lineStream(line);
 		lineStream >> protein1 >> protein2 >> bitscore >> evalue;
 		std::string keystring;
+		if(protein1.compare(protein2)==0)
+			continue;
 		if(protein1.compare(protein2)<0)
 		{
 			keystring.append(protein1);
@@ -1174,15 +1241,28 @@ RecordStore<KpGraph,Option>::top10000(std::string& filename)
 			keystring.append(protein1);
 		}
 		
-		if(homomap.find(keystring)==homomap.end())continue;
+		if(homomap.find(keystring)!=homomap.end())continue;
+		homomap[keystring]=1;
 		ElementType e1,e2;
 		e1.protein1=e2.protein1=protein1;
 		e1.protein2=e2.protein2=protein2;
-		e1.score=-log(evalue);
+		if(evalue<1e-180)
+			e1.score=190;
+		else
+			e1.score=-log10(evalue);
 		int linenum=getIndex(evalue);
 		e2.score=(*resultDistr)[linenum];
-		homoLogSet.insert(e1);
-		homoLogRatioSet.insert(e2);
+		homoLogSet.push_back(e1);
+		homoLogRatioSet.push_back(e2);
 	}
+	std::stable_sort(homoLogSet.begin(),homoLogSet.end(),desceasing);
+	std::stable_sort(homoLogRatioSet.begin(), homoLogRatioSet.end(), desceasing);
+	for(int i=0;i<10000;i++)
+	{
+		output1 << homoLogSet[i].protein1 <<"\t" << homoLogSet[i].protein2 << std::endl;
+		output2 << homoLogRatioSet[i].protein1 <<"\t"<<homoLogRatioSet[i].protein2<<std::endl;
+	}
+	output1.close();
+	output2.close();
 }
 #endif //RECORDSTORE

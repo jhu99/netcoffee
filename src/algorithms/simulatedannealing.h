@@ -227,7 +227,9 @@ SimulatedAnnealing<RS,ST,NP,OP>::run_t(KpGraph& kpgraph,RS& recordstore, NP& np)
   unsigned k=0;
   float t=_tmax;
   float step=(_tmax-_tmin)/_Kmax;
+	std::cout <<"Initial started!"<<std::endl;
   initial_t(recordstore,np);
+	std::cout <<"Initial finished!" << std::endl;
   unsigned seed =std::chrono::system_clock::now().time_since_epoch().count();
   std::string filename(_resultfolder);
   std::default_random_engine generator(seed);

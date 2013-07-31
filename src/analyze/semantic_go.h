@@ -118,10 +118,10 @@ public:
   }
   ~GoList()
   {
-    for(unsigned i=0;i<length;i++)
-      delete (*newalignment)[i];
-    delete newalignment;
-    delete alignment;
+    /*for(unsigned i=0;i<length;i++)
+      delete (*newalignment)[i];*/
+   // delete newalignment;
+    //delete alignment;
   }
   bool readGeneOntology(const char*);/// Read gene ontology file for one species.
   bool convert_fsst();/// Output fsst format for alignment output.
@@ -643,27 +643,30 @@ bool GoList<NetworkPoolType,Option>::readAlignment(const char* filename)
   {
     std::string str;
     std::stringstream streamline(line);
-    if(line[0]=='#') continue;
+    if(line[0]=='#')
+			continue;
     (*newalignment)[len]= new AlignmentNodeVector();
     Node node=_g.addNode();
     while(streamline.good())// reference of natelia
     {
       streamline >> str;
-      if(!str.compare("NA"))continue;
+      if(!str.compare("NA"))
+				continue;
       (*newalignment)[len]->push_back(str);
       label2node[str] = node;
       node2label[node] = len;
     }
     
     unsigned temp = (*newalignment)[len]->size();
+		len++;
     if(temp>=5)
       numRecords[5]++;
     else
       numRecords[temp]++;
-    len++;
   }
   //std::cout << "The number of matching sets with 3 proteins: "<<numRecords[3] <<"\t"<<numRecords[4]<<"\t"<<numRecords[5]<< std::endl;
   length=len;
+	std::cout << len << std::endl;
   return true;
 }
 
