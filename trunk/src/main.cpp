@@ -174,25 +174,26 @@ int main(int argc, char** argv)
     {
       t.restart();
 			networks.initNetworkPool(myoption.networkfiles,myoption.numthreads);
-      records.createRecords_MNetAligner(myoption.blastfiles,networks);
+     // records.createRecords_MNetAligner(myoption.blastfiles,networks);
       t.stop();
       mylog <<"------------------------M-NETALIGNER-------------------------"<<std::endl;
       mylog <<"It takes "<<t <<" seconds to create alignment records!";
     }
     else if(myoption.task==2)
     {
-      records.readRecords2(myoption.recordsfile.c_str());/// Read records for multiple networks.
+     // records.readRecords2(myoption.recordsfile.c_str());/// Read records for multiple networks.
     }
     else if(myoption.task==3)
     {
       /// Construct triple nodes using tcoffee.
       networks.initNetworkPool(myoption.networkfiles,myoption.numthreads);
-      kpgraph.constructGraph(myoption.numthreads);
+    //  kpgraph.constructGraph(myoption.numthreads);
       //records.createRecords_t(kpgraph,networks);
     }
     else if(myoption.task==4)
     {
-	}
+			records.top10000(myoption.formatfile);
+		}
   }
 
   if(myparser.given("alignment"))
@@ -203,8 +204,8 @@ int main(int argc, char** argv)
     if(myoption.task==0)
     {
       // run simulated annealing on multiple networks.
-      records.readRecords2(myoption.recordsfile.c_str());
-      simAnnealing.run2(records,networks);
+     // records.readRecords2(myoption.recordsfile.c_str());
+     // simAnnealing.run2(records,networks);
       mylog <<"------------------------M-NETALIGNER-------------------------"<<std::endl;
       mylog <<"It takes "<<t <<" seconds to obtain the alignment!"<<std::endl;
     }
@@ -221,7 +222,7 @@ int main(int argc, char** argv)
     {
       if(myoption.task==0)
       {
-        simAnnealing.printAlignment2(myoption.alignmentfile,records);
+       // simAnnealing.printAlignment2(myoption.alignmentfile,records);
       }
       else
       {

@@ -268,10 +268,10 @@ bool KpGraph<NetworkPool>::reweightingAll(NetworkPool& networkpool,int numthread
 template<typename NetworkPool>
 bool KpGraph<NetworkPool>::outputWeight(NetworkPool& networkpool,int ni,int nj,PrivateVariable& myPrivateVariable)
 {
-	std::cout << "Thread number: "<<omp_get_thread_num() << " Bipartite graph: " <<ni <<" -> "<< nj<< std::endl;
 	myPrivateVariable.network_1 = networkpool.getGraph(ni);// The first network
 	myPrivateVariable.network_2 = networkpool.getGraph(nj);// The second network
 	myPrivateVariable.bp12=graphs[getBpIndex(ni,nj)];
+	
 	for(myPrivateVariable.it=myPrivateVariable.bp12->redBlue.begin();myPrivateVariable.it!=myPrivateVariable.bp12->redBlue.end();++myPrivateVariable.it)
 	{
 			myPrivateVariable.protein1=myPrivateVariable.it->first;

@@ -1,33 +1,17 @@
 =====================================================================================================================
-========================NETCOFFEE DATASET2 (four species)============================================================
-=====================================================================================================================
-------------------------NETCOFFEE------------------------------
-It takes u: 693.72s, s: 11.59s, cu: 0s, cs: 0s, real: 779.907s seconds to obtain the alignment with alpha 0.
-------------------------NETCOFFEE------------------------------
-It takes u: 279.61s, s: 10.56s, cu: 0s, cs: 0s, real: 363.982s seconds to obtain the alignment with alpha 0.3.
-------------------------NETCOFFEE------------------------------
-It takes u: 368.12s, s: 10.82s, cu: 0s, cs: 0s, real: 452.633s seconds to obtain the alignment with alpha 0.4.
-------------------------NETCOFFEE------------------------------
-It takes u: 32.53s, s: 10.57s, cu: 0s, cs: 0s, real: 112.878s seconds to obtain the alignment with alpha 0.5.
-------------------------NETCOFFEE------------------------------
-It takes u: 28.64s, s: 10.13s, cu: 0s, cs: 0s, real: 111.56s seconds to obtain the alignment with alpha 0.6.
-------------------------NETCOFFEE------------------------------
-It takes u: 28.35s, s: 10.14s, cu: 0s, cs: 0s, real: 107.116s seconds to obtain the alignment with alpha 0.7.
-------------------------NETCOFFEE------------------------------
-It takes u: 28.66s, s: 9.83s, cu: 0s, cs: 0s, real: 110.792s seconds to obtain the alignment with alpha 1.
-=====================================================================================================================
 ========================NETCOFFEE DATASET3 (five species)============================================================
-=====================================================================================================================------------------------NETCOFFEE------------------------------
-It takes u: 716.93s, s: 17.81s, cu: 0s, cs: 0s, real: 837.828s seconds to obtain the alignment with alpha 0.
+=====================================================================================================================
 ------------------------NETCOFFEE------------------------------
-It takes u: 376.53s, s: 18.71s, cu: 0s, cs: 0s, real: 499.529s seconds to obtain the alignment with alpha 0.3.
+It takes u: 1017.48s, s: 30.94s, cu: 0s, cs: 0s, real: 1134.96s seconds to obtain the alignment with alpha 0.
 ------------------------NETCOFFEE------------------------------
-It takes u: 427.97s, s: 17.53s, cu: 0s, cs: 0s, real: 530.715s seconds to obtain the alignment with alpha 0.4.
+It takes u: 363.11s, s: 0.83s, cu: 0s, cs: 0s, real: 310.402s seconds to obtain the alignment with alpha 0.3.
 ------------------------NETCOFFEE------------------------------
-It takes u: 204.07s, s: 17.68s, cu: 0s, cs: 0s, real: 243.434s seconds to obtain the alignment with alpha 0.5.
+It takes u: 357.44s, s: 48.43s, cu: 0s, cs: 0s, real: 476.603s seconds to obtain the alignment with alpha 0.4.
 ------------------------NETCOFFEE------------------------------
-It takes u: 79.2s, s: 15.15s, cu: 0s, cs: 0s, real: 182.409s seconds to obtain the alignment with alpha 0.6.
+It takes u: 113.37s, s: 2.83s, cu: 0s, cs: 0s, real: 86.0217s seconds to obtain the alignment with alpha 0.5.
 ------------------------NETCOFFEE------------------------------
-It takes u: 125.4s, s: 16.11s, cu: 0s, cs: 0s, real: 207.154s seconds to obtain the alignment with alpha 0.7.
+It takes u: 109.81s, s: 0.48s, cu: 0s, cs: 0s, real: 53.8585s seconds to obtain the alignment with alpha 0.6.
 ------------------------NETCOFFEE------------------------------
-It takes u: 83.96s, s: 10.68s, cu: 0s, cs: 0s, real: 187.143s seconds to obtain the alignment with alpha 1.
+It takes u: 108.69s, s: 0.56s, cu: 0s, cs: 0s, real: 52.0997s seconds to obtain the alignment with alpha 0.7.
+------------------------NETCOFFEE------------------------------
+It takes u: 109.5s, s: 5.87s, cu: 0s, cs: 0s, real: 101.203s seconds to obtain the alignment with alpha 1.
