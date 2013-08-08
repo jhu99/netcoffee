@@ -19,7 +19,7 @@ public:
   std::vector<std::string> blastfile;
   std::unordered_multimap<std::string,std::string>  KOmap;
   std::unordered_map<std::string,unsigned> KOgroup;
-  //std::array<
+	float mEntropy,mNormalizedEntropy;
   bool removeBiEdges(NetworksType&);
   bool formatAlignment(std::string,std::string);
   bool removeRodundantInteraction();
@@ -29,12 +29,67 @@ public:
   bool extractGraemlinAlignment(std::string,std::string);
   bool readTrainingData(std::string);
   bool retrieveKOgroups(std::string);
+	void calculateEntropy(std::unordered_map<int,int>&,std::vector<std::string>&);
+	void retrieveGIlist();
 };
 
 template<typename NetworksType,typename MyOption>
 Format<NetworksType,MyOption>::Format(MyOption& myoption)
 {
+	mEntropy=0.0;
+	mNormalizedEntropy=0.0;
   blastfile = myoption.blastfiles;
+}
+
+template<typename NetworksType,typename MyOption>
+void Format<NetworksType,MyOption>::retrieveGIlist()
+{
+	std::vector<std::string> filelist;
+	filelist.push_back("./dataset/graemlin/0-coli.tab");
+	filelist.push_back("./dataset/graemlin/1-cholerae.tab");
+	filelist.push_back("./dataset/graemlin/2-campy.tab");
+	filelist.push_back("./dataset/graemlin/3-pylori.tab");
+	filelist.push_back("./dataset/graemlin/4-caulo.tab");
+	filelist.push_back("./dataset/graemlin/5-salmo.tab");
+	std::ifstream input;
+	std::string line,gene1,gene2,filename;
+	std::unordered_map<std::string, int> genesmap;
+	for(unsigned i=0;i<filelist.size();i++)
+	{
+		input.open(filelist[i].c_str());
+		std::getline(input,line);// header line interactor A and B
+		while(std::getline(input,line))
+		{
+			std::stringstream streamline(line);
+			streamline >> gene1 >> gene2;
+			if(genesmap.find(gene1)==genesmap.end())
+				genesmap[gene1]=1;
+			if(genesmap.find(gene2)==genesmap.end())
+				genesmap[gene2]=1;
+		}
+		input.close();
+	}
+	unsigned num=0,pos=0;
+	filename.append("./dataset/graemlin/GiList-");
+	filename.append(convert_num2str(pos));
+	filename.append(".txt");
+	std::ofstream output(filename);
+	for(std::unordered_map<std::string,int>::iterator it=genesmap.begin();it!=genesmap.end();++it,++num)
+	{
+		if(num>=2000)
+		{
+			num=0;
+			pos++;
+			output.close();
+			filename.clear();
+			filename.append("./dataset/graemlin/GiList-");
+			filename.append(convert_num2str(pos));
+			filename.append(".txt");
+			output.open(filename.c_str());
+		}
+		output << it->first << std::endl;
+	}
+	output.close();
 }
 
 template<typename NetworksType,typename MyOption>
@@ -118,6 +173,7 @@ bool Format<NetworksType,MyOption>::readTrainingData(std::string formatfile)
 		}
 		index++;
 	}
+	input.close();
 	return true;
 }
 
@@ -127,41 +183,70 @@ bool Format<NetworksType,MyOption>::retrieveKOgroups(std::string formatfile)
 	std::ifstream input(formatfile.c_str());
 	std::string line;
 	std::string trainingfile("./benchmark/graemlin/graemlin-2.0_test_files/test_cases/6way/training.txt");
-	unsigned qualifiedNum=0;
 	unsigned linenum=0;
+
 	readTrainingData(trainingfile.c_str());
+	std::vector<std::string> matchset;
+	std::unordered_map<int,int> KO_Id;
 	while(std::getline(input,line))
 	{
-		std::vector<std::string> matchset;
-		std::unordered_map<unsigned,unsigned> indexMap;
+		matchset.clear();
 		std::stringstream streamline(line);
-		unsigned maxKOnum=0;
-		unsigned matchsetSize=0;
 		while(streamline.good())
 		{
 			std::string term;
 			streamline >> term;
 			matchset.push_back(term);
-			if(KOgroup.find(term)==KOgroup.end())continue;
-			unsigned myindex=KOgroup[term];//discard all nodes in the alignment without a KO group
-			matchsetSize++;
-			if(indexMap.find(myindex)!=indexMap.end())
-			{
-				indexMap[myindex]++;
-			}else
-			{
-				indexMap[myindex]=1;
-			}
-			if(indexMap[myindex]>maxKOnum) maxKOnum=indexMap[myindex];
+			//if(KOgroup.find(term)==KOgroup.end())continue;
+			//unsigned myindex=KOgroup[term];//discard all nodes in the alignment without a KO group
+			//matchsetSize++;
+			//if(indexMap.find(myindex)!=indexMap.end())
+			//{
+			//	indexMap[myindex]++;
+			//}else
+			//{
+			//	indexMap[myindex]=1;
+			//}
+			//if(indexMap[myindex]>maxKOnum) maxKOnum=indexMap[myindex];
 		}
-		float conservedRate=maxKOnum/(1.0*matchsetSize);
-		if(conservedRate>=0.6) qualifiedNum+=matchsetSize;
+		calculateEntropy(KO_Id,matchset);
 		linenum++;
 	}
-	std::cout <<"#The number of qualified match-sets, match-sets, conrectness in "<<formatfile <<" is:"<<std::endl;
-	std::cout << qualifiedNum <<"\t" << linenum << "\t" <<qualifiedNum/(1.0*linenum)<< std::endl;
+	mEntropy/=linenum;
+	mNormalizedEntropy/=linenum;
+	std::cout <<"#The mean entropy and mean normalized entropy in  "<<formatfile <<" are "<< mEntropy<<"\t"<<mNormalizedEntropy<<std::endl;
 	return true;
 }
+
+template<typename NetworksType,typename MyOption>
+void Format<NetworksType,MyOption>::calculateEntropy(std::unordered_map<int,int>& KO_Id,std::vector<std::string>& matchset)
+{
+	unsigned mysize=matchset.size();
+	std::string ele;
+	int id;
+	KO_Id.clear();
+	float entropy=0.0;
+	for(unsigned i=0;i<mysize;i++)
+	{
+		ele=matchset[i];
+		if(KOgroup.find(ele)==KOgroup.end())continue;
+		id=KOgroup[ele];
+		if(KO_Id.find(id)==KO_Id.end())
+			KO_Id[id]=1;
+		else
+			KO_Id[id]++;		
+	}
+	int d=0;
+	for(std::unordered_map<int,int>::iterator it=KO_Id.begin();it!=KO_Id.end();++it)
+	{
+		float p_i=(1.0*it->second)/mysize;
+		entropy+=(-1.0)*p_i*log(p_i);
+		d++;
+	}
+	mEntropy+=entropy;
+	if(d>1)	mNormalizedEntropy+=(entropy/log(d));
+}
+
 template<typename NetworksType,typename MyOption>
 bool Format<NetworksType,MyOption>::retrieveKOnumber(std::string formatfile)
 {
@@ -239,18 +324,19 @@ bool Format<NetworksType,MyOption>::extractHomologyProteins(std::string filename
 template<typename NetworksType,typename MyOption>
 bool Format<NetworksType,MyOption>::extractGoAssociation(std::string formatfile)
 {
-	std::ifstream input(formatfile.c_str());
+	std::ifstream input("./dataset/graemlin/gi-map.txt");
 	std::ofstream output("./dataset/goa/gene_association.goa_target");
 	std::unordered_map<std::string,int> checklist;
 	std::string line;
 	while(std::getline(input,line))
 	{
 		std::stringstream streamline(line);
-		std::string protein;
-		streamline >> protein;
-		if(checklist.find(protein)==checklist.end())
+		std::string gi_id,uni_id;
+		streamline >> gi_id >> uni_id;
+		if(uni_id.compare("From")==0)continue;
+		if(checklist.find(uni_id)==checklist.end())
 		{
-		  checklist[protein]=1;
+		  checklist[uni_id]=1;
 	    }				
 	}
 	input.close();
@@ -283,7 +369,7 @@ template<typename NetworksType,typename MyOption>
 bool Format<NetworksType,MyOption>::extractGraemlinAlignment(std::string formatfile,std::string outfile)
 {
 	std::ifstream input(formatfile.c_str());
-	std::ifstream input2("./maptable.txt");
+	std::ifstream input2("./dataset/graemlin/gi-map.txt");
 	std::ofstream output(outfile.c_str());
 	std::string line;
 	std::unordered_map<std::string,std::string> idmap;
@@ -293,11 +379,12 @@ bool Format<NetworksType,MyOption>::extractGraemlinAlignment(std::string formatf
 		std::stringstream streamline(line);
 		std::string id1,id2;
 		streamline >> id1 >> id2;
+		if(id1.compare("From")==0)continue;
 		idmap[id1]=id2;
 	}
 
     /// The next line goes for header line. If there is no header line, set it as comment.
-	std::getline(input, line);
+	//std::getline(input, line);
 	while(std::getline(input,line))
 	{
 		std::vector<std::string> matchset;

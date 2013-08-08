@@ -71,7 +71,7 @@ SimulatedAnnealing<RS,ST,NP,OP>::SimulatedAnnealing(OptionType& myoption)
 ,_alpha(myoption.alpha)
 ,_resultfolder(myoption.resultfolder)
 {
-	_threshold=_alpha*0.8;
+	_threshold=(1-_alpha)*0.7;
 }
 
 template<typename RS, typename ST, typename NP, typename OP>
@@ -147,10 +147,12 @@ SimulatedAnnealing<RS,ST,NP,OP>::getMatchingEdgesAll(Graph& gr,
                                                      int nj,
                                                      EdgeWeight* edgemap)
 {
+	int edgenum=0;
   for(EdgeIt e(gr);e!=lemon::INVALID;++e)
   {
     if(mwm.matching(e))
     {
+			edgenum++;
       std::string protein1,protein2;
       protein1 = (*node2label)[gr.u(e)];
       protein2 = (*node2label)[gr.v(e)];
@@ -167,6 +169,7 @@ SimulatedAnnealing<RS,ST,NP,OP>::getMatchingEdgesAll(Graph& gr,
       }
     }
   }
+	std::cout << "Matching edges:"<<edgenum <<"\t"<<ni<<"\t"<<nj<<"\t"<<std::endl;
   return true;
 }
 
@@ -174,13 +177,15 @@ template<typename RS, typename ST, typename NP, typename OP>
 bool
 SimulatedAnnealing<RS,ST,NP,OP>::getHighScoringMatch(Graph& gr,RecordStoreType& rs,OrigLabelNodeMap* node2label,EdgeWeight* edgemap,int ni)
 {
+	int edgenum=0;
 	for(EdgeIt e(gr);e!=lemon::INVALID;++e)
 	{
 	  std::string protein1,protein2;
 	  protein1 = (*node2label)[gr.u(e)];
       protein2 = (*node2label)[gr.v(e)];
       if(protein1.compare(protein2)==0) continue;
-      if((*edgemap)[e] < _threshold) continue;
+      if(((*edgemap)[e]-_threshold)<1e-2) continue;
+			edgenum++;
       /// Do I need to test which protein is smaller? It will be tested in the next step.
       if(!rs.matchingEdges->addValue(protein1,protein2,ni,ni,(*edgemap)[e]))
       {
@@ -188,6 +193,7 @@ SimulatedAnnealing<RS,ST,NP,OP>::getHighScoringMatch(Graph& gr,RecordStoreType& 
         return false;
       }
 	}
+	std::cout <<"Number of matching edges:"<<edgenum << "\t"<<ni <<"\t"<< ni <<std::endl;
 	return true;
 }
 
@@ -237,7 +243,7 @@ SimulatedAnnealing<RS,ST,NP,OP>::run_t(KpGraph& kpgraph,RS& recordstore, NP& np)
   std::uniform_int_distribution<unsigned> sample_distribution(0,recordstore.matchingEdges->length-1);
   filename.append("alignmentscore.data");
   std::ofstream output(filename.c_str());
-  while(k<=_Kmax)
+  while(k<=_Kmax)//_Kmax
   {
     t = t-step;
     float beta = 1.0/(_k*t);

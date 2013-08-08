@@ -32,7 +32,7 @@ public:
   typedef struct _BpGraph
   {
     EdgeMap redBlue;
-    EdgeMap blueRed;
+    //EdgeMap blueRed;
     WeightMap seWeight;
     StWeightMap stWeight;
   }BpGraph;
@@ -145,12 +145,10 @@ bool KpGraph<NetworkPool>::constructGraph(int numthreads)
   int ni,nj;
 	ni=0;nj=-1;
 	int numBp=numSpecies*(numSpecies+1)/2;
-	//graphs.resize(numBp);
-#pragma omp parallel for num_threads(numthreads) shared(ni,nj) schedule(dynamic,1) ordered
 	for(int i=0;i<numBp;i++)
 	{
 		int lni,lnj;
-		#pragma omp ordered
+		#pragma omp critical
 		{
 			if(nj<numSpecies-1)nj++;
 			else{ni++;nj=ni;}
@@ -191,7 +189,7 @@ bool KpGraph<NetworkPool>::constructGraph(int numthreads)
 template<typename NetworkPool>
 bool KpGraph<NetworkPool>::readHomoList(std::string& filename,BpGraph* graph,int ni,int nj)
 {
-  std::ifstream input(filename.c_str());
+	std::ifstream input(filename.c_str(),std::ios_base::in);
   std::string line;
   std::string protein1="";
   std::string protein2="";
@@ -208,12 +206,13 @@ bool KpGraph<NetworkPool>::readHomoList(std::string& filename,BpGraph* graph,int
     std::string keystring;
     if(ni==nj)
     {
-		if(protein1.compare(protein2)>0)
+			int com=protein1.compare(protein2);
+		if(com>0)
 		{
 			std::string temp = protein1;
 			protein1 = protein2;
 			protein2 = temp;
-		}
+		}else if(com==0)continue;
 		}
 	keystring.append(protein1);keystring.append(protein2);
     if(graph->seWeight.find(keystring)!=graph->seWeight.end())
@@ -226,9 +225,11 @@ bool KpGraph<NetworkPool>::readHomoList(std::string& filename,BpGraph* graph,int
       graph->seWeight[keystring]=evalue;
       graph->stWeight[keystring]=0;
       graph->redBlue.insert(std::make_pair(protein1,protein2));
-      graph->blueRed.insert(std::make_pair(protein2,protein1));
+      //graph->blueRed.insert(std::make_pair(protein2,protein1));
     }
   }
+	std::cout << ni <<"\t" << nj <<"\t" << graph->seWeight.size()<<std::endl;
+	input.close();
   return true;
 }
 
