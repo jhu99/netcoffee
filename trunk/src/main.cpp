@@ -265,7 +265,10 @@ int main(int argc, char** argv)
       // Extract p-value for alignment
       analyzer.extractPValue();
     }
-    else{}
+    else if(myoption.task==4)
+    {
+		analyzer.getEntropy();
+	}
   }
 
   if(myparser.given("format"))

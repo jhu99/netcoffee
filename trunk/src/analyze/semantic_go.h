@@ -82,6 +82,8 @@ private:
   typedef std::unordered_map<std::string,FunScore> FunsimMap;
   int _numSpecies;
   int _numQualified;
+  float _mEntropy;
+  float _mNormalizedEntropy;
   FunsimMap fun_map;
 public:
   std::array<GoMap,NUM_SPECIES> go_list;
@@ -101,6 +103,8 @@ public:
   :length(0)
   ,_numSpecies(myoption.numspecies)
   ,_numQualified(0)
+  ,_mEntropy(0.0)
+  ,_mNormalizedEntropy(0.0)
   ,fun_map()
   ,go_list()
   ,go_map()
@@ -132,6 +136,7 @@ public:
   bool analyse();
   std::string getProtein(unsigned,short);
   GoTerms& getGoTerm(std::ofstream&,GOntology&,short);
+  bool calculateEntropy(std::unordered_map<std::string,int>&,std::vector<std::string>&);
   bool maskComment();
   bool deleteRedundancy();
   bool getNetworkAnnotation(NetworkPoolType&);
@@ -144,6 +149,7 @@ public:
   bool getAveFunSim(AlignmentNodeVector* pRecords,std::ofstream&,std::ofstream&,std::ofstream&);
   bool getAlignmentEdge(NetworkPoolType&);
   bool extractPValue();
+  bool getEntropy();
   bool outputMatchSet_i(std::string&,std::string&,int);
 };
 
@@ -297,6 +303,65 @@ bool GoList<NetworkPoolType,Option>::getMulFunSim(std::string& filename)
   outputQualified.close();
   outputUnknown.close();
   return true;
+}
+
+template<typename NetworkPoolType,typename Option>
+bool GoList<NetworkPoolType,Option>::calculateEntropy(std::unordered_map<std::string,int>& go_id,
+													  std::vector<std::string>& matchset)
+{
+	go_id.clear();
+	for(std::vector<std::string>::iterator it=matchset.begin();it!=matchset.end();++it)
+	{
+		if(go_map.find(*it)==go_map.end())continue;
+		GoTerms& goMF=go_map[*it].MF;
+		GoTerms& goBP=go_map[*it].BP;
+		for(GoTerms::iterator it=goMF.begin();it!=goMF.end();++it)
+		{
+			if(go_id.find(*it)!=go_id.end())
+				go_id[*it]++;
+			else
+				go_id[*it]=1;
+		}
+		for(GoTerms::iterator it=goBP.begin();it!=goBP.end();++it)
+		{
+			if(go_id.find(*it)!=go_id.end())
+				go_id[*it]++;
+			else
+				go_id[*it]=1;
+		}
+	}
+	int d=0;
+	float entropy=0.0;
+	for(std::unordered_map<std::string,int>::iterator it=go_id.begin();it!=go_id.end();++it)
+	{
+		float p_i=(1.0*it->second)/matchset.size();
+		entropy+=(-1.0)*p_i*log(p_i);
+		d++;
+	}
+	_mEntropy+=entropy;
+	if(d>1)	_mNormalizedEntropy+=(entropy/log(d));
+	return true;
+}
+
+template<typename NetworkPoolType,typename Option>
+bool GoList<NetworkPoolType,Option>::getEntropy()
+{
+	std::ifstream input(alignmentfile.c_str());
+	std::string line;
+	std::unordered_map<std::string,int> go_id;
+	while(std::getline(input,line))
+	{
+		std::stringstream streamline(line);
+		std::vector<std::string> matchset;
+		while(streamline.good())
+		{
+			std::string term;
+			streamline >> term;
+			matchset.push_back(term);
+		}
+		calculateEntropy(go_id,matchset);
+	}
+	return true;
 }
 
 template<typename NetworkPoolType,typename Option>
