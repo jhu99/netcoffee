@@ -237,7 +237,7 @@ public:
   float getBitScore(float);
   bool readScore(const char*);
   bool createBpGraph(KpGraph&,NetworkPool&,Graph*,OrigLabelNodeMap*,                                InvOrigLabelNodeMap*, EdgeWeight*,int,int,int);
-  bool assignEdgeScore(Graph*,OrigLabelNodeMap*,EdgeWeight*,BpGraph*,bool);
+	bool assignEdgeScore(Graph*,OrigLabelNodeMap*,EdgeWeight*,BpGraph*,bool,std::ofstream&);
   bool createBpGraphAll(KpGraph&,NetworkPool&);
   bool _createRecords(KpGraph&, NetworkPool&);
   /// bool createRecords_t(KpGraph&, NetworkPool&);
@@ -504,7 +504,6 @@ RecordStore<KpGraph,Option>::createBpGraphAll(KpGraph& kpgraph,NetworkPool& netw
   std::string filename(resultfolder);
   filename.append("scoreRecords.txt");
   std::ofstream output(filename.c_str());
-  output.close();
 	std::cout << "Reweighting started!" << std::endl;
   kpgraph.reweightingAll(networkpool,numThreads);
 	std::cout << "Reweighting finished!" << std::endl;
@@ -515,7 +514,7 @@ RecordStore<KpGraph,Option>::createBpGraphAll(KpGraph& kpgraph,NetworkPool& netw
 	numBp=numSpecies*(numSpecies+1)/2;
 
 	std::cout << "CreateBpGraph started!" << std::endl;
-#pragma omp parallel for num_threads(numThreads) shared(ni,nj) schedule(dynamic,1)
+//#pragma omp parallel for num_threads(numThreads) shared(ni,nj) schedule(dynamic,1)// have serious problem
 	for(int i=0;i<numBp;i++)
 	{
 		int lni,lnj;
@@ -534,9 +533,10 @@ RecordStore<KpGraph,Option>::createBpGraphAll(KpGraph& kpgraph,NetworkPool& netw
         BpGraph* bp12=kpgraph.graphs[i];
 				bool isHomoNet(false);
 				if(lni==lnj)isHomoNet=true;
-				assignEdgeScore(bpgraphs[i],node2labelVector[i],edgemapVector[i],bp12,isHomoNet);
+				assignEdgeScore(bpgraphs[i],node2labelVector[i],edgemapVector[i],bp12,isHomoNet,output);
 	}      
 	std::cout << "CreateBpGraph finished!" << std::endl;
+	output.close();
   return true;
 }
 
@@ -546,12 +546,14 @@ RecordStore<KpGraph,Option>::assignEdgeScore(Graph* gr,
 											OrigLabelNodeMap* node2label,
 											EdgeWeight* edgemap,
 											BpGraph* bp12,
-											bool isHomoNet)
+											bool isHomoNet,
+											std::ofstream& output)
 {
 	Node node1,node2;
 	std::string protein1,protein2,kst;
-	float sescore,weight,serange;
+	float sescore,weight,serange,sePart,stPart;
 	unsigned stWeight;
+	int ind;
 	serange=maxNodeScore-minNodeScore;
 	for(EdgeIt ie(*gr);ie!=lemon::INVALID;++ie)
 	{
@@ -559,6 +561,7 @@ RecordStore<KpGraph,Option>::assignEdgeScore(Graph* gr,
 		node2=gr->v(ie);
 		protein1=(*node2label)[node1];
 		protein2=(*node2label)[node2];
+		kst.clear();
 		kst.append(protein1);
 		kst.append(protein2);
 		if(bp12->seWeight.find(kst)==bp12->seWeight.end())
@@ -576,7 +579,14 @@ RecordStore<KpGraph,Option>::assignEdgeScore(Graph* gr,
 		}
 	  else
 		{
-        weight = combineScore(sescore, stWeight);// TODO: give a wise choice.
+		 sePart=(1-alpha)*((sescore-minNodeScore)/serange);
+		 ind=static_cast<int>(round((stWeight*1000.0)/maxStrScore));
+		 stPart=alpha*powerlaw[ind];
+		 weight = sePart+stPart;
+#pragma omp critical
+		 {
+		 output <<"sequence score\t"<<sescore<<"\t"<<sePart<<"\t structure score\t"<<stWeight/2<<"\t"<<stPart<<std::endl;
+		 }
 		}
     edgemap->set(ie,weight);
 	}
@@ -601,10 +611,6 @@ RecordStore<KpGraph,Option>::createBpGraph(KpGraph& kpgraph,
   network_1 = networkpool.getGraph(ni);/// The first network
   network_2 = networkpool.getGraph(nj);/// The second network
   std::string protein1,protein2;
-  #pragma omp critical
-  {
-	std::cout << omp_get_thread_num() << ni << nj<< std::endl;
-  }
   
   for(it=bp12->redBlue.begin();it!=bp12->redBlue.end();++it)
   {
@@ -636,19 +642,6 @@ RecordStore<KpGraph,Option>::createBpGraph(KpGraph& kpgraph,
       node2 = (*label2node)[protein2];
     }
     e = gr->addEdge(node1,node2);
- //   float sescore=0.0;
- //   if(!bscore){
-	//		sescore=getScore(bp12->seWeight[kst]);}
-	//else{
-	//	sescore=getBitScore(static_cast<float>(bp12->seWeight[kst]));}
- //   unsigned stWeight = bp12->stWeight[kst];
- //   float weight =0.0;
- //   if(ni == nj){
-	//		weight= (1-alpha)*(sescore-minNodeScore)/(maxNodeScore-minNodeScore);}
-	//  else{
- //       weight = combineScore(sescore, stWeight);// TODO: give a wise choice.
-	//}
- //   edgemap->set(e,weight);
   }
   return true;
 }
@@ -1180,17 +1173,11 @@ RecordStore<KpGraph,Option>::combineScore(float seScore, unsigned stScore)
   filename.append("scoreRecords.txt");
   float sePart,stPart;
   sePart=(1-alpha)*((seScore-minNodeScore)/(maxNodeScore-minNodeScore));
-  if(alpha<1e-2 || stScore<1)
-  {
-	  stPart=0;
-  }
-  else
-  {
-	  stPart=alpha*pow(static_cast<double>(stScore)/maxStrScore,FACTOR_EDGE);
-  }
-  std::ofstream output(filename.c_str(),std::ios_base::out|std::ios_base::app);
-  output <<"sequence score\t"<<seScore<<"\t"<<sePart<<"\t structure score\t"<<stScore/2<<"\t"<<stPart<<std::endl;
-  output.close();
+	int ind=static_cast<int>(round((stScore*1000.0)/maxStrScore));
+	stPart=alpha*powerlaw[ind];
+	//std::ofstream output(filename.c_str(),std::ios_base::out|std::ios_base::app);
+ // output <<"sequence score\t"<<seScore<<"\t"<<sePart<<"\t structure score\t"<<stScore/2<<"\t"<<stPart<<std::endl;
+ // output.close();
   return sePart+stPart;
 }
 

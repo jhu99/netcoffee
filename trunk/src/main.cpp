@@ -318,9 +318,15 @@ int main(int argc, char** argv)
 		myformat.extractGraemlinAlignment(myoption.formatfile,myoption.alignmentfile);
 	}
 	else if(myoption.task==8)
-	{
+	{// analyse mean entropy and mean normalized entropy for an alignment using KO groups.
 		FormatType myformat(myoption);
 		myformat.retrieveKOgroups(myoption.alignmentfile);
+	}
+	else if(myoption.task==9)
+	{
+		// create a list of all proteins/genes in graemlin data -> GiList-i.txt ->(convert to uniprot acc)->GiList-map-i.txt
+		FormatType myformat(myoption);
+		myformat.retrieveGIlist();
 	}
   }
   mylog.close();

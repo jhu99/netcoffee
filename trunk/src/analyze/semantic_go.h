@@ -249,8 +249,10 @@ bool GoList<NetworkPoolType,Option>::getMulFunSim(std::string& filename)
   std::ofstream output(filename1.c_str());
   std::ofstream outputQualified(filename2.c_str());
   std::ofstream outputUnknown(filename3.c_str());
-  readFsstResult(filename);
+  //readFsstResult(filename); // Fun_map has been already in.
   int numNAN=0;
+  std::string filename4("./result/genes.txt");
+  std::ofstream outputGenes;
   for(unsigned i=0;i<length;i++)
   {
     if(!isAnnotated((*newalignment)[i]))/// Count the number of "unknown records", any of proteins's annotation is unknown.
@@ -280,12 +282,11 @@ bool GoList<NetworkPoolType,Option>::getMulFunSim(std::string& filename)
       std::stringstream ss;
       ss << termfinder << numNAN;
       termfinder = ss.str();
-      //system(termfinder.c_str());
+      //system(termfinder.c_str());//draw GOView
       continue;
     }else
     {
-	  std::string filename4("./result/genes.txt");
-      std::ofstream outputGenes(filename4.c_str());
+      outputGenes.open(filename4.c_str(),std::ios_base::out|std::ios_base::trunc);
       getAveFunSim((*newalignment)[i],output,outputQualified,outputGenes);
       outputGenes.close();
     }
@@ -304,6 +305,7 @@ bool GoList<NetworkPoolType,Option>::getAveFunSim(AlignmentNodeVector* pRecords,
   AlignmentNodeVector::iterator it,it2;
   std::string protein,protein1,protein2;
   FunScore ave;
+  int numAnnotatedProteinPairs=0;
   for(it=pRecords->begin();it!=pRecords->end()-1;++it)
   {
     for(it2=it+1;it2!=pRecords->end();++it2)
@@ -322,14 +324,15 @@ bool GoList<NetworkPoolType,Option>::getAveFunSim(AlignmentNodeVector* pRecords,
         protein.append("_");
         protein.append(protein1);
       }
-      if(g_verbosity>VERBOSE_ESSENTIAL)
-        assert(fun_map.find(protein)!=fun_map.end());
-      ave+=fun_map[protein];
+      if(fun_map.find(protein)!=fun_map.end())
+      {
+		ave+=fun_map[protein];
+		numAnnotatedProteinPairs++;
+	  }
       protein.clear();
     }
   }
-  unsigned s=pRecords->size();
-  ave/=s*(s-1)/2;
+  ave/=numAnnotatedProteinPairs;
   for(it=pRecords->begin();it!=pRecords->end();++it)
   {
     output << "#" <<*it <<"\t";
@@ -364,12 +367,21 @@ bool GoList<NetworkPoolType,Option>::getAveFunSim(AlignmentNodeVector* pRecords,
 template<typename NetworkPoolType,typename Option>
 bool GoList<NetworkPoolType,Option>::isAnnotated(AlignmentNodeVector* pRecords)
 {
+	// This function should include match-sets that are annotated well enough. It needs fulfills several requirements:1) if n=2, n proteins are annotated; 2) if n >= 3, 60% proteins are annotated.
   AlignmentNodeVector::iterator it=pRecords->begin();
+	int numsize,numannotated;
+	numsize=pRecords->size();
+	numannotated=0;
   for(;it!=pRecords->end();++it)
   {
-    if(go_map.find(*it)==go_map.end())
-      return false;
+    if(go_map.find(*it)!=go_map.end())
+      numannotated++;
   }
+	float ratio=(1.0*numannotated)/numsize;
+	if(numsize==2 && numannotated<2)
+		return false;
+	else if(numsize>=3 &&  ratio < 0.6)
+		return false;
   return true;
 }
 
@@ -394,13 +406,13 @@ bool GoList<NetworkPoolType,Option>::readGeneOntology(const char* filename)
       else break;
     }
 
-    /// If GO_term was inferred from IEA or ISS, ignore it. Set this restriction as comments when test on alignments of dataset-3
+    /// If GO_term was inferred from IEA or ISS, ignore it.
     if(gorecord[2].compare("IEA")==0 ||gorecord[2].compare("ISS")==0)
       continue; 
     GOntology& record=go_map[gorecord[0]];
     if(gorecord[3].compare("C")==0)
     {
-       record.CC.push_back(gorecord[1]);
+       // record.CC.push_back(gorecord[1]); We don't write these proteins that only have Cell Component annotations.
       /// Cellular Component annotation is not needed in our analysis
     }
     else if(gorecord[3].compare("F")==0)
@@ -445,7 +457,6 @@ bool GoList<NetworkPoolType,Option>::goInitial()
   {
     readGeneOntology(associationfiles[i].c_str());
   }
-  ///readAlignment(alignmentfile.c_str());
   return true;
 }
 
@@ -461,9 +472,10 @@ bool GoList<NetworkPoolType,Option>::convert_fsst()
   filename.clear();
   filename.append(resultfolder);filename.append("alignment_proteins.fsst");
   commandline.append("./bin/fsst.sh ");commandline.append(resultfolder);
+	std::ofstream output;
   for(unsigned i=0;i<length;i++)
   {
-    std::ofstream output(filename.c_str());
+		output.open(filename.c_str(),std::ofstream::out | std::ofstream::trunc);
     AlignmentNodeVector::iterator it,itEnd;
     it=(*newalignment)[i]->begin();
     itEnd=(*newalignment)[i]->end();

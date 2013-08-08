@@ -951,7 +951,7 @@ drawBoxplotMulFunsim <- function()
 
 drawEdgeScoreDistri <- function()
 {
-	originData <- as.matrix(read.csv("./result/five_species/netcoffee/alpha_0.3/scoreRecords.txt",sep="\t",quote="",header=FALSE,comment="#"));
+	originData <- as.matrix(read.csv("./result/five_species/netcoffee/alpha_0.0/scoreRecords.txt",sep="\t",quote="",header=FALSE,comment="#"));
   browser();
   myseq <- as.numeric(originData[,2]);
   top <- as.numeric(originData[,5]);

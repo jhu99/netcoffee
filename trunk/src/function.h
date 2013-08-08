@@ -26,4 +26,13 @@ int getIndex_bit(float bitscore)
 	}
 	return ind;
 }
+/// Convert number types to string type.
+template<typename TNum>
+std::string
+convert_num2str(TNum num)
+{
+	std::ostringstream buff;
+	buff<<num;
+	return buff.str();
+}
 #endif

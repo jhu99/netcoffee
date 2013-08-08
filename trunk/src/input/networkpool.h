@@ -117,7 +117,7 @@ bool NetworkPool<GR,BP>::initNetworkPool(std::vector<std::string> &filelist,int 
   std::vector<std::string>::iterator it;
   int i,fsize;
 	fsize=filelist.size();
-#pragma omp parallel for num_threads(numthreads) ordered
+//#pragma omp parallel for num_threads(numthreads) ordered
   for(i=0;i<fsize;++i)
 	{
     readNetwork(filelist[i],i);
