@@ -71,7 +71,7 @@ SimulatedAnnealing<RS,ST,NP,OP>::SimulatedAnnealing(OptionType& myoption)
 ,_alpha(myoption.alpha)
 ,_resultfolder(myoption.resultfolder)
 {
-	_threshold=(1-_alpha)*0.7;
+	_threshold=(1-_alpha)*1.0;
 }
 
 template<typename RS, typename ST, typename NP, typename OP>

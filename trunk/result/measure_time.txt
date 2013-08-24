@@ -132,3 +132,66 @@ Complexes statistics / size:
 --= FINISHED =--
 It tooks 812 seconds.
 
+NetCoffee on Dataset five_species
+------------------------NETCOFFEE------------------------------
+It takes u: 112.05s, s: 0.36s, cu: 0s, cs: 0s, real: 48.2031s seconds to obtain the alignment with alpha 0.
+------------------------NETCOFFEE------------------------------
+It takes u: 106.97s, s: 0.32s, cu: 0s, cs: 0s, real: 47.2826s seconds to obtain the alignment with alpha 0.3.
+------------------------NETCOFFEE------------------------------
+It takes u: 117.08s, s: 0.3s, cu: 0s, cs: 0s, real: 51.8841s seconds to obtain the alignment with alpha 0.4.
+------------------------NETCOFFEE------------------------------
+It takes u: 124.26s, s: 0.42s, cu: 0s, cs: 0s, real: 55.6345s seconds to obtain the alignment with alpha 0.5.
+------------------------NETCOFFEE------------------------------
+It takes u: 106.28s, s: 0.35s, cu: 0s, cs: 0s, real: 46.5882s seconds to obtain the alignment with alpha 0.6.
+------------------------NETCOFFEE------------------------------
+It takes u: 107.8s, s: 0.33s, cu: 0s, cs: 0s, real: 47.803s seconds to obtain the alignment with alpha 0.7.
+------------------------NETCOFFEE------------------------------
+It takes u: 108.55s, s: 0.4s, cu: 0s, cs: 0s, real: 48.0277s seconds to obtain the alignment with alpha 1.
+
+NetCoffee on Dataset four_species
+NetCoffee on Dataset four_species
+------------------------NETCOFFEE------------------------------
+It takes u: 76.16s, s: 0.22s, cu: 0s, cs: 0s, real: 47.4843s seconds to obtain the alignment with alpha 0.
+------------------------NETCOFFEE------------------------------
+It takes u: 77.76s, s: 0.22s, cu: 0s, cs: 0s, real: 48.2216s seconds to obtain the alignment with alpha 0.3.
+------------------------NETCOFFEE------------------------------
+It takes u: 112.65s, s: 0.23s, cu: 0s, cs: 0s, real: 64.3938s seconds to obtain the alignment with alpha 0.4.
+------------------------NETCOFFEE------------------------------
+It takes u: 76.87s, s: 0.26s, cu: 0s, cs: 0s, real: 47.879s seconds to obtain the alignment with alpha 0.5.
+------------------------NETCOFFEE------------------------------
+It takes u: 76.98s, s: 0.25s, cu: 0s, cs: 0s, real: 47.9263s seconds to obtain the alignment with alpha 0.6.
+------------------------NETCOFFEE------------------------------
+It takes u: 86.81s, s: 0.2s, cu: 0s, cs: 0s, real: 53.7244s seconds to obtain the alignment with alpha 0.7.
+------------------------NETCOFFEE------------------------------
+It takes u: 76.78s, s: 0.22s, cu: 0s, cs: 0s, real: 47.8699s seconds to obtain the alignment with alpha 1.
+NetCoffee on Dataset four_species
+------------------------NETCOFFEE------------------------------
+It takes u: 34.4s, s: 0.17s, cu: 0s, cs: 0s, real: 21.6657s seconds to obtain the alignment with alpha 0.
+------------------------NETCOFFEE------------------------------
+It takes u: 33.88s, s: 0.21s, cu: 0s, cs: 0s, real: 21.3496s seconds to obtain the alignment with alpha 0.3.
+------------------------NETCOFFEE------------------------------
+It takes u: 33.9s, s: 0.22s, cu: 0s, cs: 0s, real: 21.3373s seconds to obtain the alignment with alpha 0.4.
+------------------------NETCOFFEE------------------------------
+It takes u: 34.05s, s: 0.23s, cu: 0s, cs: 0s, real: 21.335s seconds to obtain the alignment with alpha 0.5.
+------------------------NETCOFFEE------------------------------
+It takes u: 34.32s, s: 0.21s, cu: 0s, cs: 0s, real: 21.7288s seconds to obtain the alignment with alpha 0.6.
+------------------------NETCOFFEE------------------------------
+It takes u: 33.78s, s: 0.23s, cu: 0s, cs: 0s, real: 21.2239s seconds to obtain the alignment with alpha 0.7.
+------------------------NETCOFFEE------------------------------
+It takes u: 34.02s, s: 0.2s, cu: 0s, cs: 0s, real: 21.5269s seconds to obtain the alignment with alpha 1.
+
+NetCoffee on Dataset three_species
+------------------------NETCOFFEE------------------------------
+It takes u: 1.85s, s: 0.06s, cu: 0s, cs: 0s, real: 1.95798s seconds to obtain the alignment with alpha 0.
+------------------------NETCOFFEE------------------------------
+It takes u: 1.86s, s: 0.06s, cu: 0s, cs: 0s, real: 1.90116s seconds to obtain the alignment with alpha 0.3.
+------------------------NETCOFFEE------------------------------
+It takes u: 1.88s, s: 0.06s, cu: 0s, cs: 0s, real: 1.91838s seconds to obtain the alignment with alpha 0.4.
+------------------------NETCOFFEE------------------------------
+It takes u: 1.81s, s: 0.09s, cu: 0s, cs: 0s, real: 1.88356s seconds to obtain the alignment with alpha 0.5.
+------------------------NETCOFFEE------------------------------
+It takes u: 1.87s, s: 0.05s, cu: 0s, cs: 0s, real: 1.90274s seconds to obtain the alignment with alpha 0.6.
+------------------------NETCOFFEE------------------------------
+It takes u: 1.88s, s: 0.04s, cu: 0s, cs: 0s, real: 1.92468s seconds to obtain the alignment with alpha 0.7.
+------------------------NETCOFFEE------------------------------
+It takes u: 1.85s, s: 0.04s, cu: 0s, cs: 0s, real: 1.86729s seconds to obtain the alignment with alpha 1.
