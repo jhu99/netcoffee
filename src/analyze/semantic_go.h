@@ -4,11 +4,13 @@ Data: 23.07.2012*/
 #ifndef SEMANTIC_GO_H_
 #define SEMANTIC_GO_H_
 #include <iostream>
+#include <iomanip> 
 #include <fstream>
 #include <string>
 #include <set>
 #include <unordered_map>
 #include <cassert>
+#include <unordered_set>
 #include "macro.h"
 #include "stdlib.h"
 
@@ -16,7 +18,7 @@ template<typename NetworkPoolType,typename Option>
 class GoList
 {
 private:
-  typedef std::vector<std::string> GoTerms;
+  typedef std::unordered_set<std::string> GoTerms;
   typedef std::unordered_map<std::string,GoTerms*> GoMap;
   typedef typename NetworkPoolType::Graph Graph;
   typedef typename NetworkPoolType::InvOrigLabelNodeMap InvOrigLabelNodeMap;
@@ -230,9 +232,10 @@ bool GoList<NetworkPoolType,Option>::getMatchSet_i(std::string& filename,Network
 		}
 	    outputMatchSet_i(line,nextline,numSpecies);
 	}
-	std::cout << "#" << filename << std::endl;
-	std::cout <<"#Proteins covered by qualified match-sets: "<< qNumNode << "\t"<< qNumNode/(1.0*networks.allNodeNum) << std::endl;
-	std::cout <<"# Number of qualified match-sets of the alignment:"<< std::endl << qNumMatchSet_all <<"\t" << numMatchSet_all <<std::endl;
+	//std::cout << "#" << filename << std::endl;
+	//std::cout << std::setprecision(3) << "&\t" << qNumNode/(0.01*networks.allNodeNum) <<"\t";
+	//std::cout <<"#Proteins covered by qualified match-sets: "<< qNumNode << "\t"<< qNumNode/(1.0*networks.allNodeNum) << std::endl;
+  //std::cout <<"# Number of qualified match-sets of the alignment:"<< std::endl << qNumMatchSet_all <<"\t" << numMatchSet_all <<std::endl;
 	//for(int i=1;i<=_numSpecies;i++)
 	//{
 		//float ratio=0.0;
@@ -240,6 +243,8 @@ bool GoList<NetworkPoolType,Option>::getMatchSet_i(std::string& filename,Network
 		//else ratio = qNumMatchSet[i]/(1.0*numMatchSet[i]);
 		//std::cout <<"#Match-sets conserved by "<<i<<" species:"<< std::endl <<  qNumMatchSet[i] <<"\t" << numMatchSet[i] <<"\t" << ratio << std::endl;
 	//}
+  int i=5;
+		std::cout << "\t&" << numMatchSet[i]  << "\t";
 	return true;
 }
 
@@ -335,7 +340,7 @@ bool GoList<NetworkPoolType,Option>::calculateEntropy(std::unordered_map<std::st
 	for(std::unordered_map<std::string,int>::iterator it=go_id.begin();it!=go_id.end();++it)
 	{
 		float p_i=(1.0*it->second)/matchset.size();
-		entropy+=(-1.0)*p_i*log(p_i);
+		entropy+=(-1.0)*p_i*log10(p_i);
 		d++;
 	}
 	_mEntropy+=entropy;
@@ -349,6 +354,7 @@ bool GoList<NetworkPoolType,Option>::getEntropy()
 	std::ifstream input(alignmentfile.c_str());
 	std::string line;
 	std::unordered_map<std::string,int> go_id;
+	int linenum=0;
 	while(std::getline(input,line))
 	{
 		std::stringstream streamline(line);
@@ -359,8 +365,12 @@ bool GoList<NetworkPoolType,Option>::getEntropy()
 			streamline >> term;
 			matchset.push_back(term);
 		}
+		if(matchset[0].compare("#")==0)continue;
 		calculateEntropy(go_id,matchset);
+		linenum++;
 	}
+	std::cout << std::setprecision(4) << "&" << _mNormalizedEntropy/linenum  <<"\t";
+	//std::cout <<"The mean entropy and mean normalized entropy in " << alignmentfile <<" are:" << _mEntropy/linenum << "\t"<<_mNormalizedEntropy/linenum << std::endl; 
 	return true;
 }
 
@@ -423,7 +433,7 @@ bool GoList<NetworkPoolType,Option>::getAveFunSim(AlignmentNodeVector* pRecords,
       std::stringstream ss;
       ss << termfinder << _numQualified;
       termfinder = ss.str();
-      //system(termfinder.c_str());
+      system(termfinder.c_str());
     }
   //system("./bin/termfinderClient.sh ");
   return true;
@@ -482,11 +492,11 @@ bool GoList<NetworkPoolType,Option>::readGeneOntology(const char* filename)
     }
     else if(gorecord[3].compare("F")==0)
     {
-      record.MF.push_back(gorecord[1]);
+      record.MF.insert(gorecord[1]);
     }
     else if(gorecord[3].compare("P")==0)
     {
-      record.BP.push_back(gorecord[1]);
+      record.BP.insert(gorecord[1]);
     }
     else{}
   }
@@ -743,7 +753,7 @@ bool GoList<NetworkPoolType,Option>::readAlignment(const char* filename)
   }
   //std::cout << "The number of matching sets with 3 proteins: "<<numRecords[3] <<"\t"<<numRecords[4]<<"\t"<<numRecords[5]<< std::endl;
   length=len;
-	std::cout << len << std::endl;
+	//std::cout << len << std::endl;
   return true;
 }
 
@@ -848,10 +858,11 @@ bool GoList<NetworkPoolType,Option>::getAlignmentCoverage(NetworkPoolType& netwo
     mySpecies[numSpecies]++;
     protein_k[numSpecies]+=mysize;
   }
-  std::cout <<"The number of proteins coverved by the alignment: "<<alignmentProtein<<"  "<<alignmentProtein/(1.0*networks.allNodeNum)<< std::endl;
+	std::cout << std::setprecision(3) << "&\t"<<alignmentProtein/(0.01*networks.allNodeNum) << "\t";
+	//std::cout <<"#The number of proteins coverved by the alignment:\n "<<alignmentProtein<<"  "<<alignmentProtein/(1.0*networks.allNodeNum)<< std::endl;
   for(short k=1;k<=_numSpecies;k++)
   {
-    std::cout <<"The number of clusters contains proteins from exactly"<<k<<" species:"<<mySpecies[k] <<"\\" << protein_k[k] <<std::endl;
+		//std::cout <<"#The number of clusters contains proteins from exactly"<<k<<" species:\n"<<mySpecies[k] <<"\\" << protein_k[k] <<std::endl;
   }
   delete [] numProtein;
   delete [] mySpecies;

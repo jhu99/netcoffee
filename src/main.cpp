@@ -240,7 +240,7 @@ int main(int argc, char** argv)
       // Figure out annotation information of proteins.
       // Figure out coverage performance of the alignment.
       networks.initNetworkPool(myoption.networkfiles,myoption.numthreads);
-      std::cout << "Annotation information of proteins in " << myoption.alignmentfile <<std::endl;
+			//std::cout << "#Annotation information of proteins in " << myoption.alignmentfile <<std::endl;
       analyzer.readAlignment(myoption.alignmentfile.c_str());/// alignment file must strictly on the format
       analyzer.getAlignmentCoverage(networks);
       //analyzer.getNetworkAnnotation(networks);
@@ -267,8 +267,8 @@ int main(int argc, char** argv)
     }
     else if(myoption.task==4)
     {
-		analyzer.getEntropy();
-	}
+			analyzer.getEntropy();
+		}
   }
 
   if(myparser.given("format"))
