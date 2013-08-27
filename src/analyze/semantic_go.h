@@ -296,7 +296,6 @@ bool GoList<NetworkPoolType,Option>::getMulFunSim(std::string& filename)
   std::ofstream outputUnknown(filename3.c_str());
   //readFsstResult(filename); // Fun_map has been already in.
   int numNAN=0;
-  std::string filename4("./result/genes.txt");
   std::ofstream outputGenes;
   for(unsigned i=0;i<length;i++)
   {
@@ -323,17 +322,10 @@ bool GoList<NetworkPoolType,Option>::getMulFunSim(std::string& filename)
         //return false;
         //++it;
       //}
-      std::string termfinder("./bin/gotermfinder.sh ");
-      std::stringstream ss;
-      ss << termfinder << numNAN;
-      termfinder = ss.str();
-      //system(termfinder.c_str());//draw GOView
       continue;
     }else
     {
-      outputGenes.open(filename4.c_str(),std::ios_base::out|std::ios_base::trunc);
       getAveFunSim((*newalignment)[i],output,outputQualified,outputGenes);
-      outputGenes.close();
     }
   }
   output << "#The number of unknown alignment records: "<< numNAN <<std::endl;
@@ -460,16 +452,19 @@ bool GoList<NetworkPoolType,Option>::getAveFunSim(AlignmentNodeVector* pRecords,
     {
       _numQualified++;
       outputQualified << _numQualified <<"\t";
+      std::string filename(resultfolder);
+      filename.append("genes_");
+      filename.append(convert_num2str(_numQualified));
+      filename.append(".txt");
+      outputGenes.open(filename.c_str());
       for(it=pRecords->begin();it!=pRecords->end();++it)
+      {
         outputQualified <<*it<<"\t";
+        outputGenes <<*it<<"\n";
+	  }
       outputQualified << ave.mf <<"\t" << ave.bp <<std::endl;
-      std::string termfinder("./bin/gotermfinder.sh ");
-      std::stringstream ss;
-      ss << termfinder << _numQualified;
-      termfinder = ss.str();
-      system(termfinder.c_str());
+      outputGenes.close();
     }
-  //system("./bin/termfinderClient.sh ");
   return true;
 }
 
