@@ -42,7 +42,7 @@ typedef struct _Option
   double edgefactor;
   double alpha;
   double beta;
-  double threshold;
+  double eta;
   int numspecies;
   int nmax;
 	int numthreads;
@@ -63,7 +63,7 @@ typedef struct _Option
   std::vector<std::string> associationfiles;/// gene ontology association
   _Option()
   : out(false), create_records(false),
-  analyze(false), model(false),bscore(false),task(1),edgefactor(0.1),alpha(0.5),beta(1.0),threshold(0.4),numspecies(4),nmax(2000)
+  analyze(false), model(false),bscore(false),task(1),edgefactor(0.1),alpha(0.5),beta(1.0),eta(1.0),numspecies(4),nmax(2000)
   {
     profile="./profile.input";
 		numthreads=omp_get_max_threads();
@@ -110,7 +110,7 @@ bool setParser(ArgParser& parser, Option& myoption)
   .refOption("distributionfile","Output file for log ratio distribution.", myoption.distributionfile)
   .refOption("resultfolder","The folder which was used as active folder in the data process.", myoption.resultfolder)
   .refOption("beta","Probability for randomly picking out the alignment records. Default is 1.0",myoption.beta)
-  .refOption("threshold","Threshold gamma which is used to exclude match-sets with score below a certain value. Default is 0.0.",myoption.threshold)
+  .refOption("eta","Threshold imfactor which is used to exclude match-sets from a single species. Default is 1.0.",myoption.eta)
   .refOption("nmax","The parameter for SA algorithm N.",myoption.nmax)
   .refOption("out","Print the alignment result into file.",myoption.out)
   .refOption("bscore","Use bitscore as the similarity of edges.",myoption.bscore)
@@ -258,7 +258,8 @@ int main(int argc, char** argv)
     {
       // Get average score for match-sets conserved by i species.
       networks.initNetworkPool(myoption.networkfiles,myoption.numthreads);
-      analyzer.getMatchSet_i(myoption.avefunsimfile,networks);
+      //analyzer.getMatchSet_i(myoption.avefunsimfile,networks);/// from aveFunsim.result
+	  analyzer.getMatchSet_i_2(myoption.alignmentfile,networks);/// from alignmentfile
     }
     else if(myoption.task==3)
     {

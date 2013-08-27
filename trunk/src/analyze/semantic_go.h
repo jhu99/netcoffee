@@ -145,6 +145,7 @@ public:
   bool getAlignmentCoverage(NetworkPoolType&);
   bool getMulFunSim(std::string&);
   bool getMatchSet_i(std::string&,NetworkPoolType&);
+	bool getMatchSet_i_2(std::string&,NetworkPoolType&);
   bool readFsstResult(std::string&);
   bool readAveFunSim(std::string&);
   bool isAnnotated(AlignmentNodeVector* pRecords);
@@ -172,6 +173,39 @@ bool GoList<NetworkPoolType,Option>::readFsstResult(std::string& filename)
     fun_map[proteinpair] = funscore;  
   }
   return true;
+}
+
+template<typename NetworkPoolType,typename Option>
+bool GoList<NetworkPoolType,Option>::getMatchSet_i_2(std::string& filename,NetworkPoolType& networks)
+{
+	unsigned *numMatchSet = new unsigned [_numSpecies+1];
+	unsigned *numProtein = new unsigned[_numSpecies];
+	readAlignment(filename.c_str());
+	typedef AlignmentNodeVector::iterator TIterator;
+	for(unsigned i=0;i<length;i++)
+	{
+		int msize=0;
+		int numSpecies=0;
+		for(TIterator it=(*newalignment)[i]->begin();it!=(*newalignment)[i]->end();++it)
+		{
+			std::string protein=*it;
+			if(networks.getHost(protein)==100)continue;
+			numProtein[networks.getHost(protein)]++;
+			msize++;
+		}
+		for(short k=0;k<_numSpecies;k++)
+	    {
+	      if(numProtein[k]>0)
+	      {
+	        numSpecies++;
+	        numProtein[k]=0;
+	      }
+	    }
+		numMatchSet[numSpecies]++;
+	}
+	//int i=6;
+		std::cout << "\t&" << numMatchSet[2]  << "\t&" << numMatchSet[3] << "\t&" << numMatchSet[4] << "\t&" << numMatchSet[5] << "\t&" << numMatchSet[6]<< "\t";
+	return true;
 }
 
 template<typename NetworkPoolType,typename Option>
@@ -243,7 +277,7 @@ bool GoList<NetworkPoolType,Option>::getMatchSet_i(std::string& filename,Network
 		//else ratio = qNumMatchSet[i]/(1.0*numMatchSet[i]);
 		//std::cout <<"#Match-sets conserved by "<<i<<" species:"<< std::endl <<  qNumMatchSet[i] <<"\t" << numMatchSet[i] <<"\t" << ratio << std::endl;
 	//}
-  int i=5;
+  int i=2;
 		std::cout << "\t&" << numMatchSet[i]  << "\t";
 	return true;
 }
