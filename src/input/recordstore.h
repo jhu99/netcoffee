@@ -15,7 +15,7 @@ Date: 28.06.2012*/
 #include <chrono>
 #include "macro.h"
 #include "verbose.h"
-#include "math.h"
+#include <cmath>
 #include "function.h"
 
 template<typename KpGraph,typename Option>
@@ -553,7 +553,7 @@ RecordStore<KpGraph,Option>::assignEdgeScore(Graph* gr,
 	std::string protein1,protein2,kst;
 	float sescore,weight,serange,sePart,stPart;
 	unsigned stWeight;
-	int ind;
+	//int ind;
 	serange=maxNodeScore-minNodeScore;
 	for(EdgeIt ie(*gr);ie!=lemon::INVALID;++ie)
 	{
@@ -580,8 +580,9 @@ RecordStore<KpGraph,Option>::assignEdgeScore(Graph* gr,
 	  else
 		{
 		 sePart=(1-alpha)*((sescore-minNodeScore)/serange);
-		 ind=static_cast<int>(round((stWeight*1000.0)/maxStrScore));
-		 stPart=alpha*powerlaw[ind];
+		 //ind=static_cast<int>(round((stWeight*1000.0)/maxStrScore));
+		 //stPart=alpha*powerlaw[ind];
+		 stPart=alpha*pow((stWeight*1.0)/maxStrScore,FACTOR_EDGE);
 		 weight = sePart+stPart;
 #pragma omp critical
 		 {

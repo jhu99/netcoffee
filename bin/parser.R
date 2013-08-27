@@ -739,9 +739,9 @@ plotConvergency <- function(filename, para)
   size <- nrow(originData);
   x <- c(1:size);
   boxtext=paste(expression(alpha),"=",para);
-  jpeg(file="./result/images/convergence.jpeg",quality=100,width=1200,height=1200,pointsize=34);
-  plot(x,y,type="o",pch=1,col="red",cex.lab=3.0,cex.axis=2.5,cex.main=2.0);
-  text(80000,500,boxtext,cex=2);
+  pdf(file="./result/images/convergence.pdf");
+  plot(x,y,type="o",pch=1,col="red",cex.lab=2.0,cex.axis=1.5,cex.main=2.0);
+  text(30000,50,boxtext,cex=1.5);
   dev.off();
 }
 
