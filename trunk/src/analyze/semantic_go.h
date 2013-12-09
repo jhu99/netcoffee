@@ -204,7 +204,7 @@ bool GoList<NetworkPoolType,Option>::getMatchSet_i_2(std::string& filename,Netwo
 		numMatchSet[numSpecies]++;
 	}
 	//int i=6;
-		std::cout << "\t&" << numMatchSet[2]  << "\t&" << numMatchSet[3] << "\t&" << numMatchSet[4] << "\t&" << numMatchSet[5] << "\t&" << numMatchSet[6]<< "\t";
+	std::cout << "\t&" << numMatchSet[1] << "\t&" << numMatchSet[2]  << "\t&" << numMatchSet[3] << "\t&" << numMatchSet[4] << "\t&" << numMatchSet[5] << "\t&" << numMatchSet[6]<< "\t";
 	return true;
 }
 
@@ -395,7 +395,8 @@ bool GoList<NetworkPoolType,Option>::getEntropy()
 		calculateEntropy(go_id,matchset);
 		linenum++;
 	}
-	std::cout << std::setprecision(4) << "&" << _mNormalizedEntropy/linenum  <<"\t";
+	//std::cout << std::setprecision(4) << "&" << _mNormalizedEntropy/linenum  <<"\t";
+	std::cout << std::setprecision(4) << "&" << _mNormalizedEntropy/linenum  <<"\t" << _mEntropy/linenum <<"\n";
 	//std::cout <<"The mean entropy and mean normalized entropy in " << alignmentfile <<" are:" << _mEntropy/linenum << "\t"<<_mNormalizedEntropy/linenum << std::endl; 
 	return true;
 }

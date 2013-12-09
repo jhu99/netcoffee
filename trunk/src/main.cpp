@@ -258,8 +258,8 @@ int main(int argc, char** argv)
     {
       // Get average score for match-sets conserved by i species.
       networks.initNetworkPool(myoption.networkfiles,myoption.numthreads);
-      //analyzer.getMatchSet_i(myoption.avefunsimfile,networks);/// from aveFunsim.result
-	  analyzer.getMatchSet_i_2(myoption.alignmentfile,networks);/// from alignmentfile
+			analyzer.getMatchSet_i(myoption.avefunsimfile,networks);/// from aveFunsim.result
+	    //analyzer.getMatchSet_i_2(myoption.alignmentfile,networks);/// from alignmentfile
     }
     else if(myoption.task==3)
     {
@@ -308,7 +308,7 @@ int main(int argc, char** argv)
 	  // format graemlin homology data to evals format.
 	  FormatType myformat(myoption);
 	  networks.initNetworkPool(myoption.networkfiles,myoption.numthreads);
-    myformat.extractHomologyProteins(myoption.formatfile,networks);
+	  myformat.extractHomologyProteins(myoption.formatfile,networks);
 	}else if(myoption.task==6)
 	{
 		// extract GO association data for a list of proteins.
@@ -322,7 +322,8 @@ int main(int argc, char** argv)
 		myformat.extractGraemlinAlignment(myoption.formatfile,myoption.alignmentfile);
 	}
 	else if(myoption.task==8)
-	{// analyse mean entropy and mean normalized entropy for an alignment using KO groups.
+	{
+		// analyse mean entropy and mean normalized entropy for an alignment using KO groups.
 		FormatType myformat(myoption);
 		myformat.retrieveKOgroups(myoption.alignmentfile);
 	}
