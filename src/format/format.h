@@ -324,7 +324,7 @@ bool Format<NetworksType,MyOption>::extractHomologyProteins(std::string filename
 template<typename NetworksType,typename MyOption>
 bool Format<NetworksType,MyOption>::extractGoAssociation(std::string formatfile)
 {
-	std::ifstream input("./dataset/graemlin/gi-map.txt");
+	std::ifstream input(formatfile);
 	std::ofstream output("./dataset/goa/gene_association.goa_target");
 	std::unordered_map<std::string,int> checklist;
 	std::string line;
@@ -333,7 +333,7 @@ bool Format<NetworksType,MyOption>::extractGoAssociation(std::string formatfile)
 		std::stringstream streamline(line);
 		std::string gi_id,uni_id;
 		streamline >> gi_id >> uni_id;
-		if(uni_id.compare("From")==0)continue;
+		if(gi_id.compare("From")==0)continue;
 		if(checklist.find(uni_id)==checklist.end())
 		{
 		  checklist[uni_id]=1;
@@ -349,15 +349,20 @@ bool Format<NetworksType,MyOption>::extractGoAssociation(std::string formatfile)
 	{
 		if(line[0]=='!')continue;
 		std::vector<std::string> goterm;
-		std::stringstream streamline(line);
-		while(streamline.good())
+		std::string newline=line;
+		std::size_t found=line.find_first_of("\t");
+		while(found!=std::string::npos)
 		{
 			std::string term;
-			streamline >> term;
+			term=line.substr(0,found);
 			goterm.push_back(term);
+			line=line.substr(found+1);
+			found=line.find_first_of("\t");
 		}
-		if(checklist.find(goterm[1])!=checklist.end())
-			output << line << std::endl;
+		if(checklist.find(goterm[1])!=checklist.end() &&
+			goterm[6].compare("IEA")!=0 &&
+			goterm[6].compare("ISS")!=0)
+			output << newline << std::endl;
 		 //output << goterm[1] << "\t" << goterm[3] << "\t" << goterm[5] << "\t" << goterm[7] << std::endl;
 	}
 	input2.close();
