@@ -1,7 +1,8 @@
+#labels Phase-QA
 # A list of frequently asked questions.
 
 = FAQ=
 
-   # Does NetCoffee also do the pairwise alignment? 
+   # Does NetCoffee also solve the pairwise alignment problem? 
 
       No, it doesn't align two networks, since it employs a triple approach to score topological edges in bipartite graphs.
