@@ -1,7 +1,6 @@
 #labels Phase-QA
-# A list of frequently asked questions.
 
-= FAQ=
+= frequently asked questions =
 
    # Does NetCoffee also solve the pairwise alignment problem? 
 
