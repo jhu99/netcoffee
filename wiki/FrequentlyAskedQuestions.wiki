@@ -1,5 +1,5 @@
 #labels Phase-QA
-= frequently asked questions =
+= Frequently Asked Questions =
 
    * Does *NetCoffee* also solve the pairwise alignment problem? 
       No, it doesn't align two networks, since it employs a triple approach to score topological edges in bipartite graphs. Unexpected errors might happen if there are only two input networks in the "profile.input" file. 
