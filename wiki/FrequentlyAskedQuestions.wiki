@@ -5,4 +5,7 @@
       No, it doesn't align two networks, since it employs a triple approach to score topological edges in bipartite graphs. Unexpected errors might happen if there are only two input networks in the "profile.input" file. 
    
    * Do I have to modify "score.bmode" or "score.mode" when it was used for other data sets?
-     We suggest no. But you can use another scoring model if you like, that's why we leave it as an option for you. 
+     We suggest no. But you are allowed to use another scoring model if you like, that's why we leave it as an option for you. 
+
+   * Does it support Mac OS X?
+     Yes, it does. The source code can be compiled with compilers g++-4.6 or higher and MS Visual Studio 11.
