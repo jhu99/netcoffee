@@ -2,9 +2,7 @@
 = frequently asked questions =
 
    * Does *NetCoffee* also solve the pairwise alignment problem? 
-
       No, it doesn't align two networks, since it employs a triple approach to score topological edges in bipartite graphs. Unexpected errors might happen if there are only two input networks in the "profile.input" file. 
    
    * Do I have to modify "score.bmode" or "score.mode" when it was used for other data sets?
-
      We suggest no. But you can use another scoring model if you like, that's why we leave it as an option for you. 
