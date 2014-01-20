@@ -8,4 +8,4 @@
      We suggest no. But you are allowed to use another scoring model if you like, that's why we leave it as an option for you. 
 
    * Does it support Mac OS X?
-     Yes, it does. The source code can be compiled with compilers g++-4.6 or higher and MS Visual Studio 11.
+     Yes, it does. The source code can be compiled with compilers g++-4.6 or higher, MS Visual Studio 11.
