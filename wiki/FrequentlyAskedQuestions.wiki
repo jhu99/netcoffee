@@ -11,4 +11,4 @@
      Yes, it does. The source code can be compiled with compilers g++-4.6 or higher, MS Visual Studio 11.
 
    * Some error occurred when NetCoffee was run on 3 species?
-     Please make sure you have specified the parameter "-numspecies" correctly! The default is 4.
+     Please make sure you have specified the parameter "-numspecies" correctly. The default is 4.
