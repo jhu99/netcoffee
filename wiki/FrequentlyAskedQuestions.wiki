@@ -14,4 +14,4 @@
      Please make sure you have specified the parameter "-numspecies" correctly. The default is 4.
 
    * Is NetCoffee designed for finding many-to-many mapping or one-to-one mapping?
-     Both. NetCoffee will output a one-to-one mapping in default, because the default "eta" is 1. But you can also use it for a many-to-many mapping by decreasing "eta" to a smaller value, such as 0 or 0.5.
+     It was designed for generating a global many-to-many node mapping table for compared species. The option 'eta' is used to control the number of many-to-many match-sets. When 'eta'=1, it will output the smallest number of many-to-many match-sets. When 'eta'=0, it will output the largest number of many-to-many match-sets.
