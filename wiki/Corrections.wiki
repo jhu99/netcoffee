@@ -1,0 +1,30 @@
+#labels Featured
+#This is a page of the error corrections for the published paper.
+
+= Corrections =
+
+*From*:
+
+(_the first paragraph of Page 2_)
+
+Among pairwise local alignment tools are PathBlast (Kelley et al., 2004), MaWISh (Koyutu¨ rk et al., 2005), NetworkBlast (Kalaev et al., 2008), NetAligner (Pache et al., 2012) , *PINALOG* (Phan and Sternberg, 2012) and *SIPINAL* (Aladag and Erten, 2013).
+A review by Sharan et al. (Sharan and Ideker, 2006) extensively discusses some of these methods. Well-known pairwise global alignment tools are IsoRank (Singh et al., 2007), PISwap (Chindelevitch et al., 2010), MI-GRAAL (Kuchaiev and Prulj, 2011), Natalie 2.0 (El-Kebir et al., 2011) and GHOST (Patro and Kingsford, 2012). 
+
+*To*:
+
+Among pairwise local alignment tools are PathBlast (Kelley et al., 2004), MaWISh (Koyutu¨ rk et al., 2005), NetworkBlast (Kalaev et al., 2008), NetAligner (Pache et al., 2012). A review by Sharan et al. (Sharan and Ideker, 2006) extensively discusses some of these methods. Well-known pairwise global alignment tools are IsoRank (Singh et al., 2007), PISwap (Chindelevitch et al., 2010), MI-GRAAL (Kuchaiev and Prulj, 2011), Natalie 2.0 (El-Kebir et al., 2011), *PINALOG* (Phan and Sternberg, 2012), GHOST (Patro and Kingsford, 2012) and *SIPINAL* (Aladag and Erten, 2013).
+
+---
+
+*From*:
+
+(_References_)
+
+Flannick,J. _et al_. (2009) Automatic Parameter learning for multiple local network alignment. J. Comput. Biol., 16, 1001-1022.
+
+*To*
+
+Flannick, J., Novak, A., Do, C., Srinivasan, B., and Batzoglou, S. (2008). Automatic
+parameter learning for multiple network alignment. In M. Vingron and L. Wong,
+editors, Research in Computational Molecular Biology, volume 4955 of Lecture
+Notes in Computer Science, pages 214–231. Springer Berlin Heidelberg.
