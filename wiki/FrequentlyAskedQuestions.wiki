@@ -1,4 +1,4 @@
-#labels Phase-QA
+#labels Phase-QA,Featured
 = Frequently Asked Questions =
 
    * Does *NetCoffee* also solve the pairwise alignment problem? 
