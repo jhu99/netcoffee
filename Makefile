@@ -27,7 +27,7 @@ netcoffee: src/main.cpp src/verbose.o $(LEMON)/lemon/arg_parser.o
 	${CXX} ${CXXFLAGS} -o $@ $^ 
 
 move:
-	mv netcoffee ./bin
+	mv netcoffee ./bin/netcoffee.cgi
 
 #lemon: lemon-config lemon-make
 
@@ -38,4 +38,4 @@ move:
 #$(LEMON)/make	
 
 clean:
-	rm ./bin/netcoffee
+	rm ./bin/netcoffee.cgi
