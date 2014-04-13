@@ -255,3 +255,5 @@ It takes u: 669.8s, s: 0.12s, cu: 0s, cs: 0s, real: 671.873s seconds to obtain t
 It takes u: 674.22s, s: 0.16s, cu: 0s, cs: 0s, real: 676.358s seconds to obtain the alignment with alpha 0.7.
 ------------------------NETCOFFEE------------------------------
 It takes u: 667.59s, s: 0.11s, cu: 0s, cs: 0s, real: 669.663s seconds to obtain the alignment with alpha 1.
+------------------------NETCOFFEE------------------------------
+It takes u: 4.04s, s: 0.01s, cu: 0s, cs: 0s, real: 4.08648s seconds to obtain the alignment with alpha 0.5.
