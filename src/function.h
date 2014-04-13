@@ -4,6 +4,9 @@ Date: 28.07.2013*/
 
 #ifndef FUNCTION_H_
 #define FUNCTION_H_
+#include "macro.h"
+#include <math.h>
+#include <sstream>
 
 int getIndex(double evalue)
 {
@@ -31,7 +34,7 @@ template<typename TNum>
 std::string
 convert_num2str(TNum num)
 {
-	std::ostringstream buff;
+	std::stringstream buff;
 	buff<<num;
 	return buff.str();
 }

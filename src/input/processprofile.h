@@ -37,16 +37,13 @@ ProcessProfile<Option>::readProfile()
   std::ifstream input(profile.c_str());
   std::string line;
   std::string mkey,mvalue;
-  if(!input.is_open())
-  {
-    std::cerr << profile<<" can't be opened!"<<std::endl;
-  }
   while(std::getline(input,line))
   {
     if(line[0]=='#')continue;
     std::stringstream lineStream(line);
     lineStream >> mkey >> mvalue;
-    profileMap.insert(std::pair<std::string,std::string>(mkey,mvalue));
+    std::cout  << mkey <<"\t" << mvalue;
+    //profileMap.insert(std::pair<std::string,std::string>(mkey,mvalue));
   }
   input.close();
   return true;
@@ -99,7 +96,7 @@ ProcessProfile<Option>::getKey(std::string& mykey,std::string& value)
   }
   else
   {
-    std::cerr <<"Option "<<mykey<<" is not correctly specified!"<<std::endl;
+    //std::cerr <<"Option "<<mykey<<" is not correctly specified!"<<std::endl;
   }
   return true;
 }
