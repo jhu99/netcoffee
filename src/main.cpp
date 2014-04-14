@@ -3,29 +3,29 @@ Author: Jialu Hu
 Data: 18.06.2012*/
 
 #include <iostream>
-//#include <fstream>
-//#include <vector>
+#include <fstream>
+#include <vector>
 #include <omp.h>
-//#include <lemon/list_graph.h>
-//#include <lemon/smart_graph.h>
-//#include <lemon/time_measure.h>
-//#include "verbose.h"
-//#include "input/networkpool.h"
+#include <lemon/list_graph.h>
+#include <lemon/smart_graph.h>
+#include <lemon/time_measure.h>
+#include "verbose.h"
+#include "input/networkpool.h"
 //#include "input/recordstore.h"
-//#include "input/kp_graph.h"
+#include "input/kp_graph.h"
 //#include "input/processprofile.h"
 //#include "algorithms/solution_x.h"
-//#include "algorithms/simulatedannealing.h"
+#include "algorithms/simulatedannealing.h"
 //#include "analyze/semantic_go.h"
 //#include "analyze/score_model.h"
 //#include "format/format.h"
 #include "format/output_html.h"
 
 using namespace std;
-/*typedef lemon::ListGraph Graph;
+typedef lemon::ListGraph Graph;
 typedef lemon::SmartGraph BpGraph;
 typedef NetworkPool<Graph,BpGraph> InputGraph;
-typedef KpGraph<InputGraph> InputKpGraph;*/
+typedef KpGraph<InputGraph> InputKpGraph;
 
 typedef struct _Option
 {
@@ -70,11 +70,10 @@ typedef struct _Option
 }Option;
 
 typedef Output_html<Option> OutputHtml;
-/*
 typedef Solution_X<Graph, InputKpGraph, BpGraph, Option> Solution;
 typedef RecordStore<InputKpGraph, Option> InputRecord;
 typedef SimulatedAnnealing<InputRecord,Solution,InputGraph,Option> SimulatedAnnealingType;
-typedef Format<InputGraph, Option> FormatType;
+/*typedef Format<InputGraph, Option> FormatType;
 typedef GoList<InputGraph, Option> GoAnalyzer;
 
 bool runParser(Option& myoption)
@@ -98,23 +97,20 @@ int main()
   //vector<string> filenames;/// strings for input networks filename
   //string outputfile("./result/alignment.network.data");
   Option myoption;
-  //g_verbosity = VERBOSE_DEBUG;
+  g_verbosity = VERBOSE_DEBUG;
   
   webpage.set_header();
   webpage.get_data(myoption);
-  //runParser(myoption);
-  std::cout <<"test"<<std::endl;
-  webpage.set_footer();
 
-  //InputKpGraph kpgraph(myoption.blastfiles,myoption.numspecies);
+  InputKpGraph kpgraph(myoption.blastfiles,myoption.numspecies);
   //InputRecord records(hmodelfile,nmodelfile,myoption);
   //std::ofstream mylog(myoption.logfile,std::ios_base::out|std::ios_base::app);
-  //InputGraph networks;
+  InputGraph networks;
   //Timer t;
      
     //t.restart();
-    //SimulatedAnnealingType simAnnealing(myoption);
-    //networks.initNetworkPool(myoption.networkfiles,myoption.numthreads);
+    SimulatedAnnealingType simAnnealing(myoption);
+    networks.initNetworkPool(myoption.networkfiles,myoption.numthreads);
 
      ////run simulated annealing on multiple networks with tcoffee technique.
     //records.createBpGraphAll(kpgraph,networks);
@@ -128,5 +124,6 @@ int main()
         //simAnnealing.printAlignment_t(myoption.alignmentfile, networks);
     //}
     //mylog.close();
+    webpage.set_footer();
     return 0;
 }
