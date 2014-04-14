@@ -70,9 +70,9 @@ public:
 	~NetworkPool();
 	bool initNetworkPool(std::vector<std::string>&,int);
 	bool readNetwork(std::string&,int);
-  GraphData* getGraph(int);
-  unsigned getHost(std::string);
-  bool existNode(std::string);
+	GraphData* getGraph(int);
+	unsigned getHost(std::string);
+	bool existNode(std::string);
 };
 
 template<typename GR, typename BP>
@@ -116,7 +116,7 @@ bool NetworkPool<GR,BP>::initNetworkPool(std::vector<std::string> &filelist,int 
 {
   std::vector<std::string>::iterator it;
   int i,fsize;
-	fsize=filelist.size();
+  fsize=filelist.size();
 //#pragma omp parallel for num_threads(numthreads) ordered
   for(i=0;i<fsize;++i)
 	{
@@ -132,16 +132,14 @@ bool NetworkPool<GR,BP>::readNetwork(std::string &filename,int i)
   std::string line;
   std::unordered_map<std::string,int> interactionmap;
   std::ifstream input(filename.c_str());
-  if(!input.good())
-  {
-    std::cerr << filename <<"cannot be opened!"<<std::endl;
-    return 0;
-  }
 #pragma omp ordered
 	{
 	_graphSet.push_back(data);
 	}
-  //_graphSet[i]=data;// work sharing
+  if(!input.is_open())
+  {
+	  std::cout <<filename<<" doesn't exist!<br>"<<std::endl;
+  }
   std::getline(input,line);/// Skip header line: INTERACTOR A INTERACTOR B
   while(std::getline(input,line))
   {
@@ -213,10 +211,10 @@ bool NetworkPool<GR,BP>::readNetwork(std::string &filename,int i)
 	{
 		if(g_verbosity>=VERBOSE_NON_ESSENTIAL)
 		{
-			std::cerr <<filename <<" has been read successfully!"<<std::endl;
-			std::cerr <<"# of proteins:"<< data->nodeNum <<"\t"<<std::endl;
-			std::cerr <<"# of interactions:"<<data->edgeNum<<std::endl;
-			std::cerr <<"the largest degree:"<< maxNode << std::endl;
+			std::cout <<filename <<" has been read successfully!<br>"<<std::endl;
+			std::cout <<"# of proteins:"<< data->nodeNum <<"<br>"<<std::endl;
+			std::cout <<"# of interactions:"<<data->edgeNum<<"<br>"<<std::endl;
+			std::cout <<"the largest degree:"<< maxNode <<"<br>"<< std::endl;
 		}
 	}
 //#pragma omp atomic// it also works #pragma omp critical

@@ -59,24 +59,26 @@ void Output_html<Option>::get_data(Option& myoption)
 	std::string jobid,numspecies;
 	if(!getPost(jobid,numspecies))return;
 	std::cout <<"Job Id:\t"<<jobid<<std::endl;
-	std::cout <<"<br>numspecies:\t"<<numspecies<<std::endl;
+	std::cout <<"<br>numspecies:\t"<<numspecies<<"<br>"<<std::endl;
 	int num=std::stoi(numspecies);
+	myoption.numspecies=num;
 	for(int i=0;i<num;i++)
 	{
-		std::string ppifilename="./uploadfiles/";
+		std::string ppifilename="../../data-rw/uploadfiles/";
 		ppifilename.append(jobid);ppifilename.append("/ppi");
 		ppifilename.append(convert_num2str(i));
 		ppifilename.append(".tab");
-		std::cout <<"<br>"<<ppifilename<<std::endl;
+		//std::cout <<"<br>"<<ppifilename<<std::endl;
 		myoption.networkfiles.push_back(ppifilename);
 		for(int j=i;j<num;j++)
 		{
-			std::string ssfilename="./uploadfiles/";
+			std::string ssfilename="../../data-rw/uploadfiles/";
 			ssfilename.append(jobid);ssfilename.append("/ppi");
 			ssfilename.append(convert_num2str(i));
 			ssfilename.append("-ppi");ssfilename.append(convert_num2str(j));
 			ssfilename.append(".cf");
-			std::cout <<"<br>"<<ssfilename<<std::endl;
+			myoption.blastfiles.push_back(ssfilename);
+			//std::cout <<"<br>"<<ssfilename<<std::endl;
 		}
 	}
 }
