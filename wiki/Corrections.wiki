@@ -20,11 +20,11 @@ Among pairwise local alignment tools are PathBlast (Kelley et al., 2004), MaWISh
 
 (_The first paragraph in complexity analysis_)
 
-the running time complexity of Edmond's Algorithm on B_s is O(|V_{s1}\cup V_{s2}|).
+Suppose there is a bipartite graph, B_s = (V_{s1}\cup V_{s2},E_s), the running time complexity of Edmond's Algorithm on B_s is O(|V_{s1}\cup V_{s2}|\log |E_s|). Therefore, the collection of candidate edges costs ${k \choose 2}O(n\log n)$ time.
 
 *To*
 
-the running time complexity of Edmond's Algorithm on B_s is O(|V_{s1}\cup V_{s2}||E_s|log|E_s|).
+Suppose there is a bipartite graph, B_s = (V_{s1}\cup V_{s2},E_s) and |E_s|=m, the running time complexity of Edmond's Algorithm on B_s is O(|V_{s1}\cup V_{s2}||E_s|log|E_s|)=O(nm\log m). Therefore, the collection of candidate edges costs ${k \choose 2}O(nm\log m)$ time.
 
 ---
 
