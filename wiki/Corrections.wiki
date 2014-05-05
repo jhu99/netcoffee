@@ -24,7 +24,7 @@ Suppose there is a bipartite graph, B_s = (V_{s1}\cup V_{s2},E_s), the running t
 
 *To*
 
-Suppose there is a bipartite graph, B_s = (V_{s1}\cup V_{s2},E_s) and |E_s|=m, the running time complexity of Edmond's Algorithm on B_s is O(|V_{s1}\cup V_{s2}||E_s|log|E_s|)=O(nm\log m). Therefore, the collection of candidate edges costs ${k \choose 2}O(nm\log m)$ time.
+Suppose there is a bipartite graph, B_s = (V_{s1}\cup V_{s2},E_s) and |E_s|=m, the running time complexity of Edmond's Algorithm on B_s is O(|V_{s1}\cup V_{s2}||E_s|log|V_{s1}\cup V_{s2}|)=O(nm\log n). Therefore, the collection of candidate edges costs ${k \choose 2}O(nm\log n)$ time.
 
 ---
 
