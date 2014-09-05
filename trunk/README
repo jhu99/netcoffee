@@ -222,7 +222,7 @@ tar -zxvf dataset.tar.gz
 Compile the source code with command:
 make MODE=Release
 3. Run NetCoffee on our test dataset-2 with command:
-./bin/aligner -alignment -task 1 -out -alpha ${ALPHA} -alignmentfile ./result/alignment_netcoffee.data -resultfolder ./result/
+./bin/netcoffee -alignment -task 1 -out -alpha ${ALPHA} -alignmentfile ./result/alignment_netcoffee.data -resultfolder ./result/
 ${ALPHA} is the parameter you want to specify for alpha.
 Then you can find the all the involved output files in ./result/ .
 There are many other functions which you can see with "-help" option.
