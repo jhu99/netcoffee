@@ -61,11 +61,10 @@ typedef struct _Option
   std::vector<std::string> associationfiles;/// gene ontology association
   _Option()
   : out(false), create_records(false),
-  analyze(false), model(false),bscore(false),task(1),edgefactor(0.1),alpha(0.5),beta(1.0),eta(1.0),numspecies(4),nmax(2000)
+  analyze(false), model(false),bscore(false),task(1),edgefactor(0.1),alpha(0.3),beta(1.0),eta(1.0),numspecies(4),nmax(2000)
   {
-    profile="./test_profile.input";
 	numthreads=omp_get_max_threads();
-	resultfolder="./result/four_species/netcoffee/";
+	resultfolder="../../data-rw/uploadfiles/";
   }
 }Option;
 
@@ -73,57 +72,35 @@ typedef Output_html<Option> OutputHtml;
 typedef Solution_X<Graph, InputKpGraph, BpGraph, Option> Solution;
 typedef RecordStore<InputKpGraph, Option> InputRecord;
 typedef SimulatedAnnealing<InputRecord,Solution,InputGraph,Option> SimulatedAnnealingType;
-/*typedef Format<InputGraph, Option> FormatType;
-typedef GoList<InputGraph, Option> GoAnalyzer;
-
-bool runParser(Option& myoption)
-{
-  std::string filename;
-  ProcessProfile<Option> myprofile(myoption.profile);
-  //myprofile.getOption(myoption);
-  filename.append(myoption.resultfolder);
-  filename.append(myoption.avefunsimfile);
-  myoption.avefunsimfile=filename;
-  return true;
-}*/
 
 int main()
 {
   OutputHtml webpage;
 
-  //string recordsfile = "./dataset/bldata/alignment_records_blast.data";
-  //string hmodelfile= "./dataset/homology.model";
-  //string nmodelfile= "./dataset/null.model";
-  //vector<string> filenames;/// strings for input networks filename
-  //string outputfile("./result/alignment.network.data");
+  string hmodelfile= "./dataset/homology.model";
+  string nmodelfile= "./dataset/null.model";
   Option myoption;
   g_verbosity = VERBOSE_DEBUG;
-  
   webpage.set_header();
   webpage.get_data(myoption);
 
   InputKpGraph kpgraph(myoption.blastfiles,myoption.numspecies);
-  //InputRecord records(hmodelfile,nmodelfile,myoption);
-  //std::ofstream mylog(myoption.logfile,std::ios_base::out|std::ios_base::app);
+  InputRecord records(hmodelfile,nmodelfile,myoption);
+  //std::ofstream mylog(myoption.logfile);
   InputGraph networks;
-  //Timer t;
+  Timer t;
      
-    //t.restart();
-    SimulatedAnnealingType simAnnealing(myoption);
-    networks.initNetworkPool(myoption.networkfiles,myoption.numthreads);
+  t.restart();
+  SimulatedAnnealingType simAnnealing(myoption);
+  networks.initNetworkPool(myoption.networkfiles,myoption.numthreads);
 
-     ////run simulated annealing on multiple networks with tcoffee technique.
-    //records.createBpGraphAll(kpgraph,networks);
-    //simAnnealing.run_t(kpgraph,records,networks);
-    //mylog <<"------------------------NETCOFFEE------------------------------"<<std::endl;
-    //mylog <<"It takes "<<t <<" seconds to obtain the alignment with alpha "<<myoption.alpha<<"."<<std::endl;
-
-    //t.stop();
-    //if(myoption.out)
-    //{
-        //simAnnealing.printAlignment_t(myoption.alignmentfile, networks);
-    //}
-    //mylog.close();
-    webpage.set_footer();
-    return 0;
+  ////run simulated annealing on multiple networks with tcoffee technique.
+  records.createBpGraphAll(kpgraph,networks);
+  simAnnealing.run_t(kpgraph,records,networks);
+  std::cout <<"It takes "<<t <<" seconds to obtain the alignment with alpha "<<myoption.alpha<<".<br>"<<std::endl;
+  t.stop();
+  simAnnealing.printAlignment_t(myoption.alignmentfile, networks);
+  std::cout <<"Finished!<br>"<<std::endl;
+  //webpage.set_footer();
+  return 0;
 }
