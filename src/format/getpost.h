@@ -3,9 +3,10 @@
 
 #include <string.h>
 #include <iostream>
+#include <unordered_map>
 #include <vector>
 
-bool getPost(std::string &jobid,std::string &numspecies)
+bool getPost(std::unordered_map<std::string,std::string> &formData)
 {
 	char *buffer=NULL;
 	char *strlength = getenv("CONTENT_LENGTH");
@@ -15,8 +16,11 @@ bool getPost(std::string &jobid,std::string &numspecies)
 	buffer = new char[(content_length+1)*sizeof(char)];
 	if(!fread(buffer, sizeof(char), content_length, stdin))return false;
 	buffer[content_length]='\0';
-	char *value,*ivalue;
+	//std::cout << buffer<<"<br>"<<std::endl;
+	char *key,*value;
 	int i=0;
+	key=buffer;
+	std::string ikey,ivalue;
 	while(buffer[i]!='\0')
 	{
 		if(buffer[i]=='=')
@@ -28,16 +32,19 @@ bool getPost(std::string &jobid,std::string &numspecies)
 		{
 			buffer[i]='\0';
 			ivalue=value;
+			ikey=key;
 			i++;
-			jobid=ivalue;
+			key=buffer+i;
+			formData[ikey]=ivalue;
 		}
 		else
 		{
 			i++;
 		}
 	}	
+	ikey=key;
 	ivalue=value;
-	numspecies=ivalue;
+	formData[ikey]=ivalue;
 	return true;
 }
 #endif /*__GETPOST_H__*/

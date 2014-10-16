@@ -99,7 +99,7 @@ SimulatedAnnealing<RS,ST,NP,OP>::initial_t(RS& recordstore,NP& np)
 		getMatchingEdgesAll((*recordstore.bpgraphs[i]),recordstore,_mwm,recordstore.node2labelVector[i],np.getGraph(ni),ni,nj,recordstore.edgemapVector[i]);
 	  }
     }
-  std::cout <<"The number of matching edges is :"<<recordstore.matchingEdges->length <<std::endl;/// The number is 114924.
+  std::cout <<"All of matching edges are :"<<recordstore.matchingEdges->length <<"<br>"<<std::endl;/// The number is 114924.
   return true;
 }
 
@@ -164,12 +164,12 @@ SimulatedAnnealing<RS,ST,NP,OP>::getMatchingEdgesAll(Graph& gr,
       }
       if(!rs.matchingEdges->addValue(protein1,protein2,ni,nj,(*edgemap)[e]))
       {
-        std::cerr << "MachingEdge pool is full now!" <<std::endl;
+        std::cerr << "MachingEdge pool is full now!<br>" <<std::endl;
         return false;
       }
     }
   }
-	std::cout << "Matching edges:"<<edgenum <<"\t"<<ni<<"\t"<<nj<<"\t"<<std::endl;
+	std::cout << "Matching edges:"<<edgenum <<"\t"<<ni<<"\t"<<nj<<"\t<br>"<<std::endl;
   return true;
 }
 
@@ -193,7 +193,7 @@ SimulatedAnnealing<RS,ST,NP,OP>::getHighScoringMatch(Graph& gr,RecordStoreType& 
         return false;
       }
 	}
-	std::cout <<"Number of matching edges:"<<edgenum << "\t"<<ni <<"\t"<< ni <<std::endl;
+	std::cout <<"Matching edges:"<<edgenum << "\t"<<ni <<"\t"<< ni <<"<br>"<<std::endl;
 	return true;
 }
 
@@ -233,15 +233,16 @@ SimulatedAnnealing<RS,ST,NP,OP>::run_t(KpGraph& kpgraph,RS& recordstore, NP& np)
   unsigned k=0;
   float t=_tmax;
   float step=(_tmax-_tmin)/_Kmax;
-	std::cout <<"Initial started!"<<std::endl;
+  std::cout <<"Initial started!<br>"<<std::endl;
   initial_t(recordstore,np);
-	std::cout <<"Initial finished!" << std::endl;
+  std::cout <<"Initial finished!<br>" << std::endl;
   unsigned seed =std::chrono::system_clock::now().time_since_epoch().count();
-  std::string filename(_resultfolder);
   std::default_random_engine generator(seed);
   std::uniform_real_distribution<float> distribution(0.0,1.0);
   std::uniform_int_distribution<unsigned> sample_distribution(0,recordstore.matchingEdges->length-1);
+  std::string filename(_resultfolder);
   filename.append("alignmentscore.data");
+  std::cout <<"Simulated annealing started!<br>\n";
   std::ofstream output(filename.c_str());
   while(k<=_Kmax)//_Kmax
   {
@@ -259,10 +260,6 @@ SimulatedAnnealing<RS,ST,NP,OP>::run_t(KpGraph& kpgraph,RS& recordstore, NP& np)
       }
       else
       {
-        if(g_verbosity>VERBOSE_ESSENTIAL)
-        {
-          // std::cout<< delta <<"\t"<< exp(beta*delta)<<std::endl;
-        }
         if(delta>0 || distribution(generator)<exp(beta*delta))
         {
           _x.updateState_t(select, recordstore, delta, overlapValue);
@@ -270,10 +267,10 @@ SimulatedAnnealing<RS,ST,NP,OP>::run_t(KpGraph& kpgraph,RS& recordstore, NP& np)
       }
        output << _x.getAlignmentScore() << std::endl;
     }
-    std::cerr <<"Step "<<k<<"/"<<_Kmax<<"..."<< std::endl;
     k++;
   }
-  std::cout <<"The final score for this alignment is:"<<_x.getAlignmentScore()<< std::endl;
+  output.close();
+  std::cout <<"The final score for this alignment is:"<<_x.getAlignmentScore()<<"<br>"<<std::endl;
   return true;
 }
 
@@ -335,12 +332,6 @@ void
 SimulatedAnnealing<RS,ST,NP,OP>::printAlignment_t(std::string& filename, NetworkPool_Type& networkpool)
 {
   std::ofstream outfile1(filename.c_str());
-  std::ofstream outfile2("./result/alignment_statistics.data",std::ios_base::out|std::ios_base::app);
-  if(!outfile1.is_open() || !outfile2.is_open())
-  {
-    std::cerr << " Cannot open the outputfile! "<< std::endl;
-    return;
-  }
   int numNode = 0;
   for ( NodeIt it(_x.getGraph()); it!=lemon::INVALID; ++it)
   {
@@ -361,18 +352,7 @@ SimulatedAnnealing<RS,ST,NP,OP>::printAlignment_t(std::string& filename, Network
     numNode++;
   }
   /// _x.getConservedEdges_t(networkpool);
-  outfile2 << "----------------NETCOFFEE----------------------------" << std::endl;
-  outfile2 << "The number of alignment nodes:" << numNode << std::endl;
-  //for(int j=1;j<=_numSpecies;j++)
-  //{
-    //outfile2 <<"Alignment edges conserved over "<<j<<" species: " << _x._numConserved[j]<<std::endl;
-  //}
-  outfile2 << "Alpha parameter:" << _x._getAlpha() << std::endl;
-  outfile2 << "nmax parameter:" << _Nmax << std::endl;
-  outfile2 << "Alignment score:" << _x.getAlignmentScore() << std::endl;
   outfile1.close();
-  outfile2.close();
-  std::cout <<"Alignment has been written to alignment file!" <<std::endl;
   return;
 }
 

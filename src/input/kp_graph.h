@@ -194,11 +194,7 @@ bool KpGraph<NetworkPool>::readHomoList(std::string& filename,BpGraph* graph,int
   std::string protein1="";
   std::string protein2="";
   double evalue;
-  if(!input.is_open())
-  {
-    std::cerr << filename << "cannot be opened" <<std::endl;
-    return false;
-  }
+
   while(std::getline(input,line))
   {
     std::stringstream lineStream(line);
@@ -228,7 +224,7 @@ bool KpGraph<NetworkPool>::readHomoList(std::string& filename,BpGraph* graph,int
       //graph->blueRed.insert(std::make_pair(protein2,protein1));
     }
   }
-	std::cout << ni <<"\t" << nj <<"\t" << graph->seWeight.size()<<std::endl;
+	//std::cout << ni <<"\t" << nj <<"\t" << graph->seWeight.size()<<std::endl;
 	input.close();
   return true;
 }
@@ -241,11 +237,11 @@ bool KpGraph<NetworkPool>::reweightingAll(NetworkPool& networkpool,int numthread
 	ni=nj=0;
 
 	PrivateVariable myPrivateVariable;
-#pragma omp parallel for num_threads(numthreads) shared(ni,nj,networkpool) schedule(dynamic,1) private(myPrivateVariable)
+//#pragma omp parallel for num_threads(numthreads) shared(ni,nj,networkpool) schedule(dynamic,1) private(myPrivateVariable)
 	for(int num=0;num<numSpecies*(numSpecies-1)/2;num++)
 	{
 		int lni,lnj;
-		#pragma omp critical
+	//	#pragma omp critical
 		{
 			if(nj<numSpecies-1)nj++;
 			else{ni++;nj=ni+1;}
@@ -254,15 +250,6 @@ bool KpGraph<NetworkPool>::reweightingAll(NetworkPool& networkpool,int numthread
 		reweighting_parallel(networkpool,lni,lnj,myPrivateVariable);
 	}	
 
-	//#pragma omp parallel for num_threads(numthreads) shared(ni,nj,networkpool) schedule(dynamic,1) private(myPrivateVariable)
-	/*ni=nj=0;
-	for(int num=0;num<numSpecies*(numSpecies-1)/2;num++)
-	{
-			if(nj<numSpecies-1)nj++;
-			else{ni++;nj=ni+1;}
-		outputWeight(networkpool,ni,nj,myPrivateVariable);
-	}	*/
-	//#pragma omp parallel for collapse(2) for() for();; omp_set_nested(1);
   return true;
 }
 
@@ -343,7 +330,7 @@ bool KpGraph<NetworkPool>::reweighting_parallel(NetworkPool& networkpool,int ni,
 			                  && myPrivateVariable.bp2k->stWeight.find(myPrivateVariable.kst6)!=myPrivateVariable.bp2k->stWeight.end())
 			                  {
 			                    /// reweight on match edges.
-#pragma omp critical
+//#pragma omp critical
 													{
 			                    myPrivateVariable.bp1k->stWeight[myPrivateVariable.kst2]++;
 			                    myPrivateVariable.bp1k->stWeight[myPrivateVariable.kst5]++;

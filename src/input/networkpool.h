@@ -117,6 +117,7 @@ bool NetworkPool<GR,BP>::initNetworkPool(std::vector<std::string> &filelist,int 
   std::vector<std::string>::iterator it;
   int i,fsize;
   fsize=filelist.size();
+  std::cout <<"<br>NetCoffee will run with "<<numthreads <<" threads!<br>"<<std::endl;
 //#pragma omp parallel for num_threads(numthreads) ordered
   for(i=0;i<fsize;++i)
 	{
@@ -132,14 +133,10 @@ bool NetworkPool<GR,BP>::readNetwork(std::string &filename,int i)
   std::string line;
   std::unordered_map<std::string,int> interactionmap;
   std::ifstream input(filename.c_str());
-#pragma omp ordered
+//#pragma omp ordered
 	{
 	_graphSet.push_back(data);
 	}
-  if(!input.is_open())
-  {
-	  std::cout <<filename<<" doesn't exist!<br>"<<std::endl;
-  }
   std::getline(input,line);/// Skip header line: INTERACTOR A INTERACTOR B
   while(std::getline(input,line))
   {
@@ -169,7 +166,7 @@ bool NetworkPool<GR,BP>::readNetwork(std::string &filename,int i)
       node1 = data->g->addNode();
       data->label->set(node1,protein1);
       (*(data->invIdNodeMap))[protein1] = node1;
-#pragma omp critical
+//#pragma omp critical
 			{
       proteinHost[protein1] = i;// shared variable
 			}
@@ -211,10 +208,10 @@ bool NetworkPool<GR,BP>::readNetwork(std::string &filename,int i)
 	{
 		if(g_verbosity>=VERBOSE_NON_ESSENTIAL)
 		{
-			std::cout <<filename <<" has been read successfully!<br>"<<std::endl;
+			std::cout <<"Network of species "<<i <<" has been read successfully!<br>"<<std::endl;
 			std::cout <<"# of proteins:"<< data->nodeNum <<"<br>"<<std::endl;
 			std::cout <<"# of interactions:"<<data->edgeNum<<"<br>"<<std::endl;
-			std::cout <<"the largest degree:"<< maxNode <<"<br>"<< std::endl;
+			std::cout <<"# the largest degree:"<< maxNode <<"<br>"<< std::endl;
 		}
 	}
 //#pragma omp atomic// it also works #pragma omp critical
