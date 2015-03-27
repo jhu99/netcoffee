@@ -1,0 +1,16 @@
+# Frequently Asked Questions #
+
+  * Does **NetCoffee** also solve the pairwise alignment problem?
+> > No, it doesn't align two networks, since it employs a triple approach to score topological edges in bipartite graphs. Unexpected errors might happen if there are only two input networks in the "profile.input" file.
+
+  * Do I have to modify "score\_composit.bmode" or "score\_composit.mode" when they were used for other data sets?
+> > We suggest no. But you are allowed to use another scoring model if you like, that's why we leave it as an option for you. These two files are compulsory when you perform NetCoffee.
+
+  * Does it support Mac OS X?
+> > Yes, it does. The source code can be compiled with compilers g++-4.6 or higher, MS Visual Studio 11.
+
+  * Some error occurred when NetCoffee was run on 3 species?
+> > Please make sure you have specified the parameter "-numspecies" correctly. The default is 4.
+
+  * Is NetCoffee designed for finding many-to-many mapping or one-to-one mapping?
+> > It was designed for generating a global many-to-many node mapping table for compared species. The option 'eta' is used to control the number of many-to-many match-sets. When 'eta'=1, it will output the smallest number of many-to-many match-sets. When 'eta'=0, it will output the largest number of many-to-many match-sets. Hence, 'eta' is also a parameter that controls the coverage of alignments.
