@@ -1,5 +1,5 @@
 OS = $(shell uname -s)
-CXX = g++-4.6
+#CXX = g++-4.6
 DEBUG = yes
 
 # Default mode is "Release"
@@ -14,22 +14,20 @@ endif
 endif
 
 LEMON = include/lemon-1.2.3
-MYSQLCPPCONN = include/mysqlcppconn-1.1.3
-BOOST = include/boost_1_55_0
 
 ifeq ($(MODE),Debug)
-	CXXFLAGS = -Wall -g3 -DDEBUG -std=c++0x -fopenmp -DVERBOSE -I$(LEMON)/ -I$(MYSQLCPPCONN)/include/ -I$(MYSQLCPPCONN)/include/cppconn/ -I$(BOOST)/ -Isrc/ -Isrc/input/ -Isrc/algorithms/  -Isrc/format/ -I-L$(MYSQLCPPCONN)/lib/
+	CXXFLAGS = -Wall -g3 -DDEBUG -std=c++0x -fopenmp -DVERBOSE -I$(LEMON)/ -Isrc/ -Isrc/input/ -Isrc/algorithms/  -Isrc/format/ 
 else
-	CXXFLAGS = -Wall -O3 -ffast-math -fcaller-saves -finline-functions -std=c++0x -fopenmp -DNDEBUG -I$(LEMON)/ -I$(MYSQLCPPCONN)/include/ -Isrc/ -Isrc/input/ -Isrc/algorithms/ -Isrc/format/ -L$(MYSQLCPPCONN)/lib/
+	CXXFLAGS = -Wall -O3 -ffast-math -fcaller-saves -finline-functions -std=c++0x -fopenmp -DNDEBUG -I$(LEMON)/ -Isrc/ -Isrc/input/ -Isrc/algorithms/ -Isrc/format/
 endif
 
 all: netcoffee move
 
 netcoffee: src/main.cpp src/verbose.o
-	${CXX} ${CXXFLAGS} -o $@ $^ -lmysqlcppconn
+	${CXX} ${CXXFLAGS} -o $@ $^
 
 move:
-	sudo mv netcoffee /usr/lib/cgi-bin/netcoffee.cgi
+	mv netcoffee bin/netcoffee
 
 #lemon: lemon-config lemon-make
 
@@ -40,4 +38,4 @@ move:
 #$(LEMON)/make	
 
 clean:
-	rm ./bin/netcoffee.cgi $(CGI_INTERFACE)/*.o
+	rm ./bin/netcoffee

@@ -233,9 +233,9 @@ SimulatedAnnealing<RS,ST,NP,OP>::run_t(KpGraph& kpgraph,RS& recordstore, NP& np)
   unsigned k=0;
   float t=_tmax;
   float step=(_tmax-_tmin)/_Kmax;
-  std::cout <<"Initial started!<br>"<<std::endl;
+  std::cout <<"Start setting up the initial alignment state!<br>"<<std::endl;
   initial_t(recordstore,np);
-  std::cout <<"Initial finished!<br>" << std::endl;
+  std::cout <<"The inition has been done!<br>" << std::endl;
   unsigned seed =std::chrono::system_clock::now().time_since_epoch().count();
   std::default_random_engine generator(seed);
   std::uniform_real_distribution<float> distribution(0.0,1.0);

@@ -358,7 +358,10 @@ int
       for(Iterator it = range.first;it != range.second; it++)
       {
         if(it->second.compare(protein2)==0)
+        {
           newmp2.erase(it);/// erase protein2 from matchset 2
+          break;
+        }
       }
       deltaScore[1]=getDeltaScore(newmp1,*ms1, rs)+getDeltaScore(newmp2,*ms2, rs);
       index_i=1;
@@ -373,7 +376,10 @@ int
         for(Iterator it = range.first;it != range.second; it++)
         {
           if(it->second.compare(protein2)==0)
+          {
             newmp2.erase(it);/// erase protein2 from matchset 2
+            break;
+          }
         }
         deltaScore[2] =getDeltaScore(newmp1,*ms1, rs)+getDeltaScore(newmp2,*ms2, rs);
         index_i=2;
@@ -387,7 +393,10 @@ int
       for(Iterator it = range.first;it != range.second; it++)
       {
         if(it->second.compare(protein1)==0)
+        {
           newmp1.erase(it);/// erase protein1 from matchset 1
+          break;
+        }
       }
       deltaScore[3]=getDeltaScore(newmp2,*ms2, rs)+getDeltaScore(newmp1,*ms1, rs);
       index_j=3;
@@ -402,7 +411,10 @@ int
       for(it = range.first;it != range.second; it++)
       {
         if(it->second.compare(protein1)==0)
+        {
           newmp1.erase(it);/// erase protein1 from matchset 1
+          break;
+        }
       }
       deltaScore[4] =getDeltaScore(newmp1,*ms1, rs)+getDeltaScore(newmp2,*ms2, rs);
       index_j=4;
@@ -1112,7 +1124,10 @@ bool
     for(Iterator it = range.first;it != range.second; it++)
     {
       if(it->second.compare(protein2)==0)
+      {
         (*_node2string)[node2]->erase(it);/// erase protein2 from matchset 2
+        break;
+      }
     }
   }
   else if (overlapValue==2)/// Substitute protein_covered by protein 2
@@ -1129,7 +1144,10 @@ bool
     for(Iterator it = range.first;it != range.second; it++)
     {
       if(it->second.compare(protein2)==0)
+      {
         (*_node2string)[node2]->erase(it);/// erase protein2 from matchset 2
+        break;
+      }
     }
   }
   else if (overlapValue==3)/// Combine protein 1 to matchset 2
@@ -1144,7 +1162,10 @@ bool
     for(Iterator it = range.first;it != range.second; it++)
     {
       if(it->second.compare(protein1)==0)
+      {
         (*_node2string)[node1]->erase(it);/// erase protein1 from matchset 1
+        break;
+      }
     }
   }
   else if (overlapValue==4)/// Subsititute protein_covered by protein 1.
@@ -1161,7 +1182,10 @@ bool
     for(Iterator it = range.first;it != range.second; it++)
     {
       if(it->second.compare(protein1)==0)
+      {
         (*_node2string)[node1]->erase(it);/// Erase protein1 from matchset 1
+        break;
+      }
     }
   }
   else if (overlapValue==5)/// Combine protein2 to matchset 1

@@ -11,11 +11,6 @@ Data: 10.04.2014*/
 #include <unordered_map>
 #include "getpost.h"
 #include "function.h"
-#include "mysql_connection.h"
-#include <cppconn/driver.h>
-#include <cppconn/exception.h>
-#include <cppconn/resultset.h>
-#include <cppconn/statement.h>
 
 
 using namespace std;
@@ -80,16 +75,25 @@ void Output_html<Option>::get_data(Option& myoption)
 	std::cout <<"eta:\t"<<myoption.eta<<"<br>"<<std::endl;
 	std::cout <<"algorithm:\t"<<algorithm<<"<br>"<<std::endl;
 	
+	/*std::string model, algorithm;
+	jobid="test";
+	myoption.numspecies=4;
+	int num=4;
+	model="evalue";
+	myoption.alpha=0.3;
+	algorithm="netcoffee";
+	myoption.eta=0.5;*/
+	
 	for(int i=0;i<num;i++)
 	{
-		std::string ppifilename="../../data-rw/uploadfiles/";
+		std::string ppifilename="/var/www/html/mnetali/data-rw/uploadfiles/";
 		ppifilename.append(jobid);ppifilename.append("/ppi");
 		ppifilename.append(convert_num2str(i));
 		ppifilename.append(".tab");
 		myoption.networkfiles.push_back(ppifilename);
 		for(int j=i;j<num;j++)
 		{
-			std::string ssfilename="../../data-rw/uploadfiles/";
+			std::string ssfilename="./testserver/";
 			ssfilename.append(jobid);ssfilename.append("/ppi");
 			ssfilename.append(convert_num2str(i));
 			ssfilename.append("-ppi");ssfilename.append(convert_num2str(j));
@@ -99,12 +103,12 @@ void Output_html<Option>::get_data(Option& myoption)
 	}
 	if(model.compare("evalue")==0)
 	{
-		myoption.scorefile="../../data-rw/model/score_composit.model";
+		myoption.scorefile="/var/www/html/mnetali/data-rw/model/score_composit.model";
 	}
 	else
 	{
 		myoption.bscore=true;
-		myoption.scorefile="../../data-rw/model/score_composit.bmodel";
+		myoption.scorefile="/var/www/html/mnetali/data-rw/uploadfiles/score_composit.bmodel";
 	}
 	myoption.resultfolder.append(jobid);
 	myoption.resultfolder.append("/");
@@ -114,24 +118,5 @@ void Output_html<Option>::get_data(Option& myoption)
 	myoption.logfile.append("log.txt");
 }
 
-template<typename Option>
-void Output_html<Option>::update_table()
-{
-	sql::Driver *driver;
-	sql::Connection *con;
-	sql::Statement *stmt;
-	
-	driver = get_driver_instance();
-	//con = driver->connect("mysql.imp.fu-berlin.de","jhu","ADcVBRwLfy4XTfFh");
-	//con->setSchema("jhu");
-	//stmt = con->createStatement();
-	//std::string sqlstatement("UPDATE job_description SET status='completed' WHERE id='");
-	//sqlstatement.append(jobid);
-	//sqlstatement.append("'");
-	//std::cout << sqlstatement <<"<br>\n";
-	//stmt->execute(sqlstatement.c_str());
-	delete stmt;
-	delete con;
-}
 
 #endif //OUTPUT_HTML_H_
