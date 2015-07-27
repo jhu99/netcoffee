@@ -242,7 +242,7 @@ SimulatedAnnealing<RS,ST,NP,OP>::run_t(KpGraph& kpgraph,RS& recordstore, NP& np)
   std::uniform_int_distribution<unsigned> sample_distribution(0,recordstore.matchingEdges->length-1);
   std::string filename(_resultfolder);
   filename.append("alignmentscore.data");
-  std::cout <<"Simulated annealing started!<br>\n";
+  std::cout <<"Simulated annealing started!<br>";
   std::ofstream output(filename.c_str());
   while(k<=_Kmax)//_Kmax
   {

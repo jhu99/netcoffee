@@ -93,7 +93,7 @@ void Output_html<Option>::get_data(Option& myoption)
 		myoption.networkfiles.push_back(ppifilename);
 		for(int j=i;j<num;j++)
 		{
-			std::string ssfilename="./testserver/";
+			std::string ssfilename="/var/www/html/mnetali/data-rw/uploadfiles/";
 			ssfilename.append(jobid);ssfilename.append("/ppi");
 			ssfilename.append(convert_num2str(i));
 			ssfilename.append("-ppi");ssfilename.append(convert_num2str(j));
