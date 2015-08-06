@@ -501,9 +501,9 @@ template<typename KpGraph,typename Option>
 bool
 RecordStore<KpGraph,Option>::createBpGraphAll(KpGraph& kpgraph,NetworkPool& networkpool)
 {
-	std::cout << "Reweighting started!<br>" << std::endl;
+	std::cout << "Reweighing started!<br>" << std::endl;
     kpgraph.reweightingAll(networkpool,numThreads);
-	std::cout << "Reweighting finished!<br>" << std::endl;
+	std::cout << "Reweighing finished!<br>" << std::endl;
     readScore(rfile.c_str());
 	maxStrScore = kpgraph.maxStrWeight;/// 6551
 	int ni,nj,numBp;

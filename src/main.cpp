@@ -63,7 +63,7 @@ typedef struct _Option
   : out(false), create_records(false),
   analyze(false), model(false),bscore(false),task(1),edgefactor(0.1),alpha(0.3),beta(1.0),eta(0.7),numspecies(4),nmax(2000)
   {
-	numthreads=omp_get_max_threads();
+	numthreads=1;
 	resultfolder="/var/www/html/mnetali/data-rw/uploadfiles/";
   }
 }Option;

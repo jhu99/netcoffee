@@ -117,7 +117,7 @@ bool NetworkPool<GR,BP>::initNetworkPool(std::vector<std::string> &filelist,int 
   std::vector<std::string>::iterator it;
   int i,fsize;
   fsize=filelist.size();
-  std::cout <<"<br>NetCoffee will run with "<<numthreads <<" threads!<br>"<<std::endl;
+  //std::cout <<"<br>NetCoffee will run with "<<numthreads <<" threads!<br>"<<std::endl;
 //#pragma omp parallel for num_threads(numthreads) ordered
   for(i=0;i<fsize;++i)
 	{
@@ -204,7 +204,7 @@ bool NetworkPool<GR,BP>::readNetwork(std::string &filename,int i)
 	  if(maxNode < (*data->degreeMap)[mynode])
 		maxNode=(*data->degreeMap)[mynode];
   }
-#pragma omp critical
+//#pragma omp critical
 	{
 		if(g_verbosity>=VERBOSE_NON_ESSENTIAL)
 		{
