@@ -73,7 +73,7 @@ void Output_html<Option>::get_data(Option& myoption)
 	myoption.eta=std::stof(eta);
 	std::cout <<"alpha:\t"<<myoption.alpha<<"<br>"<<std::endl;
 	std::cout <<"eta:\t"<<myoption.eta<<"<br>"<<std::endl;
-	std::cout <<"algorithm:\t"<<algorithm<<"<br>"<<std::endl;
+	std::cout <<"algorithm:\t"<<algorithm<<"<br><br>"<<std::endl;
 	
 	/*std::string model, algorithm;
 	jobid="test";
