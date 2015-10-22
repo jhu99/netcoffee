@@ -1,5 +1,5 @@
 OS = $(shell uname -s)
-CXX = g++-4.6
+CXX = g++
 DEBUG = yes
 
 # Default mode is "Release"
