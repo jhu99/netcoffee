@@ -156,7 +156,7 @@ P62258	P61981	  315.0
 
 You can generate the following message by running the program with option "-h".
 
-$NETCOFFEE/bin/aligner -h
+$NETCOFFEE/bin/netcoffee -h
 Usage:
   ./bin/netcoffee -version|-records|-alignment|-analyse|-format
      [--help|-h|-help] [-alignmentfile str] [-alpha num] [-avefunsimfile str]
