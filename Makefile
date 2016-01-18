@@ -21,13 +21,14 @@ else
 	CXXFLAGS = -Wall -O3 -ffast-math -fcaller-saves -finline-functions -std=c++0x -fopenmp -DNDEBUG -I$(LEMON)/ -Isrc/ -Isrc/input/ -Isrc/algorithms/
 endif
 
-all: netcoffee move
+all: netcoffee mkbin move
 
 netcoffee: src/main.cpp src/verbose.o $(LEMON)/lemon/arg_parser.o
 	${CXX} ${CXXFLAGS} -o $@ $^ 
-
+mkbin:
+	mkdir ./bin
 move:
-	mv netcoffee ./bin
+	mv netcoffee ./bin/
 
 #lemon: lemon-config lemon-make
 
