@@ -114,6 +114,7 @@ bool setParser(ArgParser& parser, Option& myoption)
   .refOption("nmax","The parameter for SA algorithm N.",myoption.nmax)
   .refOption("out","Print the alignment result into file.",myoption.out)
   .refOption("bscore","Use bitscore as the similarity of edges.",myoption.bscore)
+  .refOption("profile","Use bitscore as the similarity of edges. Defult is ./profile.input.",myoption.profile)
   ;
   return true;
 }
