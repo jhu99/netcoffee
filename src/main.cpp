@@ -46,6 +46,7 @@ typedef struct _Option
   int numspecies;
   int nmax;
 	int numthreads;
+    std::string alignment_statistic;
   std::string alignmentfile;
   std::string avefunsimfile;
   std::string recordsfile;
@@ -128,6 +129,10 @@ bool runParser(ArgParser& myparser, Option& myoption)
   filename.append(myoption.resultfolder);
   filename.append(myoption.avefunsimfile);
   myoption.avefunsimfile=filename;
+  filename.clear();
+    filename.append(myoption.resultfolder);
+    filename.append("alignment_statistic.data");
+    myoption.alignment_statistic=filename;
   return true;
 }
 
@@ -227,7 +232,7 @@ int main(int argc, char** argv)
       }
       else
       {
-        simAnnealing.printAlignment_t(myoption.alignmentfile, networks);
+        simAnnealing.printAlignment_t(myoption.alignmentfile, myoption.alignment_statistic, networks);
       }
     }
   }

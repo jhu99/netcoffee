@@ -57,7 +57,7 @@ public:
     bool getMatchingEdges(Graph&,MaXWeightedMatchingType&,RS&,NP&);
     bool getHighScoringMatch(Graph&,RecordStoreType&,OrigLabelNodeMap*,EdgeWeight*,int);
     void printAlignment2(std::string&,RecordStoreType&);
-    void printAlignment_t(std::string&,NetworkPool_Type&);
+    void printAlignment_t(std::string&,std::string&,NetworkPool_Type&);
 };
 template<typename RS, typename ST, typename NP, typename OP>
 SimulatedAnnealing<RS,ST,NP,OP>::SimulatedAnnealing(OptionType& myoption)
@@ -332,10 +332,12 @@ SimulatedAnnealing<RS,ST,NP,OP>::run2(RS& recordstore, NP& np)
 
 template<typename RS, typename ST, typename NP, typename OP>
 void
-SimulatedAnnealing<RS,ST,NP,OP>::printAlignment_t(std::string& filename, NetworkPool_Type& networkpool)
+SimulatedAnnealing<RS,ST,NP,OP>::printAlignment_t(std::string& filename,
+                                                  std::string& file_statistics,
+                                                  NetworkPool_Type& networkpool)
 {
   std::ofstream outfile1(filename.c_str());
-  std::ofstream outfile2("./result/alignment_statistics.data",std::ios_base::out|std::ios_base::app);
+  std::ofstream outfile2(file_statistics.c_str(),std::ios_base::out);
   if(!outfile1.is_open() || !outfile2.is_open())
   {
     std::cerr << " Cannot open the outputfile! "<< std::endl;
