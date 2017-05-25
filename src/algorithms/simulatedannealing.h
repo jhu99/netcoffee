@@ -365,10 +365,12 @@ SimulatedAnnealing<RS,ST,NP,OP>::printAlignment_t(std::string& filename,
   /// _x.getConservedEdges_t(networkpool);
   outfile2 << "----------------NETCOFFEE----------------------------" << std::endl;
   outfile2 << "The number of alignment nodes:" << numNode << std::endl;
-  //for(int j=1;j<=_numSpecies;j++)
-  //{
-    //outfile2 <<"Alignment edges conserved over "<<j<<" species: " << _x._numConserved[j]<<std::endl;
-  //}
+  for(int j=0;j<_numSpecies;j++)
+  {
+      outfile2 << "Nodes in network "<<j+1 <<": " << networkpool.getGraph(j)->nodeNum << std::endl;
+      outfile2 << "Edges in network "<<j+1 <<": "<< networkpool.getGraph(j)->edgenum << std::endl;
+      outfile2 <<"Alignment edges conserved over "<<j<<" species: " << _x._numConserved[j]<<std::endl;
+  }
   outfile2 << "Alpha parameter:" << _x._getAlpha() << std::endl;
   outfile2 << "nmax parameter:" << _Nmax << std::endl;
   outfile2 << "Alignment score:" << _x.getAlignmentScore() << std::endl;
