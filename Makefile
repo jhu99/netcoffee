@@ -3,7 +3,7 @@ CXX = g++
 DEBUG = yes
 
 # Default mode is "Release"
-DEFAULT_MODE  = Debug
+DEFAULT_MODE  = Release
 MODE         ?= $(DEFAULT_MODE)
 
 # If mode is something other than "Debug" or "Release",throw a fit

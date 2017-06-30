@@ -358,9 +358,8 @@ SimulatedAnnealing<RS,ST,NP,OP>::printAlignment_t(std::string& filename,
 		  outfile1 << mit->second <<"\t" ;
 	  }
 	  outfile1 << mit->second << std::endl;
+	numNode++;
     }
-    
-    numNode++;
   }
   /// _x.getConservedEdges_t(networkpool);
   outfile2 << "----------------NETCOFFEE----------------------------" << std::endl;
